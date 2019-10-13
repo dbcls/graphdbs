@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <title>Orthology Resources</title>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+      <link href="css/select2.css" rel="stylesheet" />
+      <link href="css/togorth.css" rel="stylesheet" />
+      <script src="js/jquery-3.4.1.min.js"></script>
+      <script src="js/d3.js"></script>
+      <script src="js/select2.js"></script>
+      <script src="js/togorth.js"></script>
+      <script src="js/ortholog-group.js"></script>
+      <script>
+       $().ready(
+           function() {
+               var tabs = [
+                   { title: 'Databases', page: 'databases' },
+                   { title: 'Search', page: 'search' },
+                   { title: 'SPARQL',    page: 'sparql' },
+                   { title: 'Links', page: 'links' },
+                   { title: 'References', page: 'references' }
+               ];
+               togorth.createTabs( tabs );
+           }
+       );
+      </script>
+    <link 
+  </head>
+  <body>
+    <header>
+	<div class="logo">
+            <h1 id="title">TogoOrthology</h1>
+            <!-- <h1 id="title">Orthology Resources</h1> -->
+	</div>
+      <nav id="top_menu">
+        <div id="tabs"></div>
+      </nav>        
+    </header>
+
+    <article>
+      <div class="container">
+        <div id="tabpane">
+          <div id="contents"></div>
+        </div>
+      </div>
+    </article>
+
+    <footer>
+	<div class="container">
+            <!-- Copyright (C) 2019 Database Center for Life Science (DBCLS) -->
+            2019 Database Center for Life Science (DBCLS)
+	</div>
+    </footer>
+
+  </body>
+</html>

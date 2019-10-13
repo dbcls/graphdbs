@@ -1,0 +1,136 @@
+header {
+    padding: 10px 10px 0 10px;
+    display: flex;
+    background-color: white;
+    color: white;
+    max-width: 1250px;
+    margin: 0 auto;
+    height: 100px;
+}
+
+footer {
+    padding: 10px;
+    background-color: navy;
+    color: white;
+}
+
+textarea {
+    width: 100%;
+    height: 250px;
+}
+
+article {
+    padding: 10px 5px;
+}
+
+button {
+    margin: 0;
+}
+
+div {
+    margin: 0;
+}
+
+table {
+    border: 1px solid navy;
+    border-collapse: collapse;
+}
+
+th {
+    background-color: lightblue;
+    color: navy;
+    margin: 0;
+    padding: 1px;
+    border: 1px solid navy;
+}
+
+td {
+    border: 1px solid navy;
+    margin: 0;
+    padding: 1px;
+}
+
+nav {
+    height: 100px;
+}
+
+#title {
+    font-size: 20px;
+    font-weight: bold;
+    font-family: serif;
+    color: navy;
+}
+
+#contents {
+    padding: 5px 0;
+}
+
+#top_menu {
+    display: flex;
+    vertical-align: center;
+}
+
+#tabs {
+    padding: 0;
+    display: flex;
+    vertical-align: center;
+}
+
+#top_menu_inner {
+    width: 1000px;
+}
+
+#sparql_result {
+    margin-top: 25px;
+}
+
+.container {
+    width: 1000px;
+    margin: 0 auto;
+}
+
+.tab_content {
+    display: none;
+}
+
+.tab_button,
+.tab_button:active,
+.tab_button:hover  {
+    display: block;
+    width: 120px;
+    height: 50px;
+    font-size: 15px;
+    background-color: white;
+    font-family: sans-serif;
+    font-weight: 400;
+    color: black;
+    cursor: pointer;
+    outline: 0;
+    border: none;
+}
+
+.tab_button:hover {
+    border-bottom: solid 2px #005cab;
+}
+
+.submit {
+    display: block;
+    width: 150px;
+    padding: 15px;
+    border-radius: 3;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    background-color: lightgray;
+    outline: 0;
+}
+
+.submit:hover {
+    background-color: gray;
+}
+
+.logo {
+    flex-grow: 1;
+    height: 100px;
+}
+

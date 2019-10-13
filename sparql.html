@@ -1,0 +1,14 @@
+<div>
+  <h3>SPARQL:</h3>
+  <textarea id="sparql_text">PREFIX orth: &lt;http://purl.jp/bio/11/orth#&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+
+select distinct ?s ?p ?o where {
+    ?s ?p ?o .
+} limit 100</textarea>
+  <button id="sparql_button" class="submit">Submit</button>
+</div>
+<div id="sparql_result"></div>
+<script>
+    $( '#sparql_button' ).click( togorth.submitSparql );
+</script>
