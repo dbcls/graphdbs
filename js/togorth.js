@@ -161,8 +161,8 @@ togorth.createDbTable = function( id ) {
         }
     ).then(
         function( result ) {
-            var tag = '<tr><th>Name</th><th>Method</th><th>Hierarchical / Flat</th><th>Target</th><th>#organisms</th><th>Sequence Source</th>'
-                    + '<th>Publication</th><th>Last Update</th><th>URL</th></tr>'
+            // var tag = '<tr><th>Name</th><th>Method</th><th>Hierarchical / Flat</th><th>Target</th><th>#organisms</th><th>Sequence Source</th><th>Publication</th><th>Last Update</th><th>URL</th></tr>'
+            var tag = '<tr><th>Name</th></tr>'
             $( '#' + id ).html( tag );
             result.feed.entry.forEach(
                 function( entry ) {
@@ -204,8 +204,8 @@ togorth.getDbObject = function ( string ) {
 // create DB line tag
 togorth.createDbLineTag = function( object ) {
     var keys = [ 
-        'name', 'method', 'hierarchicalflatpair-wiseandothercharacteristics', 'target', 'organisms', 
-        'sequencesource', 'publication', 'lastupdate', 'url'
+        // 'name', 'method', 'hierarchicalflatpair-wiseandothercharacteristics', 'target', 'organisms', 'sequencesource', 'publication', 'lastupdate', 'url'
+        'name'
     ]
     var tag = togorth.createLineTag( object, keys );
     return tag;
