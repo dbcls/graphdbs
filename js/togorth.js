@@ -152,7 +152,7 @@ togorth.createSparqlResultTable = function( headers, result ) {
 togorth.createDbTable = function( id ) {
     $.ajax(
         {
-            url: 'https://spreadsheets.google.com/feeds/list/1QNBD67P-CUbmz_NNOkikNYsuV2bL9zzauToFDZeLib4/od6/public/values',
+            url: 'https://spreadsheets.google.com/feeds/list/1dku2zss1K3h0dE8yuZ29tgURDK0L4Q5FvlyNK-BImyo/od6/public/values',
             type: 'GET',
             dataType: 'json',
             data: {
