@@ -4,9 +4,6 @@ var togorth = {};
 // id
 togorth.id = 1;
 
-// endpoint
-togorth.endpoint = 'https://sparql.orth.dbcls.jp/sparql';
-
 // issue ID
 togorth.issueId = function() {
     var id = togorth.id;
@@ -65,32 +62,6 @@ togorth.openTab = function( id ) {
     $( '#tab_content-' + id ).css( 'display', 'block' );
 }
 
-// submit sparql
-togorth.submitSparql = function() {
-    var tag = '<h3>Result:</h3><div>Searching...</div>';
-    $( '#sparql_result' ).html( tag );
-
-    var sparql = $( '#sparql_text' ).val();
-
-    $.ajax(
-        {
-            url: togorth.endpoint,
-            type: 'GET',
-            dataType: 'json',
-            data: {
-                format: 'application/sparql-results+json',
-                query: sparql
-            }
-        }
-    ).then(
-        function( result ) {
-            var headers = togorth.getHeaders( result );
-            var rows = togorth.getResult( result, headers );
-            togorth.createSparqlResultTable( headers, rows );
-        }
-    );
-}
-
 // headers
 togorth.getHeaders = function( result ) {
     var headers = [];
@@ -118,34 +89,6 @@ togorth.getResult = function( result, headers ) {
         }
     );
     return array;
-}
-
-// sparql result table
-togorth.createSparqlResultTable = function( headers, result ) {
-    var tag = '<h3>Result:</h3><table id="sparql_result_table"></table>';
-    $( '#sparql_result' ).html( tag );
-
-    tag = '<tr>';
-    headers.forEach(
-        function( header ) {
-            tag += '<th>' + header + '</th>'
-        }
-    );
-    tag += '</tr>';
-    $( '#sparql_result_table' ).append( tag );
-
-    result.forEach(
-        function( row ) {
-            tag = '<tr>'
-            headers.forEach( 
-                function( header ) {
-                    tag += '<td>' + row[ header ] + '</td>';
-                }
-            );
-            tag += '</tr>'
-            $( '#sparql_result_table' ).append( tag );
-        }
-    );
 }
 
 // create db table
