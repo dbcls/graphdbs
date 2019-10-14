@@ -1,50 +1,50 @@
 // namespace
-var togorth = {};
+var togo = {};
 
 // id
-togorth.id = 1;
+togo.id = 1;
 
 // issue ID
-togorth.issueId = function() {
-    var id = togorth.id;
-    togorth.id++;
+togo.issueId = function() {
+    var id = togo.id;
+    togo.id++;
     return id;
 }
 
 // create tabs
-togorth.createTabs = function( tabs ) {
+togo.createTabs = function( tabs ) {
     tabs.forEach( 
         function( element ) {
             title = element.title;
             page = element.page;
-            var id = togorth.issueId();
+            var id = togo.issueId();
             element.id = id;
-            togorth.addTabButton( title, id );
-            togorth.addTabContent( page, id );
+            togo.addTabButton( title, id );
+            togo.addTabContent( page, id );
         }
     );
     var tag = '<div class="tab_rest"></div>';
     $( '#tabs' ).append( tag );
 
     if( tabs.length > 0 ) {
-        togorth.openTab( tabs[ 0 ].id );
+        togo.openTab( tabs[ 0 ].id );
     }
 }
 
 // add tab button
-togorth.addTabButton = function( title, id ) {
+togo.addTabButton = function( title, id ) {
     var buttonId = 'tab_button-' + id;
     var tag = '<button id="' + buttonId + '" class="tab_button">' + title + '</button>';
     $( '#tabs' ).append( tag );
     $( '#' + buttonId ).click(
         function() {
-            togorth.openTab( id );
+            togo.openTab( id );
         }
     );
 }
 
 // add tab content
-togorth.addTabContent = function( page, id ) {
+togo.addTabContent = function( page, id ) {
     var panelId = 'tab_content-' + id;
     var tag = '<div id="' + panelId + '" class="tab_content"></div>'
     $( '#contents' ).append( tag );
@@ -52,7 +52,7 @@ togorth.addTabContent = function( page, id ) {
 }
 
 // open tab
-togorth.openTab = function( id ) {
+togo.openTab = function( id ) {
     $( '.tab_button' ).css( 'color', 'black' );
     $( '.tab_button' ).css( 'border-bottom', 'none' );
     $( '.tab_button:hover' ).css( 'border-bottom', '2px solid #005cab' );
@@ -63,7 +63,7 @@ togorth.openTab = function( id ) {
 }
 
 // headers
-togorth.getHeaders = function( result ) {
+togo.getHeaders = function( result ) {
     var headers = [];
     result.head.vars.forEach(
         function( element ) {
@@ -74,7 +74,7 @@ togorth.getHeaders = function( result ) {
 }
 
 // results
-togorth.getResult = function( result, headers ) {
+togo.getResult = function( result, headers ) {
     var array = [];
     result.results.bindings.forEach(
         function( element ) {
@@ -92,7 +92,7 @@ togorth.getResult = function( result, headers ) {
 }
 
 // create db table
-togorth.createDbTable = function( id ) {
+togo.createDbTable = function( id ) {
     var no = 1;
     $.ajax(
         {
@@ -115,9 +115,9 @@ togorth.createDbTable = function( id ) {
                     }
 
                     if( obsolete != '1' ) {
-			var object = togorth.getDbObject( entry.content.$t );
+			var object = togo.getDbObject( entry.content.$t );
 			object.no = no;
-			var lineTag = togorth.createDbLineTag( object );
+			var lineTag = togo.createDbLineTag( object );
 			$( '#' + id ).append( lineTag );
 			no++;           
 		    }             
@@ -128,7 +128,7 @@ togorth.createDbTable = function( id ) {
 }
 
 // get DB object
-togorth.getDbObject = function ( string ) {
+togo.getDbObject = function ( string ) {
     var object = {};
     var array = string.split( ',' );
     var prevKey = null;
@@ -154,16 +154,16 @@ togorth.getDbObject = function ( string ) {
 }
 
 // create DB line tag
-togorth.createDbLineTag = function( object ) {
+togo.createDbLineTag = function( object ) {
     var keys = [ 
         'no', 'name', 'company', 'firstrelease', 'datamodel', 'implementation', 'querylanguage', 'sourcecode', 'comment'
     ]
-    var tag = togorth.createLineTag( object, keys );
+    var tag = togo.createLineTag( object, keys );
     return tag;
 }
 
 // create line tag
-togorth.createLineTag = function( object, keys ) {
+togo.createLineTag = function( object, keys ) {
     var tag = '';
     keys.forEach(
         function( key ) {
@@ -190,7 +190,7 @@ togorth.createLineTag = function( object, keys ) {
 }
 
 // create db table
-togorth.createLinkTable = function( id ) {
+togo.createLinkTable = function( id ) {
     var tag = '<tr><th>Name</th><th>URL</th></tr>';
     $( '#' + id ).html( tag );
     $.getJSON(
@@ -198,7 +198,7 @@ togorth.createLinkTable = function( id ) {
         function( data ) {
             data.forEach(
                 function( element ) {
-                    var tag = togorth.createLineTag( element, [ 'name', 'url' ] );
+                    var tag = togo.createLineTag( element, [ 'name', 'url' ] );
                     $( '#' + id ).append( tag );
                 }
             );
@@ -207,7 +207,7 @@ togorth.createLinkTable = function( id ) {
 }
 
 // create reference table
-togorth.createReferenceTable = function( id ) {
+togo.createReferenceTable = function( id ) {
     var tag = '<tr><th>Authors</th><th>Year</th><th>Title</th><th>Journal</th></tr>';
     $( '#' + id ).html( tag );
     $.getJSON(
@@ -216,7 +216,7 @@ togorth.createReferenceTable = function( id ) {
             data.forEach(
                 function( element ) {
                     var keys = [ 'authors', 'year', 'title', 'journal' ];
-                    var tag = togorth.createLineTag( element, keys );
+                    var tag = togo.createLineTag( element, keys );
                     $( '#' + id ).append( tag );
                 }
             );
