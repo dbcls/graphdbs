@@ -105,7 +105,7 @@ togo.createDbTable = function( id ) {
         }
     ).then(
         function( result ) {
-            var tag = '<tr><th>No.</th><th>Name</th><th>Company/ Organization</th><th>First Release</th><th>Model</th><th>Implementation</th><th>Query Language</th><th>Source code</th><th>Remarks</th></tr>'
+            var tag = '<tr><th>No.</th><th>Name</th><th>Company/ Organization</th><th>First Release</th><th>Model</th><th>Implementation</th><th>Query Language</th><th>Source code</th><th>History</th></tr>'
             $( '#' + id ).html( tag );
             result.feed.entry.forEach(
                 function( entry ) {
@@ -176,7 +176,7 @@ togo.createLineTag = function( object, keys ) {
 		    }
                 }
                 if( key === 'sourcecode' ) {
-                    value = '<a href="' + value + '" target="_blank">' + value + '</a>';
+                    value = '<a href="' + value + '" target="_blank">' + 'GitHub' + '</a>';
                 }
                 tag += '<td>' + value + '</td>'
             }
