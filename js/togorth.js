@@ -150,6 +150,7 @@ togorth.createSparqlResultTable = function( headers, result ) {
 
 // create db table
 togorth.createDbTable = function( id ) {
+    var no = 1;
     $.ajax(
         {
             url: 'https://spreadsheets.google.com/feeds/list/1dku2zss1K3h0dE8yuZ29tgURDK0L4Q5FvlyNK-BImyo/od6/public/values',
@@ -161,13 +162,22 @@ togorth.createDbTable = function( id ) {
         }
     ).then(
         function( result ) {
-            var tag = '<tr><th>Name</th><th>Company/ Organization</th><th>First Release</th><th>Model</th><th>Implementation</th><th>Query Language</th><th>Source code</th><th>Remarks</th></tr>'
+            var tag = '<tr><th>No.</th><th>Name</th><th>Company/ Organization</th><th>First Release</th><th>Model</th><th>Implementation</th><th>Query Language</th><th>Source code</th><th>Remarks</th></tr>'
             $( '#' + id ).html( tag );
             result.feed.entry.forEach(
                 function( entry ) {
-                    var object = togorth.getDbObject( entry.content.$t );
-                    var lineTag = togorth.createDbLineTag( object );
-                    $( '#' + id ).append( lineTag );
+                    var obsolete = '';
+                    if( 'gsx$obsolete' in entry ) {
+                        obsolete = entry[ 'gsx$obsolete' ][ '$t' ];
+                    }
+
+                    if( obsolete != '1' ) {
+			var object = togorth.getDbObject( entry.content.$t );
+			object.no = no;
+			var lineTag = togorth.createDbLineTag( object );
+			$( '#' + id ).append( lineTag );
+			no++;           
+		    }             
                 }
             );
         }
@@ -203,7 +213,7 @@ togorth.getDbObject = function ( string ) {
 // create DB line tag
 togorth.createDbLineTag = function( object ) {
     var keys = [ 
-        'name', 'company', 'firstrelease', 'datamodel', 'implementation', 'querylanguage', 'sourcecode', 'comment'
+        'no', 'name', 'company', 'firstrelease', 'datamodel', 'implementation', 'querylanguage', 'sourcecode', 'comment'
     ]
     var tag = togorth.createLineTag( object, keys );
     return tag;
@@ -216,7 +226,13 @@ togorth.createLineTag = function( object, keys ) {
         function( key ) {
             if( key in object ) {
                 var value = object[ key ];
-                if( key === 'url' ) {
+                if( key === 'name' ) {
+                    var url = object.url;
+		    if( url != null ) {
+			value = '<a href="' + url + '" target="_blank">' + value + '</a>';
+		    }
+                }
+                if( key === 'sourcecode' ) {
                     value = '<a href="' + value + '" target="_blank">' + value + '</a>';
                 }
                 tag += '<td>' + value + '</td>'
