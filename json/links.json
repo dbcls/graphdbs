@@ -1,10 +1,10 @@
 [
     {
-        "name": "Orthology Ontology",
-        "url":  "http://qfo.github.io/OrthologyOntology/"
+        "name": "Hsa-u.c2-0.pg",
+        "url":  "https://chiba.dbcls.jp/pg-archive/Hsa-u.c2-0.pg.gz"
     },
     {
-        "name": "Orthology RDF",
-        "url": "https://github.com/qfo/OrthologyOntology"
+        "name": "Hsa-u.c2-0.pg",
+        "url":  "https://chiba.dbcls.jp/pg-archive/Hsa-u.c2-0.pg.gz"
     }
 ]
