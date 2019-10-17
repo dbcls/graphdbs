@@ -11,9 +11,12 @@
        $().ready(
            function() {
                var tabs = [
-                   { title: 'DB engines', page: 'databases' },
+                   /* { title: 'Databases', page: 'databases' }, */
+                   { title: 'Engines', page: 'databases' },
+                   /* { title: 'DB engines', page: 'databases' }, */
+                   { title: 'Data', page: 'links' },
+                   /* { title: 'Test data', page: 'links' }, */
                    /* { title: 'Data Archive', page: 'links' }, */
-                   { title: 'Test data', page: 'links' },
                    { title: 'References', page: 'references' }
                ];
                togo.createTabs( tabs );
