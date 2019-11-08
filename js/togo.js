@@ -212,7 +212,7 @@ togo.createPaperTable = function( id ) {
     var no = 1;
     $.ajax(
         {
-            url: 'https://spreadsheets.google.com/feeds/list/1E1z5rRoRKuS9uyZk1D0mOzYBBT6W8K_uZwPbuuEPP58/od6/public/values',
+            url: 'https://spreadsheets.google.com/feeds/list/15X73jP4tZ7t5U1nUS4NIjcaXIcBzUn2BrQhyn12ZhcA/od6/public/values',
             type: 'GET',
             dataType: 'json',
             data: {
