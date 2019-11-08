@@ -207,6 +207,49 @@ togo.createLinkTable = function( id ) {
     );
 }
 
+// create paper table
+togo.createPaperTable = function( id ) {
+    var no = 1;
+    $.ajax(
+        {
+            url: 'https://spreadsheets.google.com/feeds/list/1E1z5rRoRKuS9uyZk1D0mOzYBBT6W8K_uZwPbuuEPP58/od6/public/values',
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                alt: 'json'
+            }
+        }
+    ).then(
+        function( result ) {
+            var tag = '<tr><th>Tag</th><th>Year</th><th>Paper</th></tr>'
+            $( '#' + id ).html( tag );
+            result.feed.entry.forEach(
+                function( entry ) {
+                    console.log( entry );
+                    var tag = entry[ 'gsx$tag' ][ '$t' ];
+                    var paper = entry[ 'gsx$paper' ][ '$t' ];
+                    var year = entry[ 'gsx$year' ][ '$t' ];
+                    var url = entry[ 'gsx$url' ][ '$t' ];
+                    var lineTag = togo.createPaperLineTag( tag, paper, year, url );
+                    $( '#' + id ).append( lineTag );
+                }
+            );
+        }
+    );
+}
+
+// create paper line tag
+togo.createPaperLineTag = function( tag, paper, year, url ) {
+    var line = '<tr><td>' + tag + '</td><td>' + year + '</td>';
+    var paperTag = paper;
+    if( url !== '' ) {
+        paperTag = '<a href="' + url + '" target="_blank">' + paperTag + '</a>';
+    }
+    paperTag = '<td>' + paperTag + '</td>';
+    line = line + paperTag + '</tr>';
+    return line;
+}
+
 // create reference table
 togo.createReferenceTable = function( id ) {
     var tag = '<tr><th>Authors</th><th>Year</th><th>Title</th><th>Journal</th></tr>';
