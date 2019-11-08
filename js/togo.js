@@ -173,6 +173,7 @@ togo.createLineTag = function( object, keys ) {
                     var url = object.url;
 		    if( url != null ) {
 			value = '<a href="' + url + '" target="_blank">' + value + '</a>';
+			// value = '<img src="img/jena.png" height="50" />';
 		    }
                 }
                 if( key === 'sourcecode' ) {
