@@ -115,12 +115,12 @@ togo.createDbTable = function( id ) {
                     }
 
                     if( obsolete != '1' ) {
-			var object = togo.getDbObject( entry.content.$t );
-			object.no = no;
-			var lineTag = togo.createDbLineTag( object );
-			$( '#' + id ).append( lineTag );
-			no++;           
-		    }             
+			            var object = togo.getDbObject( entry.content.$t );
+			            object.no = no;
+			            var lineTag = togo.createDbLineTag( object );
+			            $( '#' + id ).append( lineTag );
+			            no++;           
+		            }             
                 }
             );
         }
