@@ -1,8 +1,8 @@
 Graph databases
 ===================
 
-There are plethora of implementations for graph databases and RDF
-stores (see https://graphdb.dbcls.jp/ ).
+There are plethora of implementations for graph databases and RDF stores(triplestores).
+See https://graphdb.dbcls.jp/ for the details of list.
 
 Here we summarize documentations including the installation processes of those implementations.
 
