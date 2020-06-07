@@ -2,7 +2,7 @@
 
 https://graphdb.dbcls.jp/
 
-https://hchiba1.github.io/graphdbs/
+https://dbcls.github.io/graphdbs/
 
 ## Read the Docs
 
