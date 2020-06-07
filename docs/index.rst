@@ -11,8 +11,8 @@ Here we summarize documentations including the installation processes of those i
 .. toctree::
    :maxdepth: 2
 
-   virtuoso
-   graphdb
-   rdfstore-js
-   stardog
-   allegrograph
+   md/virtuoso
+   md/graphdb
+   md/rdfstore-js
+   md/stardog
+   md/allegrograph
