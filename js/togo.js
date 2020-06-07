@@ -1,3 +1,4 @@
+
 // namespace
 var togo = {};
 
@@ -109,12 +110,12 @@ togo.createDbTable = function( id ) {
             $( '#' + id ).html( tag );
             result.feed.entry.forEach(
                 function( entry ) {
-                    var obsolete = '';
-                    if( 'gsx$obsolete' in entry ) {
-                        obsolete = entry[ 'gsx$obsolete' ][ '$t' ];
+                    var hide = '';
+                    if( 'gsx$hide' in entry ) {
+                        hide = entry[ 'gsx$hide' ][ '$t' ];
                     }
 
-                    if( obsolete != '1' ) {
+                    if( hide != '1' ) {
 			            var object = togo.getDbObject( entry.content.$t );
 			            object.no = no;
 			            var lineTag = togo.createDbLineTag( object );
