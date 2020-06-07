@@ -1,4 +1,4 @@
-Graph databases and RDF stores documentation
+Graph databases documentation
 ===================
 
 There are plethora of implementations for graph databases and RDF
