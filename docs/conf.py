@@ -19,7 +19,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'GraphDB'
+project = 'GraphDBs'
 copyright = '2020, DBCLS'
 author = 'Hirokazu Chiba'
 
