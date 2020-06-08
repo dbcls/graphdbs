@@ -1,7 +1,7 @@
-Graph databases and triplestores
+Graph databases
 ===================
 
-There are plethora of implementations for graph databases triplestores (RDF stores).
+There are plethora of implementations for graph databases and triplestores (RDF stores).
 
 See https://graphdb.dbcls.jp/ for the details of the list.
 
