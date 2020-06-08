@@ -5,7 +5,7 @@ There are plethora of implementations for graph databases and triplestores (RDF 
 
 See https://graphdb.dbcls.jp/ for the details of the list.
 
-Here we summarize documentations including the installation processes of those implementations.
+Here we summarize documentations that include installation processes of those implementations.
 
 .. toctree::
    :maxdepth: 2
