@@ -1,4 +1,4 @@
-Graph databases
+Graph databases & triplestores
 ===================
 
 There are plethora of implementations for graph databases and triplestores (RDF stores).
