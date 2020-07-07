@@ -12,7 +12,8 @@
 
        $ sudo ./bin/graphdb
 
- * ブラウザで localhost:7200 にアクセスすると、GraphDBのホーム画面がが表示される
+ * ブラウザで localhost:7200 にアクセスすると、GraphDBのホーム画面が表示される
+ 
  * 新しいリポジトリを作るため、左のメニューから、Setup->Repositories->Create new repositoryと選択する
  * リポジトリのIDを入力し、最下部のCreateをクリック
  * ターミナル上で、以下のコマンドを実行して ttl データをインポート
