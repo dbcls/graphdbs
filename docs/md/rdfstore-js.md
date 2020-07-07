@@ -2,11 +2,15 @@
 
 ## Installation
 * npmをインストール
+
       $ sudo apt install npm
+      
 * rdfstore-js で作業するためのディレクトリを作って移動
+
       $ mkdir ./rdfstore-js
       $ cd rdfstore-js
 * npm を使って必要なパッケージをインストール
+
       $ npm install nodejs
       $ npm install rdfstore
 * テキストエディタなどで、以下のようなファイルを作成する。ファイル名はtest.jsとする。
@@ -28,4 +32,5 @@ rdfstore.create(function(err, store){
 });
 ```
 * ファイル作成後、以下のコマンドで実行する。
-     $ node test.js
+
+      $ node test.js
