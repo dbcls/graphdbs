@@ -28,4 +28,5 @@ rdfstore.create(function(err, store){
 });
 ```
 * ファイル作成後、以下のコマンドで実行する。
-     $ node test.js
+  * 大きめのファイルを扱う場合は、Node.jsのメモリ制限に引っかかることがあるので `--max-old-space-size`を指定する（単位はMB）
+     $ node --max-old-space-size=4096 test.js
