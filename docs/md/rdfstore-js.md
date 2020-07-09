@@ -2,11 +2,15 @@
 
 ## Installation
 * npmをインストール
+
       $ sudo apt install npm
+      
 * rdfstore-js で作業するためのディレクトリを作って移動
+
       $ mkdir ./rdfstore-js
       $ cd rdfstore-js
 * npm を使って必要なパッケージをインストール
+
       $ npm install nodejs
       $ npm install rdfstore
 * テキストエディタなどで、以下のようなファイルを作成する。ファイル名はtest.jsとする。
@@ -29,4 +33,5 @@ rdfstore.create(function(err, store){
 ```
 * ファイル作成後、以下のコマンドで実行する。
   * 大きめのファイルを扱う場合は、Node.jsのメモリ制限に引っかかることがあるので `--max-old-space-size`を指定する（単位はMB）
-     $ node --max-old-space-size=4096 test.js
+
+        $ node --max-old-space-size=4096 test.js
