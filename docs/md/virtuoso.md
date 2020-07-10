@@ -22,3 +22,12 @@ configure に --with-port=1112 オプションを付けるなどすれば失敗�
 cd /path/to/install/directory
 vi var/lib/virtuoso/db/virtuoso.ini
 ```
+* 起動
+```
+bin/virtuoso-t +wait
+```
+* ロード
+```
+isql 1111 dba dba
+SQL> 
+```
