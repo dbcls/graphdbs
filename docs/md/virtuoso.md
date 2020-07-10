@@ -29,5 +29,5 @@ bin/virtuoso-t +wait
 * ロード
 ```
 isql 1111 dba dba
-SQL> 
+SQL> DB.DBA.TTLP_MT(file_to_string_output('path/to/example.ttl'), '', 'http://example.com', 0);
 ```
