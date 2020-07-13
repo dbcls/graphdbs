@@ -1,6 +1,6 @@
 # AllegroGraph
 
-## 参考URL
+参考URL
       
       https://franz.com/agraph/support/documentation/current/agraph-quick-start.html
 ## Installation
