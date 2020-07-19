@@ -1,5 +1,22 @@
 # GraphDB
 
+ウェブサイト
+
+    https://www.ontotext.com/products/graphdb/
+     
+更新履歴
+
+    http://graphdb.ontotext.com/documentation/free/release-notes.html
+
+本記事の対象バージョン
+
+    9.3.1 (2020/06/18リリース)
+    
+ライセンスなど
+
+ * 無料版が存在するが、同時に発行できるクエリは２つまでとの記述有り
+
+
 ## Installation
  * GrahDBのフリーエディションを使用するため、サイト上でユーザ登録をする https://www.ontotext.com/products/graphdb/graphdb-free/
  * ユーザ登録が完了すると、登録したメールアドレスにインストール用バイナリのダウンロード用リンクが送られてくる
