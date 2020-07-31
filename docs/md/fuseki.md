@@ -1,24 +1,16 @@
 # Fuseki
 
-ウェブサイト
-
-    https://jena.apache.org/documentation/fuseki2/
+[ウェブサイト](https://jena.apache.org/documentation/fuseki2/)
     
-クイックスタート
-
-    https://jena.apache.org/documentation/fuseki2/fuseki-quick-start.html
+[クイックスタート](https://jena.apache.org/documentation/fuseki2/fuseki-quick-start.html)
     
-本記事の対象バージョン
-    
-    3.16.0 (2020/07/09リリース)
+本記事の対象バージョン：3.16.0 (2020/07/09リリース)
 
 ライセンスなど
-
-    オープンソース（Apache 2.0 ライセンス）
+* オープンソース（Apache 2.0 ライセンス）
     
 必要なもの
-    
-    Java と Tomcat のインストール
+* Java と Tomcat のインストール
 
 ## Installation
 

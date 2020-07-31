@@ -1,20 +1,13 @@
 # AllegroGraph
 
-ウェブサイト
+[ウェブサイト](https://allegrograph.com/products/allegrograph/)
 
-    https://allegrograph.com/products/allegrograph/
-
-Quick Start
-
-    https://franz.com/agraph/support/documentation/current/agraph-quick-start.html
+[Quick Start](https://franz.com/agraph/support/documentation/current/agraph-quick-start.html)
     
-本記事の対象バージョン
-    
-    7.0.0
+本記事の対象バージョン：7.0.0
 
-ライセンスなど
-
-    Free, Developer, Enterpriseの3形態あり。Free だと 5000,000 トリプルと3サーバまでの制限あり(https://allegrograph.com/allegrograph-editions/)
+ライセンス
+* Free, Developer, Enterpriseの3形態あり。Free だと 5000,000 トリプルと3サーバまでの制限あり(https://allegrograph.com/allegrograph-editions/)
       
 ## Installation
 

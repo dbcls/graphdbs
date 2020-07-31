@@ -6,17 +6,13 @@
 Quick start
 * https://github.com/blazegraph/database/wiki/Quick_Start
 
-本記事の対象バージョン
-
-    2.1.6 (2020/02/04リリース)
+本記事の対象バージョン：2.1.6 (2020/02/04リリース)
     
-ライセンスなど
-
-    オープンソース (GPL2.0ライセンス)
+ライセンス
+* オープンソース (GPL2.0ライセンス)
 
 その他必要条件
-
-    Java 9以上
+* Java 9以上
 
 
 ## Installation

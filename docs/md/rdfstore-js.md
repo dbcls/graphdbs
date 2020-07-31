@@ -1,16 +1,11 @@
 # rdfstore-js
 
-ウェブサイト
-
-    https://github.com/antoniogarrote/rdfstore-js
+[ウェブサイト](https://github.com/antoniogarrote/rdfstore-js)
     
-本記事の対象バージョン
+本記事の対象バージョン：0.9.17 (2016/09/04リリース）
 
-    0.9.17 (2016/09/04リリース）
-
-ライセンスなど
-
-    オープンソース（MITライセンス）
+ライセンス
+* オープンソース（MITライセンス）
 
 ## Installation
 * npmをインストール

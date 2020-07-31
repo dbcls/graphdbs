@@ -1,20 +1,14 @@
 # RDF4j
 
-ウェブサイト
-
-    https://rdf4j.org/
+[ウェブサイト](https://rdf4j.org/)
     
-本記事の対象バージョン
-    
-    3.3.0
+本記事の対象バージョン：3.3.0
 
-ライセンスなど
-
-    オープンソース（Eclipse Distribution License (EDL), v1.0.）
+ライセンス
+* オープンソース（Eclipse Distribution License (EDL), v1.0.）
     
 必要なもの
-    
-    Java と Tomcat のインストール
+* Java と Tomcat のインストール
 
 
 ## Installation
