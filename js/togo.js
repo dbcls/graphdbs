@@ -13,23 +13,21 @@ togo.issueId = function() {
 }
 
 // create tabs
-togo.createTabs = function( tabs ) {
-    tabs.forEach( 
-        function( element ) {
-            title = element.title;
-            page = element.page;
-            var id = togo.issueId();
-            element.id = id;
-            togo.addTabButton( title, id );
-            togo.addTabContent( page, id );
-        }
-    );
-    var tag = '<div class="tab_rest"></div>';
-    $( '#tabs' ).append( tag );
+togo.createTabs = (tabs) => {
+  tabs.forEach((element) => {
+    title = element.title;
+    page = element.page;
+    const id = togo.issueId();
+    element.id = id;
+    togo.addTabButton(title, id);
+    togo.addTabContent(page, id);
+  });
+  const tag = '<div class="tab_rest"></div>';
+  $('#tabs').append(tag);
 
-    if( tabs.length > 0 ) {
-        togo.openTab( tabs[ 0 ].id );
-    }
+  if (tabs.length > 0) {
+    togo.openTab(tabs[0].id);
+  }
 }
 
 // add tab button
