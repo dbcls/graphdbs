@@ -1,12 +1,10 @@
 # Blazegraph
 
 ウェブサイト
+* https://blazegraph.com/
 
-    https://blazegraph.com/
-    
 Quick start
-
-    https://github.com/blazegraph/database/wiki/Quick_Start
+* https://github.com/blazegraph/database/wiki/Quick_Start
 
 本記事の対象バージョン
 
