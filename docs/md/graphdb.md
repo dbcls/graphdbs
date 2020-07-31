@@ -1,12 +1,10 @@
 # GraphDB
 
 ウェブサイト
-
-    https://www.ontotext.com/products/graphdb/
-     
+* https://www.ontotext.com/products/graphdb/
+   
 更新履歴
-
-    http://graphdb.ontotext.com/documentation/free/release-notes.html
+* http://graphdb.ontotext.com/documentation/free/release-notes.html
 
 本記事の対象バージョン
 
