@@ -12,12 +12,12 @@ Here we summarize documentations that include installation processes of those im
 
    md/virtuoso
    md/graphdb
-   md/rdfstore-js
    md/stardog
    md/blazegraph
    md/allegrograph
    md/fuseki
    md/rdf4j
+   md/rdfstore-js
    md/neptune
    md/neo4j
    md/pgx
