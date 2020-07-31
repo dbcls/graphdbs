@@ -43,4 +43,4 @@ Quick Start
  * ロード完了後、ブラウザ上でqueries のタブを選択し、クエリを入力して実行する。
  * 実行中のサーバを止めたい場合は、以下のコマンドを実行する。
          
-        sudo /bin/agraph-control --config /lib/agraph.cfg stop
+        sudo ./bin/agraph-control --config ./lib/agraph.cfg stop
