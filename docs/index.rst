@@ -18,9 +18,10 @@ Here we summarize documentations that include installation processes of those im
    md/allegrograph
    md/fuseki
    md/rdf4j
+   md/neptune
    md/neo4j
+   md/pgx
    md/arangodb
    md/orientdb
-   md/neptune
    md/janusgraph
    md/tigergraph
