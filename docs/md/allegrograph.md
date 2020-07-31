@@ -16,10 +16,6 @@ Quick Start
 
     Free, Developer, Enterpriseの3形態あり。Free だと 5000,000 トリプルと3サーバまでの制限あり(https://allegrograph.com/allegrograph-editions/)
       
-=======
-参考URL
->>>>>>> b43114a8e8002a7ba3cb3d953766d7b31ef77c34
-      
 ## Installation
 
  * 以下のURLに名前とメールアドレスを入力して、tarファイルをダウンロード
