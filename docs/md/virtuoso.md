@@ -1,5 +1,13 @@
 # Virtuoso
 
+[ウェブサイト](http://vos.openlinksw.com/owiki/wiki/VOS)
+
+バージョン
+* 7.2.5.1 (2018/08/15)
+
+ライセンス
+* GPLv2
+
 ## Installation
 * ソースを取得
 ```
