@@ -61,3 +61,28 @@ sudo mkdir /etc/fuseki && sudo chgrp tomcat /etc/fuseki && sudo chown tomcat /et
 ```
 /$/** = localhostFilter
 ```
+
+### コマンドラインからデータのロードを実行する場合
+
+ * tdbloaderを含んだapache-jenaのパッケージをダウンロードする
+
+```
+wget [https://apache.cs.utah.edu/jena/binaries/apache-jena-3.16.0.zip](https://apache.cs.utah.edu/jena/binaries/apache-jena-3.16.0.zip)
+```
+
+ * zipファイルの展開後、./bin/tdbloader2を使ってロードする。tdbloaderとtdbloader2があるが、tdbloader2 の方がMac/Linux専用である分性能が良いとのこと。
+
+```
+cd <apache-jena*.zipを解凍した場所>
+mkdir tmp # いったんtmpにロード
+./bin/tdbloader2 --loc ./tmp <RDFデータファイルのパス>
+```
+
+ * ロードしたデータをfusekiサーバから参照したい場合は、ブラウザ上でmanage datasets → add new dataset から好きな名前で（ここではsample_datasetとする）データセットを作る。データセットタイプはPersistent にする。tdbloader2だからPersistent（TDB2）の方にしたくなるがどうやら違うらしい。
+ * 新しいデータセットを作成後、以下のコマンドでデータセットのディレクトリに先ほどtdbloader2で作成したファイルを移動する
+
+```
+mv ./tmp/* <fusekiのインストール場所>/run/databases/sample_dataset/
+```
+
+ * 一度fuseki-serverのプロセスを再起動すると、データセットがロードされた状態になるはず
