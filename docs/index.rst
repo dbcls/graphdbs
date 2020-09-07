@@ -19,8 +19,9 @@ Here we summarize documentations that include installation processes of those im
    md/rdf4j
    md/rdfstore-js
    md/neptune
-   md/neo4j
+   md/oracle
    md/pgx
+   md/neo4j
    md/arangodb
    md/orientdb
    md/janusgraph
