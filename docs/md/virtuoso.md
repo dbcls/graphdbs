@@ -56,7 +56,7 @@ vi /path/to/install/directory/var/lib/virtuoso/db/virtuoso.ini
 ```
 sudo apt install -y libssl1.0-dev
 ```
-新しいUbuntuでは、パッケージ libssl1.0-dev が見つからないことがある。この場合は、/etc/apt/sources.list の末尾に以下を追加して apt update を行う。
+Ubuntu 20.04 LTSでは、パッケージ libssl1.0-dev が見つからないことがある。この場合は、/etc/apt/sources.list の末尾に以下を追加して apt update を行う。
 ```
 deb http://security.ubuntu.com/ubuntu bionic-security main
 ```
