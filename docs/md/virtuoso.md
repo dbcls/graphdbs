@@ -16,7 +16,7 @@
 ```
 git clone git@github.com:openlink/virtuoso-opensource.git
 cd virtuoso-opensource
-git checkout v7.2.0.1
+git checkout v7.2.5.1
 ```
 * コンパイル
 ```
