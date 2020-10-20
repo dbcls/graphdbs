@@ -1,19 +1,12 @@
 # GraphDB
 
-ウェブサイト
+[ウェブサイト](https://www.ontotext.com/products/graphdb/)
+   
+[更新履歴](http://graphdb.ontotext.com/documentation/free/release-notes.html)
 
-    https://www.ontotext.com/products/graphdb/
-     
-更新履歴
+本記事の対象バージョン：9.3.1 (2020/06/18リリース)
 
-    http://graphdb.ontotext.com/documentation/free/release-notes.html
-
-本記事の対象バージョン
-
-    9.3.1 (2020/06/18リリース)
-    
-ライセンスなど
-
+ライセンス
  * 無料版が存在するが、同時に発行できるクエリは２つまでとの記述有り
 
 

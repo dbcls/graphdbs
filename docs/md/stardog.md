@@ -1,21 +1,14 @@
 # Stardog
 
-ウェブサイト
-
-    https://www.stardog.com/
+[ウェブサイト](https://www.stardog.com/)
     
-Getting Started 
+[Getting Started](https://www.stardog.com/docs/#_setting_path)
 
-    https://www.stardog.com/docs/#_setting_path
+本記事の対象バージョン：7.3.2（2020/07/01リリース）
 
-本記事の対象バージョン
-    
-    7.3.2（2020/07/01リリース）
+ライセンス
+* 完全にフリーなライセンスは存在しないが、30日分の体験版、1年のアカデミックライセンスの体験版がある。
 
-ライセンスなど
-
-* 完全にフリーなライセンスは存在せず、30日分の体験版と1年のアカデミックライセンスの体験版しか存在しない？
-    
 
 ## Installation
 
