@@ -59,3 +59,46 @@ dbms.default_listen_address=0.0.0.0
 ```
 sudo service neo4j restart
 ```
+
+ 
+### NeoSemanticsを使用する場合
+ * NeoSemanticsはRDFデータを変換しつつNeo4JにインポートできるようになるNeo4Jプラグイン
+ * まずNeoSemanticsのjarをダウンロード
+```
+wget https://github.com/neo4j-labs/neosemantics/releases/download/4.1.0.1/neosemantics-4.1.0.1.jar
+```
+ * これをNeo4Jのpluginsフォルダに移動
+```
+sudo mv neosemantics-4.1.0.1.jar /var/lib/neo4j/plugins/
+```
+ * Neo4Jの再起動
+```
+sudo service neo4j restart
+```
+ * うまくいっていれば、Neo4J Browser上で`call dbms.procedures()`というコマンドの実行結果の中に、n10sから始まるものが含まれているはず。
+ * 早速データをロード・・・する前に、Resourceのuriにユニーク制約を張っておく
+
+```
+CREATE CONSTRAINT n10s_unique_uri ON (r:Resource)
+ASSERT r.uri IS UNIQUE
+```
+
+ * あとはn10s.rdf.import.fetchでデータをロードする。リモートのデータをロードする場合はurlの指定をhttp:// から始める。ローカルのデータをロードする場合はfile:// から始めれば良い。以下は/home/user_name/file_name.ntをロードする場合の例。
+
+```
+CALL n10s.rdf.import.fetch(
+  'file:///home/user_name/file_name.nt',
+  'Turtle'
+)
+```
+
+ * ロードする際にはプレフィックスを省略表記にするかなどをオプションで設定できる。
+ * 設定できるオプションの一覧は以下URLを参照
+   * https://neo4j.com/docs/labs/nsmntx/current/reference/
+ * 例えば、次のような形で指定可能
+ 
+```
+CALL n10s.graphconfig.init({
+  handleVocabUris: 'MAP'
+})
+```
