@@ -33,7 +33,8 @@ wget https://ftp.yz.yamagata-u.ac.jp/pub/network/apache/jena/binaries/apache-jen
 
 * データセットをロードするには、ブラウザからアクセスしたあと、manage datasetsメニューのadd new datasetタブから好きな名前とDataset typeを選んでDatasetを作成する。その後、datasetメニューに移動してupload filesタブからファイルをアップロードできる。
  
-
+* クエリの実行はdataset のメニューから、データセットごとに実行できる。
+ * Web API越しに実行する場合は、http://localhost:3030/<データセット名>/query にGETリクエストを送ると実行できる
 
 ### Tomcatを使う場合
 
@@ -62,16 +63,16 @@ sudo mkdir /etc/fuseki && sudo chgrp tomcat /etc/fuseki && sudo chown tomcat /et
 wget [https://apache.cs.utah.edu/jena/binaries/apache-jena-3.16.0.zip](https://apache.cs.utah.edu/jena/binaries/apache-jena-3.16.0.zip)
 ```
 
- * zipファイルの展開後、./bin/tdbloader2を使ってロードする。tdbloaderとtdbloader2があるが、tdbloader2 の方がMac/Linux専用である分性能が良いとのこと。
-
+ * zipファイルの展開後、./bin/tdb2.tdbloaderを使ってロードする。
+  * 名前付きグラフとしてロードする場合は、tdb2.tdbloader 実行時に--graph=グラフのURL  のようにオプションを追加する
 ```
 cd <apache-jena*.zipを解凍した場所>
 mkdir tmp # いったんtmpにロード
-./bin/tdbloader2 --loc ./tmp <RDFデータファイルのパス>
+./bin/tdb2.tdbloader --loc ./tmp <RDFデータファイルのパス>
 ```
 
- * ロードしたデータをfusekiサーバから参照したい場合は、ブラウザ上でmanage datasets → add new dataset から好きな名前で（ここではsample_datasetとする）データセットを作る。データセットタイプはPersistent にする。tdbloader2だからPersistent（TDB2）の方にしたくなるがどうやら違うらしい。
- * 新しいデータセットを作成後、以下のコマンドでデータセットのディレクトリに先ほどtdbloader2で作成したファイルを移動する
+ * ロードしたデータをfusekiサーバから参照したい場合は、ブラウザ上でmanage datasets → add new dataset から好きな名前で（ここではsample_datasetとする）データセットを作る。データセットタイプはPersistent（TDB2）にする。
+ * 新しいデータセットを作成後、以下のコマンドでデータセットのディレクトリに先ほどtdb2.tdbloaderで作成したファイルを移動する
 
 ```
 mv ./tmp/* <fusekiのインストール場所>/run/databases/sample_dataset/

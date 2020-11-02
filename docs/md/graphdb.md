@@ -27,9 +27,11 @@
  * 新しいリポジトリを作るため、左のメニューから、Setup->Repositories->Create new repositoryと選択する
  * リポジトリのIDを入力し、最下部のCreateをクリック
  * ターミナル上で、以下のコマンドを実行して ttl データをインポート
- 
-       $ sudo ./loadrdf -f -i <repository_name> -m parallel <path to dataset>
+   * なお、loadrdfコマンドではインポートするグラフに名前をつけることができない模様。
+   * このため、グラフ名をつける必要がある場合はブラウザ上のhttp://localhost:7200/import から行う必要あり？
+       $ sudo ./bin/loadrdf -f -i <repository_name> -m parallel <path to dataset>
 
  * インポートが完了したら、ブラウザに戻り左のメニューからSPARQLをクリックする
  * リポジトリのリストが表示されるのでリポジトリを選択する
  * SPARQLのエディタが表示されるのでSPARQLを入力後、RUNで実行できる
+ * APIからSPARQLを実行したい場合は、http://localhost:7200/repositories/<リポジトリ名> にGETリクエストを送ればよい

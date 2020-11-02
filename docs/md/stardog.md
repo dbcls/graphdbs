@@ -38,7 +38,14 @@ Stardogから送られる情報をメールで受け取りたいかなどを聞�
 ./bin/stardog-admin db create -n myDB /path/to/some/data.ttl
 ```
 
+* 名前付きグラフにロードしたい場合は、入力するRDFファイルの名前の前に@<グラフのURL>のようにする。以下はhttp://examples.org の例
+```
+./bin/stardog-admin db create -n myDB @http://examples.org /path/to/some/data.ttl
+```
+
 * クエリはコマンドライン上から以下のように実行できる
 ```
 ./bin/stardog query myDB "SELECT DISTINCT ?s WHERE { ?s ?p ?o } LIMIT 10"
 ```
+
+* Web API越しにSPARQLを実行したい場合は http://localhost:5820/<DB名>/query に対してGETリクエストを送る

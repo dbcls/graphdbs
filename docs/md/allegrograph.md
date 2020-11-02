@@ -32,7 +32,15 @@
  * コマンドラインに戻り、以下のコマンドでロードを行う。`repository_name`と`path/to/dataset`は適宜読み替える。（ブラウザ上のimport RDFからロードすることも可能）
         
         ./bin/agtool load repository_name path/to/dataset
+
+* グラフ名を指定したい場合は、 -g オプションを使用する
+
+        ./bin/agtool load repository_name -g http://example.org path/to/dataset
+        
  * ロード完了後、ブラウザ上でqueries のタブを選択し、クエリを入力して実行する。
+   * Web APIからSPARQLを実行したい場合は、 http://localhost:10035/repositories/<リポジトリ名> に対してPOSTで実行する（queryパラメータにクエリの内容を含める）。GETで送るとエラーになるので注意。
+   
  * 実行中のサーバを止めたい場合は、以下のコマンドを実行する。
          
         sudo ./bin/agraph-control --config ./lib/agraph.cfg stop
+ 

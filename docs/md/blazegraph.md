@@ -31,6 +31,11 @@ java -server -Xmx4g -jar <downloaded_dir>/blazegraph.jar
 ```
 load <file:///path/to/your.ttl>
 ```
+ * 名前付きグラフにする場合は、以下のようにINTO GRAPH <グラフのURL>をつける
+```
+load <file:///path/to/your.ttl> INTO GRAPH  <http://examples.org>
+```
  * 実行すると、一番下に小さく`Running update...`と表示されるので完了するまで待つ。
 
  * クエリを実行する場合は、Queryタブに移動してクエリを入力後、Executeボタンをクリックして実行できる。
+   * Web APIから実行したい場合は、http://localhost:9999/sparql に対してGETメソッドでリクエストを送ればよい。
