@@ -50,6 +50,10 @@ SQL> DB.DBA.TTLP_MT(file_to_string_output('example.ttl'), '', 'http://example.co
 ```
 vi /path/to/install/directory/var/lib/virtuoso/db/virtuoso.ini
 ```
+virtuoso-temp.dbのサイズが肥大化することがある. その場合、virtuoso.iniの中でTempAllocationPctを設定する. (virtuoso.dbに対して、何％まで許容するか)
+```
+TempAllocationPct        = 100
+```
 
 ## トラブルシューティング
 ./configure で OpenSSLに関するエラーが出ることがある。この場合は、libssl1.0-dev をインストールする。
