@@ -56,6 +56,8 @@ sudo service neo4j restart
 
  
 ### NeoSemanticsを使用する場合
+[チュートリアル](https://neo4j.com/labs/neosemantics/tutorial/)
+
  * NeoSemanticsはRDFデータを変換しつつNeo4jにインポートできるようになるNeo4jプラグイン
  * まずNeoSemanticsのjarをダウンロード
 ```
