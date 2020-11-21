@@ -13,7 +13,8 @@
 必要なもの
 * Java のインストール
 
-## Installation (Ubuntu 18.04の場合)
+## Installation
+### Ubuntu 18.04の場合
 
 [参考](https://neo4j.com/docs/operations-manual/current/installation/linux/debian/)
 
