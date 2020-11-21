@@ -23,7 +23,7 @@
 ## Installation (Ubuntu 18.04の場合)
 
  * 参考：https://neo4j.com/docs/operations-manual/current/installation/linux/debian/
- * Neo4Jのパッケージリポジトリを追加する
+ * Neo4jのパッケージリポジトリを追加する
 ```
 wget -O - https://debian.neo4j.com/neotechnology.gpg.key | sudo apt-key add -
 echo 'deb https://debian.neo4j.com stable latest' | sudo tee -a /etc/apt/sources.list.d/neo4j.list
@@ -42,7 +42,7 @@ sudo service neo4j start
 ```
 sudo service neo4j stop
 ```
- * localhost:7474にアクセスするとNeo4J Browserが立ち上がるはず。
+ * localhost:7474にアクセスするとNeo4j Browserが立ち上がるはず。
  * デフォルトだとユーザ名とパスワードは両方ともneo4jになっているので、これでログイン（ログイン後にパスワードの変更を求められる）
 
 ### 外部から接続したい場合
@@ -55,27 +55,27 @@ sudo service neo4j stop
 ```
 dbms.default_listen_address=0.0.0.0
 ```
- * Neo4Jを再起動する
+ * Neo4jを再起動する
 ```
 sudo service neo4j restart
 ```
 
  
 ### NeoSemanticsを使用する場合
- * NeoSemanticsはRDFデータを変換しつつNeo4JにインポートできるようになるNeo4Jプラグイン
+ * NeoSemanticsはRDFデータを変換しつつNeo4jにインポートできるようになるNeo4jプラグイン
  * まずNeoSemanticsのjarをダウンロード
 ```
 wget https://github.com/neo4j-labs/neosemantics/releases/download/4.1.0.1/neosemantics-4.1.0.1.jar
 ```
- * これをNeo4Jのpluginsフォルダに移動
+ * これをNeo4jのpluginsフォルダに移動
 ```
 sudo mv neosemantics-4.1.0.1.jar /var/lib/neo4j/plugins/
 ```
- * Neo4Jの再起動
+ * Neo4jの再起動
 ```
 sudo service neo4j restart
 ```
- * うまくいっていれば、Neo4J Browser上で`call dbms.procedures()`というコマンドの実行結果の中に、n10sから始まるものが含まれているはず。
+ * うまくいっていれば、Neo4j Browser上で`call dbms.procedures()`というコマンドの実行結果の中に、n10sから始まるものが含まれているはず。
  * 早速データをロード・・・する前に、Resourceのuriにユニーク制約を張っておく
 
 ```
