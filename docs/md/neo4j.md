@@ -79,6 +79,9 @@ sudo service neo4j restart
  * 早速データをロード・・・する前に、Resourceのuriにユニーク制約を張っておく
 
 ```
+CALL n10s.graphconfig.init();
+```
+```
 CREATE CONSTRAINT n10s_unique_uri ON (r:Resource)
 ASSERT r.uri IS UNIQUE
 ```
