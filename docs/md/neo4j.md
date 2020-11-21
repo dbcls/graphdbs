@@ -1,28 +1,22 @@
 # Neo4j
 
-ウェブサイト
-    https://neo4j.com/
+[ウェブサイト](https://neo4j.com/)
 
-インストール方法参考
-
-    https://neo4j.com/docs/operations-manual/current/installation/
+[インストールマニュアル](https://neo4j.com/docs/operations-manual/current/installation/)
     
 本記事の対象バージョン
-    
-    4.1.0 Communiti Edition
+* 4.1.0 Communiti Edition
 
 ライセンスなど
-
-    オープンソース（Community Editionに限る。GPL v3）
+* オープンソース（Community Editionに限る。GPL v3）
     
 必要なもの
-    
-    Java のインストール
-
+* Java のインストール
 
 ## Installation (Ubuntu 18.04の場合)
 
- * 参考：https://neo4j.com/docs/operations-manual/current/installation/linux/debian/
+[参考](https://neo4j.com/docs/operations-manual/current/installation/linux/debian/)
+
  * Neo4jのパッケージリポジトリを追加する
 ```
 wget -O - https://debian.neo4j.com/neotechnology.gpg.key | sudo apt-key add -
@@ -85,6 +79,8 @@ CALL n10s.graphconfig.init();
 CREATE CONSTRAINT n10s_unique_uri ON (r:Resource)
 ASSERT r.uri IS UNIQUE
 ```
+
+[参考](https://neo4j.com/docs/labs/nsmntx/current/config/)
 
  * あとはn10s.rdf.import.fetchでデータをロードする。リモートのデータをロードする場合はurlの指定をhttp:// から始める。ローカルのデータをロードする場合はfile:// から始めれば良い。以下は/home/user_name/file_name.ntをロードする場合の例。
 
