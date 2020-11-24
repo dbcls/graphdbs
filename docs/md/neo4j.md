@@ -2,7 +2,7 @@
 
 [ウェブサイト](https://neo4j.com/)
 
-[Manual](https://neo4j.com/docs/operations-manual/current/installation/)
+参考：[Manual](https://neo4j.com/docs/operations-manual/current/installation/)
     
 本記事の対象バージョン
 * 4.1.0 Communiti Edition
@@ -16,7 +16,7 @@
 ## Installation
 ### Ubuntu 18.04の場合
 
-[Manual](https://neo4j.com/docs/operations-manual/current/installation/linux/debian/)
+参考：[Manual](https://neo4j.com/docs/operations-manual/current/installation/linux/debian/)
 
  * Neo4jのパッケージリポジトリを追加する
 ```
@@ -42,9 +42,9 @@ sudo service neo4j stop
 
  
 ### NeoSemanticsを使用する場合
-[Tutorial](https://neo4j.com/labs/neosemantics/tutorial/)
+参考：[Tutorial](https://neo4j.com/labs/neosemantics/tutorial/)
 
-[Configuration](https://neo4j.com/docs/labs/nsmntx/current/config/)
+参考：[Configuration](https://neo4j.com/docs/labs/nsmntx/current/config/)
 
  * NeoSemanticsはRDFデータを変換しつつNeo4jにインポートできるようになるNeo4jプラグイン
  * まずNeoSemanticsのjarをダウンロード
