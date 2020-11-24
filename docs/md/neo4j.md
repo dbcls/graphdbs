@@ -70,6 +70,14 @@ CREATE CONSTRAINT n10s_unique_uri ON (r:Resource)
 ASSERT r.uri IS UNIQUE
 ```
 
+ * ロードする際にはプレフィックスを省略表記にするかなどをオプションで設定できる。参考：[Reference](https://neo4j.com/docs/labs/nsmntx/current/reference/)
+ 
+```
+CALL n10s.graphconfig.init({
+  handleVocabUris: 'MAP'
+})
+```
+
  * あとはn10s.rdf.import.fetchでデータをロードする。リモートのデータをロードする場合はurlの指定をhttp:// から始める。ローカルのデータをロードする場合はfile:// から始めれば良い。以下は/home/user_name/file_name.ntをロードする場合の例。
 
 ```
@@ -77,17 +85,6 @@ CALL n10s.rdf.import.fetch(
   'file:///home/user_name/file_name.nt',
   'Turtle'
 )
-```
-
- * ロードする際にはプレフィックスを省略表記にするかなどをオプションで設定できる。
- * 設定できるオプションの一覧は以下URLを参照
-   * https://neo4j.com/docs/labs/nsmntx/current/reference/
- * 例えば、次のような形で指定可能
- 
-```
-CALL n10s.graphconfig.init({
-  handleVocabUris: 'MAP'
-})
 ```
 
 ## Configuration
