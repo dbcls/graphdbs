@@ -2,7 +2,7 @@
 
 [ウェブサイト](https://neo4j.com/)
 
-[インストールマニュアル](https://neo4j.com/docs/operations-manual/current/installation/)
+[Manual](https://neo4j.com/docs/operations-manual/current/installation/)
     
 本記事の対象バージョン
 * 4.1.0 Communiti Edition
@@ -16,7 +16,7 @@
 ## Installation
 ### Ubuntu 18.04の場合
 
-[参考](https://neo4j.com/docs/operations-manual/current/installation/linux/debian/)
+[Manual](https://neo4j.com/docs/operations-manual/current/installation/linux/debian/)
 
  * Neo4jのパッケージリポジトリを追加する
 ```
@@ -40,24 +40,11 @@ sudo service neo4j stop
  * localhost:7474にアクセスするとNeo4j Browserが立ち上がるはず。
  * デフォルトだとユーザ名とパスワードは両方ともneo4jになっているので、これでログイン（ログイン後にパスワードの変更を求められる）
 
-### 外部から接続したい場合
- * （以下を行うと、任意のホストからの接続を許可することになるので、セキュリティ上の問題が起きないよう注意すること）
- * /etc/neo4j/neo4j.confを開くと、以下のような記述があるので
-```
-#dbms.default_listen_address=0.0.0.0
-```
- * コメントアウトを解除する
-```
-dbms.default_listen_address=0.0.0.0
-```
- * Neo4jを再起動する
-```
-sudo service neo4j restart
-```
-
  
 ### NeoSemanticsを使用する場合
-[チュートリアル](https://neo4j.com/labs/neosemantics/tutorial/)
+[Tutorial](https://neo4j.com/labs/neosemantics/tutorial/)
+
+[Configuration](https://neo4j.com/docs/labs/nsmntx/current/config/)
 
  * NeoSemanticsはRDFデータを変換しつつNeo4jにインポートできるようになるNeo4jプラグイン
  * まずNeoSemanticsのjarをダウンロード
@@ -83,8 +70,6 @@ CREATE CONSTRAINT n10s_unique_uri ON (r:Resource)
 ASSERT r.uri IS UNIQUE
 ```
 
-[参考](https://neo4j.com/docs/labs/nsmntx/current/config/)
-
  * あとはn10s.rdf.import.fetchでデータをロードする。リモートのデータをロードする場合はurlの指定をhttp:// から始める。ローカルのデータをロードする場合はfile:// から始めれば良い。以下は/home/user_name/file_name.ntをロードする場合の例。
 
 ```
@@ -103,4 +88,21 @@ CALL n10s.rdf.import.fetch(
 CALL n10s.graphconfig.init({
   handleVocabUris: 'MAP'
 })
+```
+
+## Configuration
+
+### 外部から接続したい場合
+ * （以下を行うと、任意のホストからの接続を許可することになるので、セキュリティ上の問題が起きないよう注意すること）
+ * /etc/neo4j/neo4j.confを開くと、以下のような記述があるので
+```
+#dbms.default_listen_address=0.0.0.0
+```
+ * コメントアウトを解除する
+```
+dbms.default_listen_address=0.0.0.0
+```
+ * Neo4jを再起動する
+```
+sudo service neo4j restart
 ```
