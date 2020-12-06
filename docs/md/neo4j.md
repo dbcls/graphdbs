@@ -90,23 +90,23 @@ CALL n10s.rdf.import.fetch(
 ```
 
 ### curlでクエリを実行する方法（実行時間を計測したい場合など）
- * コマンドラインのスクリプトから起動する場合など、curlでクエリを実行したい場合にはcurlの`-d`オプション（`--data`オプション）にクエリを指定して、`/db/data/transaction/commit`に対して実行すればよい。
+ * コマンドラインのスクリプトから起動する場合など、curlでクエリを実行したい場合にはcurlの`-d, --data`オプションにクエリを指定して、`/db/data/transaction/commit`に対して実行すればよい。
    * 例えば、以下のようなスクリプトを手元に用意する。名前は仮に`curl_cypher.sh`とする。
 ```
 query=$(cat $1 | tr -d '\n')
 param="{ \"statements\": [ {\"statement\": \"$query\"}]}"
 curl -o $2 -X POST -H 'Content-type: application/json;charset=utf-8' -d "$param"  'http://localhost:7474/db/data/transaction/commit' 
 ```
-   * また、サンプルのクエリとして以下のようなファイルを、sample_query.cypとして保存する。
+   * また、サンプルのクエリとして以下のようなファイルを、`sample_query.cyp`として保存する。
 ```
 MATCH (n) RETURN n LIMIT 10
 ```
    * その後、`sh ./curl_cypher.sh sample_cypher.cyp`のようにして実行することで、結果がJSON形式で表示される。
      * 実行時間を計測したい場合は、`time sh ./curl_cypher.sh sample_cypher.cyp`のようにすればよい。
 
- * なおNeo4j BrowserやNeo4j Consoleを使用する場合、一応クエリごとの実行時間は表示してくれるが、これはあまり信用してはいけないらしい（以下のURLで don’t rely on that exact timing though ）
+ * なおNeo4j BrowserやNeo4j Consoleを使用する場合、一応クエリごとの実行時間は表示してくれるが、これはあまり信用してはいけないらしい（以下のURLで don't rely on that exact timing と言われている）
    * https://neo4j.com/developer/neo4j-browser/
-   * Enterprise版だと、dbms.logs.query.*のようなオプションが用意されている。
+   * なおEnterprise版だと、`dbms.logs.query.*`のようなオプションが用意されているらしい。
 
 
 
