@@ -11,7 +11,7 @@
 その他必要条件
 * automake, libtool, gperf (インストールされていない場合はaptでインストールする)
 
-## インストール
+## Installation
 * ソースを取得
 ```
 git clone git@github.com:openlink/virtuoso-opensource.git
@@ -44,14 +44,18 @@ isql 1111 dba dba
 SQL> DB.DBA.TTLP_MT(file_to_string_output('example.ttl'), '', 'http://example.com/example.ttl', 0);
 ```
 
-## 設定変更
+## Configuration
 デフォルトから設定を変更したい場合
 * 設定ファイルの編集
 ```
 vi /path/to/install/directory/var/lib/virtuoso/db/virtuoso.ini
 ```
+問い合わせによって、virtuoso-temp.dbのサイズが肥大化していくことがある。その場合、virtuoso.iniの中でTempAllocationPct(virtuoso.dbに対して、何％まで許容するか)を設定する。[参照](http://docs.openlinksw.com/virtuoso/dbadm/)
+```
+TempAllocationPct        = 100
+```
 
-## トラブルシューティング
+## Troubleshooting
 ./configure で OpenSSLに関するエラーが出ることがある。この場合は、libssl1.0-dev をインストールする。
 ```
 sudo apt install -y libssl1.0-dev
