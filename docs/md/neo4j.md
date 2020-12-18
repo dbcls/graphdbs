@@ -101,7 +101,7 @@ CALL n10s.rdf.import.fetch(
 ```
 query=$(cat $1 | tr -d '\n')
 param="{ \"statements\": [ {\"statement\": \"$query\"}]}"
-curl -o $2 -X POST -H 'Content-type: application/json;charset=utf-8' -d "$param"  'http://localhost:7474/db/data/transaction/commit' 
+curl -u neo4j:neo4j -H 'Content-type: application/json;charset=utf-8' -d "$param" http://localhost:7474/db/data/transaction/commit
 ```
    * また、サンプルのクエリとして以下のようなファイルを、`sample_query.cyp`として保存する。
 ```
