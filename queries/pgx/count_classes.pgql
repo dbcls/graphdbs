@@ -1,0 +1,9 @@
+SELECT DISTINCT COUNT(n.label_), n.label_ MATCH (n) GROUP BY n.label_
+
+// SELECT (COUNT(?instance) AS ?count) ?class
+// FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+// WHERE {
+//   ?instance a ?class .
+// }
+// GROUP BY ?class
+// ORDER BY DESC(?count)

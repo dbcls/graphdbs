@@ -1,0 +1,1 @@
+SELECT COUNT(tax) MATCH (tax)-/:subClassOf*/->(n2) WHERE id(n2) = '9443'"

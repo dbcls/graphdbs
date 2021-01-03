@@ -1,0 +1,1 @@
+SELECT COUNT(r) MATCH (n)-[r]->()

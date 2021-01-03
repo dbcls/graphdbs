@@ -1,0 +1,12 @@
+SELECT COUNT(DISTINCT(taxid)) MATCH (taxid)-/:subClassOf+/->(r) WHERE r.label = 'Primates'
+
+/*
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT (COUNT(DISTINCT ?taxid) AS ?count) ?taxon
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+WHERE {
+  ?taxid rdfs:subClassOf* ?taxon .
+  ?taxon rdfs:label "Primates" .
+} GROUP BY ?taxon
+*/
