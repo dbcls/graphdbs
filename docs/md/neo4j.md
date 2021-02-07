@@ -3,7 +3,7 @@
 [ウェブサイト](https://neo4j.com/)
     
 本記事の対象バージョン
-* 4.1.0 Communiti Edition
+* 4.1.0 Community Edition
 
 ライセンスなど
 * オープンソース（Community Editionに限る。GPL v3）
