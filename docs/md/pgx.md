@@ -21,7 +21,7 @@ sudo alien --scripts oracle-graph-20.4.0.x86_64.rpm # --scriptsオプション�
 sudo dpkg -i oracle-graph_20.4.0-1_amd64.deb 
 ```
 
- * インストール後、標準では `/opt/oracle/graph/` にインストールされる。とりあえずコマンドライン上で試すのであれば、bin/opg-jshell が試しやすい
+ * インストール後、標準では `/opt/oracle/graph/` にインストールされる。とりあえずコマンドライン上で試すのであれば、`bin/opg-jshell` が試しやすい
 ```
 sudo /opt/oracle/graph/bin/opg-jshell
 ```
