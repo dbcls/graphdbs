@@ -1,1 +1,1 @@
-SELECT COUNT(n) MATCH (n) WHERE n.label_ = 'Taxon
+SELECT COUNT(n) MATCH (n) WHERE n.label_ = 'Taxon'
