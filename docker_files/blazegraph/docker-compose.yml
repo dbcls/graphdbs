@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  blazegraph:
+    container_name: blazegraph-local
+    build:
+      context: .
+    restart: unless-stopped
+    ports: 
+      - 8889:8080
+    volumes:
+      - ./RWStore.properties:/RWStore.properties
