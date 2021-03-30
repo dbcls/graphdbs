@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  stardog:
+    build:
+      context: .
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    ports: 
+      - "5820:5820"
+    volumes:
+      - ./stardog-home:/stardog-home
