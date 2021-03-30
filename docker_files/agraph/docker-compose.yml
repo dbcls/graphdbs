@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+  agraph:
+    build:
+      args:
+        - AG_VERSION=7.0.0
+      context: .
+    restart: unless-stopped
+    environment:
+      - AGRAPH_SUPER_USER=admin
+      - AGRAPH_SUPER_PASSWORD=pass
+    ports: 
+      - 10000-10035:10000-10035
+    volumes:
+      - ./agdata:/agraph/data
+    shm_size: '1gb'
