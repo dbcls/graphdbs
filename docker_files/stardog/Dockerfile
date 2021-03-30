@@ -11,8 +11,6 @@ RUN chmod a+x /opt/stardog/bin/stardog-admin
 
 RUN apk add --no-cache bash util-linux procps net-tools busybox-extras less curl
 
-RUN mkdir /stardog-home
-
 ENV STARDOG_HOME /stardog-home
 
 ENV PATH "/opt/stardog/bin:$PATH"
