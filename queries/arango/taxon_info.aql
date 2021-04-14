@@ -1,0 +1,4 @@
+FOR t IN taxonomy
+    FILTER t._key == "9606" and t.LABEL == "Taxon"
+    FOR t2 IN 1..1 OUTBOUND t subClassOf
+        RETURN t2
