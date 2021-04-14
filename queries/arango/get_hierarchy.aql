@@ -2,9 +2,9 @@ FOR ancestor in taxonomy
     FILTER ancestor._key == "40674"  
     FOR t in 1..100 INBOUND ancestor subClassOf
         FILTER t.rank == "Species"	     
-        FOR family in 1..1 OUTBOUND t subClassOf
+        FOR family in 1..100 OUTBOUND t subClassOf
             FILTER family.rank == "Family"
 
-        FOR order in 1..1 OUTBOUND t subClassOf
+        FOR order in 1..100 OUTBOUND t subClassOf
             FILTER order.rank == "Order"
     RETURN {t, ancestor, family, order}
