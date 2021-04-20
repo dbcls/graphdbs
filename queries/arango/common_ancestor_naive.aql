@@ -1,0 +1,9 @@
+FOR ancestor in taxonomy
+    FOR t, e, path in 1..100 INBOUND ancestor subClassOf
+        FILTER t._key == "9606"
+        FOR ancestor2 in taxonomy
+            FOR t2 in 1..100 INBOUND ancestor2 subClassOf
+                FILTER t2._key == "511145" and ancestor._key == ancestor2._key
+                SORT length(path.vertices) ASC
+                LIMIT 1
+                RETURN ancestor
