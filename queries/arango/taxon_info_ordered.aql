@@ -1,0 +1,5 @@
+FOR t in taxonomy
+    FILTER t._key == "9606"
+    FOR	t2, e in 1..1 OUTBOUND t subClassOf
+      SORT e._key, t2._key ASC
+      RETURN { t2: t2._key, e: e._key }

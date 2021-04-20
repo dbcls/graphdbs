@@ -1,0 +1,4 @@
+FOR t in taxonomy
+    FILTER t.LABEL == "Taxon"
+    COLLECT WITH COUNT INTO length
+    RETURN length

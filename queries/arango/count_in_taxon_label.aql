@@ -1,0 +1,5 @@
+FOR t in taxonomy
+    FILTER t.label == "Primates"
+    FOR descendant in 1..100 OUTBOUND t subClassOf
+       COLLECT WITH COUNT INTO length
+       RETURN length
