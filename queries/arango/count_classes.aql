@@ -1,3 +1,3 @@
 FOR t in taxonomy
     COLLECT label = t.LABEL WITH COUNT INTO labelCount
-    RETURN t.label, labelCount
+    RETURN {label: label, count: labelCount}
