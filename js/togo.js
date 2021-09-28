@@ -94,7 +94,7 @@ togo.getResult = function (result, headers) {
 togo.createDbTable = function (id) {
   $.ajax(
     {
-      url: 'https://sheets.googleapis.com/v4/spreadsheets/1dku2zss1K3h0dE8yuZ29tgURDK0L4Q5FvlyNK-BImyo/values/A1:ZZ256?key=AIzaSyDjDVUwbN8fcUrNrCFH1JgoIg-oot7UYNA',
+      url: 'json/engines.json',
       type: 'GET',
       dataType: 'json',
       data: {
@@ -105,10 +105,9 @@ togo.createDbTable = function (id) {
     function (result) {
       let tag = '<tr><th>No.</th><th>Name</th><th>Company/ Organization</th><th>First Release</th><th>Model</th><th>Implementation</th><th>Query Language</th><th>Source code</th><th>History</th></tr>'
       $('#' + id).html(tag);
-      rows = togo.arraysToObjects(result.values);
-      rows.forEach(
+      result.forEach(
         (row, i) => {
-          if(row.hide != '1') {
+          if(row.Hide != '1') {
             row.number = i + 1;
             var lineTag = togo.createDbLineTag(row);
             $('#' + id).append(lineTag);
@@ -119,34 +118,10 @@ togo.createDbTable = function (id) {
   );
 }
 
-// convert an array of arrays to an array of objects assuming that the first row includes keys
-// example input: [["key1", "key2"], ["value1-1", "value2-1"], ["value1-2", "value2-2"]] 
-// example output: [{key1: "value1-1", key2: "value2-1"}, {key1: "value1-2", key2: "value2-2"}]
-togo.arraysToObjects = function (arrayOfArrays) {
-  let first = true;
-  let objects = [];
-  let keys = arrayOfArrays[0];
-  arrayOfArrays.forEach((row) => {
-    if(first) {
-      first = false; // skip first row
-    } else {
-      let object = {};
-      let i = 0;
-      row.forEach((cell, index) => {
-        if(keys[index])
-          object[keys[index].toLowerCase()] = cell;
-      });
-      objects.push(object);
-    }
-  });
-  return objects;
-}
-
-
 // create DB line tag
 togo.createDbLineTag = function (object) {
   var keys = [
-    'number', 'name', 'company', 'first release', 'data model', 'implementation', 'query language', 'source code', 'comment'
+    'number', 'Name', 'Company', 'First release', 'Data model', 'Implementation', 'Query language', 'Source code', 'Comment'
   ]
   var tag = togo.createLineTag(object, keys);
   return tag;
@@ -159,14 +134,14 @@ togo.createLineTag = function (object, keys) {
     function (key) {
       if (key in object) {
         var value = object[key];
-        if (key === 'name') {
-          var url = object.url;
+        if (key === 'Name') {
+          var url = object.URL;
           if (url != null) {
             value = '<a href="' + url + '" target="_blank">' + value + '</a>';
             // value = '<img src="img/jena.png" height="50" />';
           }
         }
-        if (key === 'source code') {
+        if (key === 'Source code') {
           value = '<a href="' + value + '" target="_blank">' + 'GitHub' + '</a>';
         }
         tag += '<td>' + value + '</td>'
@@ -198,10 +173,9 @@ togo.createLinkTable = function (id) {
 
 // create paper table
 togo.createPaperTable = function (id) {
-  var no = 1;
   $.ajax(
     {
-      url: 'https://sheets.googleapis.com/v4/spreadsheets/15X73jP4tZ7t5U1nUS4NIjcaXIcBzUn2BrQhyn12ZhcA/values/A1:ZZ256?key=AIzaSyDjDVUwbN8fcUrNrCFH1JgoIg-oot7UYNA',
+      url: 'json/references.json',
       type: 'GET',
       dataType: 'json',
       data: {
@@ -212,10 +186,9 @@ togo.createPaperTable = function (id) {
     function (result) {
       var tag = '<tr><th>Tag</th><th>Year</th><th>Paper</th></tr>'
       $('#' + id).html(tag);
-      rows = togo.arraysToObjects(result.values);
-      rows.forEach(
+      result.forEach(
         (row) => {
-          var lineTag = togo.createPaperLineTag(row.tag, row.paper, row.year, row.url);
+          var lineTag = togo.createPaperLineTag(row.Tag, row.Paper, row.Year, row.URL);
           $('#' + id).append(lineTag);
         }
       );
