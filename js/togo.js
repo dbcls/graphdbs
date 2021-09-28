@@ -89,9 +89,10 @@ togo.getResult = function (result, headers) {
   return array;
 }
 
+
+
 // create db table
 togo.createDbTable = function (id) {
-  var no = 1;
   $.ajax(
     {
       url: 'https://sheets.googleapis.com/v4/spreadsheets/1dku2zss1K3h0dE8yuZ29tgURDK0L4Q5FvlyNK-BImyo/values/A1:ZZ256?key=AIzaSyDjDVUwbN8fcUrNrCFH1JgoIg-oot7UYNA',
@@ -103,22 +104,15 @@ togo.createDbTable = function (id) {
     }
   ).then(
     function (result) {
-      var tag = '<tr><th>No.</th><th>Name</th><th>Company/ Organization</th><th>First Release</th><th>Model</th><th>Implementation</th><th>Query Language</th><th>Source code</th><th>History</th></tr>'
+      let tag = '<tr><th>No.</th><th>Name</th><th>Company/ Organization</th><th>First Release</th><th>Model</th><th>Implementation</th><th>Query Language</th><th>Source code</th><th>History</th></tr>'
       $('#' + id).html(tag);
-      console.log(result);
-      result.feed.entry.forEach(
-        function (entry) {
-          var hide = '';
-          if ('gsx$hide' in entry) {
-            hide = entry['gsx$hide']['$t'];
-          }
-
-          if (hide != '1') {
-            var object = togo.getDbObject(entry.content.$t);
-            object.no = no;
-            var lineTag = togo.createDbLineTag(object);
+      rows = togo.arraysToObjects(result.values);
+      rows.forEach(
+        (row, i) => {
+          if(row.hide != '1') {
+            row.number = i + 1;
+            var lineTag = togo.createDbLineTag(row);
             $('#' + id).append(lineTag);
-            no++;
           }
         }
       );
@@ -126,35 +120,34 @@ togo.createDbTable = function (id) {
   );
 }
 
-// get DB object
-togo.getDbObject = function (string) {
-  var object = {};
-  var array = string.split(',');
-  var prevKey = null;
-
-  array.forEach(
-    function (element) {
-      var index = element.indexOf(':');
-      if (index >= 0) {
-        var key = element.substr(0, index).trim();
-        var value = element.substr(index + 1).trim();
-        object[key] = value;
-        prevKey = key;
-      } else {
-        if (prevKey != null) {
-          object[prevKey] = object[prevKey] + ', ' + element.trim();
-        }
-      }
+// convert an array of arrays to an array of objects assuming that the first row includes keys
+// example input: [["key1", "key2"], ["value1-1", "value2-1"], ["value1-2", "value2-2"]] 
+// example output: [{key1: "value1-1", key2: "value2-1"}, {key1: "value1-2", key2: "value2-2"}]
+togo.arraysToObjects = function (arrayOfArrays) {
+  let first = true;
+  let objects = [];
+  let keys = arrayOfArrays[0];
+  arrayOfArrays.forEach((row) => {
+    if(first) {
+      first = false; // skip first row
+    } else {
+      let object = {};
+      let i = 0;
+      row.forEach((cell, index) => {
+        if(keys[index])
+          object[keys[index].toLowerCase()] = cell;
+      });
+      objects.push(object);
     }
-  );
-
-  return object;
+  });
+  return objects;
 }
+
 
 // create DB line tag
 togo.createDbLineTag = function (object) {
   var keys = [
-    'no', 'name', 'company', 'firstrelease', 'datamodel', 'implementation', 'querylanguage', 'sourcecode', 'comment'
+    'number', 'name', 'company', 'first release', 'data model', 'implementation', 'query language', 'source code', 'comment'
   ]
   var tag = togo.createLineTag(object, keys);
   return tag;
@@ -174,7 +167,7 @@ togo.createLineTag = function (object, keys) {
             // value = '<img src="img/jena.png" height="50" />';
           }
         }
-        if (key === 'sourcecode') {
+        if (key === 'source code') {
           value = '<a href="' + value + '" target="_blank">' + 'GitHub' + '</a>';
         }
         tag += '<td>' + value + '</td>'
@@ -222,7 +215,6 @@ togo.createPaperTable = function (id) {
       $('#' + id).html(tag);
       result.feed.entry.forEach(
         function (entry) {
-          console.log(entry);
           var tag = entry['gsx$tag']['$t'];
           var paper = entry['gsx$paper']['$t'];
           var year = entry['gsx$year']['$t'];
