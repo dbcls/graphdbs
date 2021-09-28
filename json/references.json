@@ -1,8 +1,1 @@
-[
-    {
-        "year": "2018",
-        "authors": "Uchiyama, I., Mihara, M., Nishide, H., Chiba, H., & Kato, M.",
-        "title": "MBGD update 2018: microbial genome database based on hierarchical orthology relations covering closely related and distantly related comparisons.",
-        "journal": "Nucleic acids research, 47(D1), D382-D389."
-    }
-]
+[{"Tag": "Review", "Year": "2017", "Paper": "Angles, R., Arenas, M., Barcel\u00f3, P., Hogan, A., Reutter, J., & Vrgoc, D. (2017). Foundations of Modern Query Languages for Graph Databases. ACM Computing Surveys (CSUR), 50(5), 68", "URL": "http://aidanhogan.com/docs/graph_database_query_survey.pdf"}, {"Tag": "Review", "Year": "2017", "Paper": "Angles, R., & Gutierrez, C. (2017). An introduction to Graph Data Management. arXiv preprint arXiv:1801.00036.", "URL": "https://arxiv.org/pdf/1801.00036.pdf"}, {"Tag": "PGX", "Year": "2015", "Paper": "van Rest, O., Hong, S., Kim, J., Meng, X., & Chafi, H. (2016, June). PGQL: a property graph query language. In Proceedings of the Fourth International Workshop on Graph Data Management Experiences and Systems (p. 7). ACM.", "URL": ""}, {"Tag": "PGX", "Year": "2017", "Paper": "Roth, N. P., Trigonakis, V., Hong, S., Chafi, H., Potter, A., Motik, B., & Horrocks, I. (2017). PGX. D/Async: A Scalable Distributed Graph Pattern Matching Engine.", "URL": ""}, {"Tag": "Virtuoso", "Year": "2012", "Paper": "Erling, O. (2012). Virtuoso, a Hybrid RDBMS/Graph Column Store. IEEE Data Eng. Bull., 35(1), 3-8.", "URL": ""}]
