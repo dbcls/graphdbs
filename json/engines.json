@@ -847,19 +847,19 @@
   },
   {
     "Hide": "",
-    "Name": "Katana",
-    "Company": "The University of Texas at Austin",
+    "Name": "Katana Graph",
+    "Company": "",
     "First release": "2020",
     "Last update": "2021",
     "Version": "",
     "Data model": "",
     "Implementation": "C++",
     "Query language": "",
-    "Back-end": "",
+    "Back-end": "Galois as its graph processing backend",
     "Front-end": "",
     "Standardization": "",
     "Source code": "https://github.com/KatanaGraph/katana",
-    "Comment": "",
+    "Comment": "backend is Galois (2014-2018 UT Austin)",
     "": "",
     "URL": "https://katanagraph.com/"
   }
