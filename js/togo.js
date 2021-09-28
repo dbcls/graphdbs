@@ -90,7 +90,6 @@ togo.getResult = function (result, headers) {
 }
 
 
-
 // create db table
 togo.createDbTable = function (id) {
   $.ajax(
@@ -202,7 +201,7 @@ togo.createPaperTable = function (id) {
   var no = 1;
   $.ajax(
     {
-      url: 'https://sheets.googleapis.com/v4/spreadsheets/1QNBD67P-CUbmz_NNOkikNYsuV2bL9zzauToFDZeLib4/values/A1:ZZ256?key=AIzaSyDjDVUwbN8fcUrNrCFH1JgoIg-oot7UYNA',
+      url: 'https://sheets.googleapis.com/v4/spreadsheets/15X73jP4tZ7t5U1nUS4NIjcaXIcBzUn2BrQhyn12ZhcA/values/A1:ZZ256?key=AIzaSyDjDVUwbN8fcUrNrCFH1JgoIg-oot7UYNA',
       type: 'GET',
       dataType: 'json',
       data: {
@@ -213,13 +212,10 @@ togo.createPaperTable = function (id) {
     function (result) {
       var tag = '<tr><th>Tag</th><th>Year</th><th>Paper</th></tr>'
       $('#' + id).html(tag);
-      result.feed.entry.forEach(
-        function (entry) {
-          var tag = entry['gsx$tag']['$t'];
-          var paper = entry['gsx$paper']['$t'];
-          var year = entry['gsx$year']['$t'];
-          var url = entry['gsx$url']['$t'];
-          var lineTag = togo.createPaperLineTag(tag, paper, year, url);
+      rows = togo.arraysToObjects(result.values);
+      rows.forEach(
+        (row) => {
+          var lineTag = togo.createPaperLineTag(row.tag, row.paper, row.year, row.url);
           $('#' + id).append(lineTag);
         }
       );
