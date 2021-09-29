@@ -2,6 +2,6 @@
 
 https://dbcls.github.io/graphdbs/
 
-## Read the Docs
+## Documentation
 
 https://graphdbs.readthedocs.io/
