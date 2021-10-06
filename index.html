@@ -1,58 +1,59 @@
 <!DOCTYPE html>
 <html>
-  <head>
-      <title>Graph Databases</title>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-      <link href="css/togo.css" rel="stylesheet" />
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/css/theme.default.min.css">
-      <script src="js/jquery-3.4.1.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js"></script>
-      <script src="js/d3.js"></script>
-      <script src="js/togo.js"></script>
-      <script>
-       $().ready(
-           function() {
-               var tabs = [
-                   { title: 'Engines', page: 'databases' },
-                   /* { title: 'DB engines', page: 'databases' }, */
-                   /* { title: 'Data', page: 'links' }, */
-                   /* { title: 'Test data', page: 'links' }, */
-                   /* { title: 'Data Archive', page: 'links' }, */
-                   /* { title: 'References', page: 'references' } */
-                   { title: 'References', page: 'papers' }
-               ];
-               togo.createTabs( tabs );
-           }
-       );
-      </script>
-    <link 
-  </head>
-  <body>
-    <header>
-	<div class="logo">
-            <h1 id="title">List of Graph Databases</h1>
-	</div>
-      <nav id="top_menu">
+<head>
+    <title>Graph Databases</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link href="css/togo.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/css/theme.default.min.css">
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js"></script>
+    <script src="js/d3.js"></script>
+    <script src="js/togo.js"></script>
+    <script>
+      $().ready(
+        () => {
+          var tabs = [
+            {title: 'Engines', page: 'databases'},
+            /* { title: 'DB engines', page: 'databases' }, */
+            /* { title: 'Data', page: 'links' }, */
+            /* { title: 'Test data', page: 'links' }, */
+            /* { title: 'Data Archive', page: 'links' }, */
+            /* { title: 'References', page: 'references' } */
+            {title: 'References', page: 'papers'}
+          ];
+          togo.createTabs(tabs);
+        }
+      );
+    </script>
+    <link
+</head>
+<body>
+<header>
+    <div class="logo">
+        <h1 id="title">List of Graph Databases</h1>
+    </div>
+    <nav id="top_menu">
         <div id="tabs"></div>
-      </nav>        
-    </header>
+    </nav>
+</header>
 
-    <article>
-      <div class="container">
+<article>
+    <div class="container">
         <div id="tabpane">
-          <div id="contents"></div>
+            <div id="contents"></div>
         </div>
-      </div>
-    </article>
+    </div>
+</article>
 
-    <footer>
-	<div class="container">
-            <!-- Copyright (C) 2019 Database Center for Life Science (DBCLS) -->
-            2019-2021 Database Center for Life Science (DBCLS)
-	</div>
-    </footer>
+<footer>
+    <div class="container">
+        <!-- Copyright (C) 2019 Database Center for Life Science (DBCLS) -->
+        2019-2021 Database Center for Life Science (DBCLS)
+    </div>
+</footer>
 
-  </body>
+</body>
 </html>
