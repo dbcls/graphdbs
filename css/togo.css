@@ -37,17 +37,15 @@ table {
 }
 
 th {
-    background-color: lightblue;
-    color: navy;
-    margin: 0;
-    padding: 1px;
-    border: 1px solid navy;
+    background-color: lightblue !important;
+    color: navy !important;
+    border: 1px solid navy !important;
+    font-size: 16px;
 }
 
 td {
-    border: 1px solid navy;
-    margin: 0;
-    padding: 1px;
+    border: 1px solid navy !important;
+    font-size: 16px;
 }
 
 nav {

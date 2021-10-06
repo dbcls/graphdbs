@@ -103,17 +103,23 @@ togo.createDbTable = function (id) {
     }
   ).then(
     function (result) {
-      let tag = '<tr><th>No.</th><th>Name</th><th>Company/ Organization</th><th>First Release</th><th>Model</th><th>Implementation</th><th>Query Language</th><th>Source code</th><th>History</th></tr>'
-      $('#' + id).html(tag);
+      let content = '<thead><tr><th>No.</th><th>Name</th><th>Company/ Organization</th><th>First Release</th><th>Model</th><th>Implementation</th><th>Query Language</th><th>Source code</th><th>History</th></tr></thead>'
       result.forEach(
         (row, i) => {
           if(row.Hide != '1') {
             row.number = i + 1;
             var lineTag = togo.createDbLineTag(row);
-            $('#' + id).append(lineTag);
+            content += lineTag;
           }
         }
       );
+      $( '#' + id ).html(content).tablesorter({
+        headers: {
+          7: {
+            sorter: false
+          }
+        }
+      });
     }
   );
 }
@@ -184,14 +190,13 @@ togo.createPaperTable = function (id) {
     }
   ).then(
     function (result) {
-      var tag = '<tr><th>Tag</th><th>Year</th><th>Paper</th></tr>'
-      $('#' + id).html(tag);
+      var content = '<thead><tr><th>Tag</th><th>Year</th><th>Paper</th></tr></thead>';
       result.forEach(
         (row) => {
-          var lineTag = togo.createPaperLineTag(row.Tag, row.Paper, row.Year, row.URL);
-          $('#' + id).append(lineTag);
+          content += togo.createPaperLineTag(row.Tag, row.Paper, row.Year, row.URL);
         }
       );
+      $( '#' + id ).html(content).tablesorter();
     }
   );
 }
