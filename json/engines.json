@@ -182,7 +182,7 @@
   {
     "Hide": "",
     "Name": "Stardog",
-    "Company": "",
+    "Company": "Stardog Union",
     "First release": "2010",
     "Last update": "2019",
     "Version": "7.0.2",
@@ -192,7 +192,7 @@
     "Back-end": "",
     "Front-end": "",
     "Standardization": "tested",
-    "Source code": "",
+    "Source code": "https://github.com/stardog-union",
     "Comment": "",
     "": "",
     "URL": "https://www.stardog.com/"
@@ -457,13 +457,13 @@
     "Last update": "2019",
     "Version": "2.1.5",
     "Data model": "RDF",
-    "Implementation": "",
+    "Implementation": "Java",
     "Query language": "SPARQL",
     "Back-end": "",
     "Front-end": "",
     "Standardization": "tested",
     "Source code": "https://github.com/blazegraph/database",
-    "Comment": "Bigdata",
+    "Comment": "2006-2015 Bigdata",
     "": "Triple Pattern Fragment is available",
     "URL": "https://blazegraph.com/"
   },
