@@ -54,4 +54,4 @@ Create a user.
       sqlplus sys/Welcome1@XEPDB1 as sysdba @/host-home/icgc/scripts/00_user.sql
 
 ### 関連
- * [Setup RDF Graph Server with Autonomous Database](https://github.com/ryotayamanaka/setup_rdf_adb)
+[Setup RDF Graph Server with Autonomous Database](https://github.com/ryotayamanaka/setup_rdf_adb)
