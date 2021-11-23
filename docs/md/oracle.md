@@ -11,8 +11,6 @@
 
 ## Installation
 
-### Install Oracle Database
-
 Get Dockerfile to build Docker image of Oracle Database.
 
     $ mkdir oracle
@@ -37,7 +35,7 @@ Once you got the message below, you can quit with Ctl+C.
     DATABASE IS READY TO USE!
     #########################
 
-### Configure Oracle Database
+### Configuration
 
 Start the conteiner.
 
