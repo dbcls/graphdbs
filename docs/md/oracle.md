@@ -2,7 +2,9 @@
 
 [ウェブサイト](https://www.oracle.com/jp/database/technologies/appdev/xe.html)
 
-参考：[1](https://github.com/med2rdf/icgc/blob/master/README.md), [2](https://github.com/ryotayamanaka/setup_pg_docker)
+ * [参考1](https://github.com/med2rdf/icgc/blob/master/README.md) (RDFの利用)
+ * [参考2](https://github.com/ryotayamanaka/setup_pg_docker) (PGの利用)
+ * [参考3](https://github.com/ryotayamanaka/setup_rdf_adb) (Oracle Cloudの利用)
 
 バージョン：18.4.0 XE
 
@@ -37,6 +39,3 @@ Configure the database as a triplestore.
 Create a user.
 
     $ docker exec -it oracle sqlplus sys/Welcome1@XEPDB1 as sysdba @/host-home/icgc/scripts/00_user.sql
-
-### 関連
-[Setup RDF Graph Server with Autonomous Database](https://github.com/ryotayamanaka/setup_rdf_adb)
