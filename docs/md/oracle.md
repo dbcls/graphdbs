@@ -9,6 +9,9 @@
 ライセンス：[Oracle Free Use Terms and Conditions](https://www.oracle.com/downloads/licenses/oracle-free-license.html)
 ([Permitted Features](https://docs.oracle.com/en/database/oracle/oracle-database/18/xelic/licensing-information.html#GUID-3BD43E8F-53C3-42F0-BBBD-B743FD41F951))
 
+関連
+ * [Setup RDF Graph Server with Autonomous Database](https://github.com/ryotayamanaka/setup_rdf_adb)
+
 ## Installation
 
 Get Dockerfile to build Docker image of Oracle Database.
