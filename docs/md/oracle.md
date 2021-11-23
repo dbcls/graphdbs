@@ -9,7 +9,7 @@
 ライセンス：[Oracle Free Use Terms and Conditions](https://www.oracle.com/downloads/licenses/oracle-free-license.html)
 ([Permitted Features](https://docs.oracle.com/en/database/oracle/oracle-database/18/xelic/licensing-information.html#GUID-3BD43E8F-53C3-42F0-BBBD-B743FD41F951))
 
-## インストール
+## Installation
 
 ### Install Oracle Database
 
