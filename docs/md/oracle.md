@@ -13,15 +13,11 @@
 ## Installation
 
 ### Docker版
-Get Dockerfile to build Docker image of Oracle Database.
 
-    $ mkdir oracle
-    $ cd oracle
+Get Dockerfile to build Docker image of Oracle Database (needs 4GB memory).
+
     $ git clone https://github.com/oracle/docker-images.git
-
-Build docker image (needs 4GB memory).
-
-    $ cd ~/oracle/docker-images/OracleDatabase/SingleInstance/dockerfiles/18.4.0/
+    $ cd docker-images/OracleDatabase/SingleInstance/dockerfiles/18.4.0/
     $ docker build -t oracle/database:18.4.0-xe -f Dockerfile.xe .
 
 Launch Oracle Database on a docker container.
