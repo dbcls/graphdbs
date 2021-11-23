@@ -2,7 +2,7 @@
 
 [ウェブサイト](https://www.oracle.com/jp/database/technologies/appdev/xe.html)
 
-[参考](https://github.com/med2rdf/icgc/blob/master/README.md)
+参考：[1](https://github.com/med2rdf/icgc/blob/master/README.md), [2](https://github.com/ryotayamanaka/setup_pg_docker)
 
 バージョン：18.4.0 XE
 
