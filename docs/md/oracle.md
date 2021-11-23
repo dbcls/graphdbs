@@ -12,7 +12,7 @@
 
 ## Installation
 
-### Docker版
+### Docker版を利用
 
 Get Dockerfile to build Docker image of Oracle Database (needs 4GB memory).
 
@@ -30,21 +30,13 @@ Once you got the message below, the database is ready (you can quit with Ctl+C).
     DATABASE IS READY TO USE!
     #########################
 
-### Configuration
-
-Start the conteiner.
-
-    $ docker start oracle
-
 Configure the database as a triplestore.
 
-    $ docker exec -it oracle \
-      sqlplus sys/Welcome1@XEPDB1 as sysdba @/host-home/icgc/scripts/setup.sql
+    $ docker exec -it oracle sqlplus sys/Welcome1@XEPDB1 as sysdba @/host-home/icgc/scripts/setup.sql
 
 Create a user.
 
-    $ docker exec -it oracle \
-      sqlplus sys/Welcome1@XEPDB1 as sysdba @/host-home/icgc/scripts/00_user.sql
+    $ docker exec -it oracle sqlplus sys/Welcome1@XEPDB1 as sysdba @/host-home/icgc/scripts/00_user.sql
 
 ### 関連
 [Setup RDF Graph Server with Autonomous Database](https://github.com/ryotayamanaka/setup_rdf_adb)
