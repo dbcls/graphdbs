@@ -22,12 +22,9 @@ Get Dockerfile to build Docker image of Oracle Database (needs 4GB memory).
 
 Launch Oracle Database on a docker container.
 
-    $ docker run --name oracle \
-      -p 1522:1521 -e ORACLE_PWD=Welcome1 \
-      -v $HOME:/host-home \
-      oracle/database:18.4.0-xe
+    $ docker run --name oracle -p 1521:1521 -e ORACLE_PWD=Welcome1 -v $HOME:/host-home oracle/database:18.4.0-xe
 
-Once you got the message below, you can quit with Ctl+C.
+Once you got the message below, the database is ready (you can quit with Ctl+C).
 
     #########################
     DATABASE IS READY TO USE!
