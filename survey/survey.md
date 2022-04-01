@@ -1,0 +1,875 @@
+# トリプルストア及びグラフデータベースに関する技術調査 (2021年度更新)
+
+# 背景
+
+近年、RDF関連のソフトウェア開発が進展し、世界中で様々なRDFストア（トリプルストアと呼ばれる）が公開されてきた。よく用いられている実装の一例としてはOpenLink Software Virtuosoがあるが、その他にも多くの新しい実装が活発に開発されてきており、多くの実装について、性質や性能が自明ではない。また、グラフを基礎としたデータモデルを採用しているデータベースとしては、プロパティ・グラフモデルに基づくデータベース実装も出てきており、近年より活発に開発が行われている。トリプルストアに加えて、プロパティ・グラフモデルに基づくデータベース実装に言及するとき、グラフデータベースと呼ばれることが多い。
+
+このように活発に開発が続けられているトリプルストア及びグラフデータベースの分野は、進展が早くまた製品も多様性に富むため、現状を把握するのは容易ではないが、各データベースの有用性を評価するために、標準準拠状況、性能の観点から継続的に調査を行うことが望ましい。こうした評価情報は、RDF等の基盤技術を利用している研究機関において共有されるべき重要な情報であり、統合データベースにおける基盤技術開発とデータベース運用を行っている本機構が取り組むべき課題である。
+
+# 調査実施内容
+
+各トリプルストアに関して、インストールやデータのロード、クエリの実行方法に関する調査を行いました。
+
+作業内容の詳細に関しては、それぞれの調査結果や手順をGitHubレポジトリ([https://github.com/dbcls/graphdbs](https://github.com/dbcls/graphdbs)) および Googleスプレッドシート([https://docs.google.com/spreadsheets/d/1gZzRT0Q5TTFrho09XY_SsMfYzU5reiYGIKJpsiXYnRQ](https://docs.google.com/spreadsheets/d/1gZzRT0Q5TTFrho09XY_SsMfYzU5reiYGIKJpsiXYnRQ))上に記載しています。
+
+9/7〜9/11のBioHackathon 2020および9/18のSPARQLthonにおいて、リモート会議として調査の報告や今後の方針に関する議論、論文化に向けた課題の議論等、担当者および外部有識者との間で打ち合わせを行いました。
+
+# 各データベースエンジンに関する情報のまとめ (主に定性的な情報について)
+
+## Virtuoso
+
+Virtuosoは、OpenLink Software社の開発するデータベースエンジンである。Open-source版とcommercial版がある. 今までのところ、open-source版を用いている. RDBMSを基盤としており、RDFを扱えるようになっている。もともとrow-wiseであったが、Virtuoso 7からはcolumn-wiseを用いるように拡張された。graph identifier gと、(s, p, o) からなる4つ組(quads)をストアする。インデックスは、<g, s, p, o>と<o, g, p, s>である。
+
+多くのRDFワークロードでは、削除が少なく、大量の読み込みを必要とするアクセスパターンがあります。デフォルトのインデックススキームは、これらに最適化されています。このような状況では，この方式はスペースを大幅に節約し，より良い作業セットを実現します．通常、このレイアウトは、4つのフルインデックスを使用したレイアウトの60～70％のスペースで済みます。
+
+これが現実的ではない場合、インデックススキームはフルインデックスのみを持つべきです。つまり、各キーがクワッドの主キーのすべての列を保持します。これは、CREATE INDEX文でDISTINCT NO PRIMARY KEY REFオプションが指定されていない場合に当てはまります。このような場合、削除されてもすべてのインデックスは厳密に同期されます。
+
+[http://docs.openlinksw.com/virtuoso/rdfperfrdfscheme/](http://docs.openlinksw.com/virtuoso/rdfperfrdfscheme/)
+
+[https://www.amazon.co.jp/RDF-Database-Systems-Triples-Processing/dp/0127999574](https://www.amazon.co.jp/RDF-Database-Systems-Triples-Processing/dp/0127999574)
+
+**ウェブサイト**
+
+[http://vos.openlinksw.com/owiki/wiki/VOS](http://vos.openlinksw.com/owiki/wiki/VOS)
+
+**バージョン**
+
+7.2.5.1 (2018/08/15)
+
+**ライセンス**
+
+GPLv2
+
+**その他必要条件**
+
+automake, libtool, gperf パッケージをaptでインストールする必要がある。
+
+### Installation
+
+**ソースを取得**
+
+**コンパイル**
+
+ポート1111を既に使用していると、makeの途中で失敗する。（テストに1111を使おうとするため）
+
+configure に --with-port=1112 オプションを付けるなどすれば失敗を回避できるかもしれないが、1111を空けておくのが確実。
+
+**起動**
+
+http://localhost:8890/sparql でSPARQLエンドポイントが起動していることを確認する。
+
+**ロード**
+
+**データの取得**
+
+**SQL>**
+
+### Configuration
+
+デフォルトから設定を変更したい場合
+
+- 設定ファイルの編集
+
+問い合わせによって、virtuoso-temp.dbのサイズが肥大化していくことがある。その場合、virtuoso.iniの中でTempAllocationPct(virtuoso.dbに対して、何％まで許容するか)を設定する。[参照](http://docs.openlinksw.com/virtuoso/dbadm/)
+
+### Troubleshooting
+
+./configure で OpenSSLに関するエラーが出ることがある。この場合は、libssl1.0-dev をインストールする。
+
+Ubuntu 20.04 LTSでは、パッケージ libssl1.0-dev が見つからないことがある。この場合は、/etc/apt/sources.list の末尾に以下を追加して apt update を行う。
+
+## GraphDB
+
+GraphDBは、Ontotext社の開発したトリプルストアであり、ライセンスとしてはFree版とStandard版、Enterprise版が存在する。実装言語はJavaのため、JVMの動作する基板上であれば使用可能である。
+
+GraphDB Free Edition 9.3.1 (https://www.ontotext.com/products/graphdb/graphdb-free/) に関して、弊社内Linuxサーバへのインストールを行い、インストール、Webサーバの起動、GUIへのアクセス方法、SPARQLクエリを発行する方法をGitHub内のdocs/md/graphdb.mdに記載しました。また、貴研究所より指定されたデータセットに関して、GraphDBでロードした場合に要する時間の調査を行い、環境情報とともにスプレッドシートに記載しました。
+
+**ウェブサイト**
+
+[https://www.ontotext.com/products/graphdb/](https://www.ontotext.com/products/graphdb/)
+
+**更新履歴**
+
+http://graphdb.ontotext.com/documentation/free/release-notes.html
+
+**本記事の対象バージョン**
+
+9.3.1 (2020/06/18リリース)
+
+**ライセンス**
+
+無料版が存在するが、同時に発行できるクエリは２つまでとの記述有り。有料ライセンスはStandard版とEnterprice版の二種
+
+### Installation
+
+- GrahDBのフリーエディションを使用するため、サイト上でユーザ登録をする https://www.ontotext.com/products/graphdb/graphdb-free/
+- ユーザ登録が完了すると、登録したメールアドレスにインストール用バイナリのダウンロード用リンクが送られてくる
+- Download as a stand-alone serverのリンクをクリックしてダウンロード（Desktop installationではない方）
+- ダウンロード後、zipを解凍してそのフォルダへ移動
+
+- GraphDBをワークベンチモードで起動
+
+- ブラウザで localhost:7200 にアクセスすると、GraphDBのホーム画面が表示される
+- 新しいリポジトリを作るため、左のメニューから、Setup->Repositories->Create new repositoryと選択する
+- リポジトリのIDを入力し、最下部のCreateをクリック
+- ターミナル上で、以下のコマンドを実行して ttl データをインポート
+- なお、loadrdfコマンドではインポートするグラフに名前をつけることができない模様。
+- このため、グラフ名をつける必要がある場合はブラウザ上のhttp://localhost:7200/import から行う必要あり？
+
+- インポートが完了したら、ブラウザに戻り左のメニューからSPARQLをクリックする
+- リポジトリのリストが表示されるのでリポジトリを選択する
+- SPARQLのエディタが表示されるのでSPARQLを入力後、RUNで実行できる
+- APIからSPARQLを実行したい場合は、http://localhost:7200/repositories/<リポジトリ名> にGETリクエストを送ればよい
+
+## Stardog
+
+Stardog 7.3.2 ([https://www.stardog.com/get-started/](https://www.stardog.com/get-started/))に関して、弊社内Linuxサーバへのインストールを行い、インストール方法をdocs/md/stardog.mdに記載しました。
+
+Linuxサーバへインストールを行ったStardog 7.3.2に関して、データのロード時間を計測いたしました。
+
+**ウェブサイト**
+
+[https://www.stardog.com/](https://www.stardog.com/)
+
+**Getting Started**
+
+[https://www.stardog.com/docs/#_setting_path](https://www.stardog.com/docs/#_setting_path)
+
+**本記事の対象バージョン**
+
+7.3.2（2020/07/01リリース）
+
+**ライセンス**
+
+完全にフリーなライセンスは存在しないが、30日分の体験版、1年のアカデミックライセンスの体験版がある。
+
+### Installation
+
+Stardogの最新版をダウンロードして解凍して移動
+
+Stardogのサーバを起動。
+
+- 初回起動時にはライセンスに関する質問をされるので、利用規約への同意やメールアドレス、
+
+Stardogから送られる情報をメールで受け取りたいかなどを聞かれるので、答える。
+
+- この時点で5820番ポートでサーバが起動するが、このままの状態ではWebブラウザからアクセスしても何も表示されない。
+- GUIが必要な場合は、別途Stardog Studioをインストールする必要があるらしい https://www.stardog.com/studio/
+- なおデフォルトのユーザ名/パスワードはadmin/admin
+- コマンドライン上でクエリを実行できればいい場合は、以下を参照のこと。
+- データをロードしてDBを作るため、以下のようなコマンドを使用する。
+
+- 名前付きグラフにロードしたい場合は、入力するRDFファイルの名前の前に@<グラフのURL>のようにする。以下はhttp://examples.org の例
+
+- クエリはコマンドライン上から以下のように実行できる
+
+- Web API越しにSPARQLを実行したい場合は http://localhost:5820/<DB名>/query に対してGETリクエストを送る
+
+## AllegroGraph
+
+AllegroGraph はFranz社の開発したマルチモデルデータベースであり、ドキュメントデータとトリプルデータの両方をサポートしている。ライセンスとしてはFree,Developer, Enterpriseの三種類が存在する。実装言語はJava, Python, Common Lispである。
+
+AllegroGraph Free Edition の7.0.0（https://franz.com/agraph/downloads/）に関して、弊社内Linuxサーバへのインストールを行い、インストール方法、データセットのロード方法、クエリの発行方法をdocs/md/allegrograph.mdに記載しました。
+
+6月に弊社Linuxサーバへインストールを行ったAllegroGraph 7.0.0 に関して、データのロード時間を計測いたしました。ただし、フリー版のライセンスでは５００万トリプル以上のデータをロードすることができず、対象データ全体を扱えなかったため、参考情報として行数を先頭から５００万行分に限定したファイルを使用してロード時間を計測させていただきました。
+
+貴研究所担当者様より頂いたAllegroGraph Enterprise Editionのライセンスを利用し、弊社でEnterprise Editionを用いたロード時間の測定を行いました。この際、AllegroGraph開発者より入力ファイルの形式がturtleファイルかntriplesファイルかでデータのロードの並列性能に差があるという連絡を受けたため、入力ファイルをturtleからntriplesに変換したものも用意し、ntriplesでのみ並列化の効果があることを確認しました。
+
+**ウェブサイト**
+
+[https://allegrograph.com/products/allegrograph/](https://allegrograph.com/products/allegrograph/)
+
+**Quick Start**
+
+[https://franz.com/agraph/support/documentation/current/agraph-quick-start.html](https://franz.com/agraph/support/documentation/current/agraph-quick-start.html)
+
+**本記事の対象バージョン**
+
+7.0.0
+
+**ライセンス**
+
+Free, Developer, Enterpriseの3形態あり。Free だと 5000,000 トリプルと3サーバまでの制限あり(https://allegrograph.com/allegrograph-editions/)
+
+**Installation**
+
+- 以下のURLに名前とメールアドレスを入力して、tarファイルをダウンロード
+
+https://franz.com/franz/agraph/ftp/pri/acl/ag/ag7.0.0/linuxamd64.64/agraph-7.0.0-linuxamd64.64.tar.gz.lhtml?l=agfree
+
+- tar ファイルを解凍後、解凍したフォルダに移動し、インストールしたいディレクトリを指定してインストール
+
+- インストールの際、いくつか質問されるので答えていく。ユーザ名とパスワード以外はデフォルトで良さそう。
+- ユーザ名とパスワードに関しては、後でデータセットをロードする時に必要になる。
+- ユーザはデフォルトだとagraphになるが、シェルのユーザ名と同じにしておくと良い。
+- インストールしたディレクトリに移動後、以下のコマンドでサーバを起動
+
+- ブラウザで、`http://127.0.0.1:10035` にアクセスする。
+- ユーザ名とパスワードを入力して、サインインする。
+- リポジトリを好きな名前で作成する。
+- コマンドラインに戻り、以下のコマンドでロードを行う。`repository_name`と`path/to/dataset`は適宜読み替える。（ブラウザ上のimport RDFからロードすることも可能）
+
+- グラフ名を指定したい場合は、 -g オプションを使用する
+
+- ロード完了後、ブラウザ上でqueries のタブを選択し、クエリを入力して実行する。
+- Web APIからSPARQLを実行したい場合は、 http://localhost:10035/repositories/<リポジトリ名> に対してPOSTで実行する（queryパラメータにクエリの内容を含める）。GETで送るとエラーになるので注意。
+- 実行中のサーバを止めたい場合は、以下のコマンドを実行する。
+
+## Blazegraph
+
+BlazegraphはSYSTAP社が開発したオープンソースのトリプルストアであり、WikidataのSPARQLエンドポイントとして採用されている。実装言語はJavaであり、SPARQLに加えてGremlin APIもサポートしている。
+
+BlazeGraph 2.1.6に関して、弊社内Linuxサーバへのインストールを行い、インストール方法、データセットのロード方法、クエリの発行方法をdocs/md/blazegraph.mdに記載しました。また、データのロード時間の計測を行いました。
+
+BlazeGraph 2.1.6に関して、弊社内Linuxサーバへのインストールを行い、インストール方法、データセットのロード方法、クエリの発行方法をdocs/md/blazegraph.mdに記載しました。また、データのロード時間の計測を行いました。
+
+**ウェブサイト**
+
+[https://blazegraph.com/](https://blazegraph.com/)
+
+**Quick start**
+
+[https://github.com/blazegraph/database/wiki/Quick_Start](https://github.com/blazegraph/database/wiki/Quick_Start)
+
+本記事の対象バージョン：2.1.6 (2020/02/04リリース)
+
+**ライセンス**
+
+オープンソース (GPL2.0ライセンス)
+
+**その他必要条件**
+
+Java 9以上
+
+### Installation
+
+- Blazegraph のリポジトリから最新リリースのjarファイルをダウンロードする(https://github.com/blazegraph/database/releases)。
+- 以下は wget でダウンロードする例。
+
+- ダウンロードされたjarファイルを、以下のコマンドで実行する
+- 実行するとWebサーバが起動するので、http://localhost:9999/ でアクセスできる
+- `Go to http://<自分のサーバのIP>/blazegraph/` のような表示も出るが、こちらでもアクセス可能
+
+- データをロードするにはブラウザ内で、Updateタブを選択して以下のようなコマンドを入れて下の方のUpdateボタンをクリックする。
+
+- 名前付きグラフにする場合は、以下のようにINTO GRAPH <グラフのURL>をつける
+
+- 実行すると、一番下に小さく`Running update...`と表示されるので完了するまで待つ。
+- クエリを実行する場合は、Queryタブに移動してクエリを入力後、Executeボタンをクリックして実行できる。
+- Web APIから実行したい場合は、http://localhost:9999/sparql に対してGETメソッドでリクエストを送ればよい。
+
+## Apache Jena Fuseki
+
+Apache Jena Fuseki はApacheソフトウェア財団のコミュニティによって開発されたトリプルストアである。より正確には、Apache Jenaがトリプルストアとしての機能の核となる部分であり、Fusekiはhttpのインターフェース部分を指す。実装言語はJavaであり、単独のWebサーバとしても実行できるほか、TomcatなどのServletとしても使用することができる。オープンソースであり、ライセンスはApache ライセンスを採用している。
+
+Apache Jena Fuseki 3.16.0に関して、弊社内Linuxサーバへのインストールを行い、インストール方法、データセットのロード方法、クエリの発行方法をdocs/md/fuseki.mdに記載しました。ロード時間に関しては、ブラウザ経由でのアップロードに関しては実験いたしましたが、他のトリプルストアに対しての実験の公平性のためコマンドラインからのロードを追って調査する予定です。
+
+先月に弊社Linuxサーバへインストールを行ったApache Jena Fuseki 3.16.0に関して、コマンドライン経由でのデータのロードを行う方法をドキュメントに追記した上で、ロード時間の計測を行いました。
+
+**ウェブサイト**
+
+[https://jena.apache.org/documentation/fuseki2/](https://jena.apache.org/documentation/fuseki2/)
+
+**クイックスタート**
+
+[https://jena.apache.org/documentation/fuseki2/fuseki-quick-start.html](https://jena.apache.org/documentation/fuseki2/fuseki-quick-start.html)
+
+**本記事の対象バージョン**
+
+3.16.0 (2020/07/09リリース)
+
+**ライセンスなど**
+
+- オープンソース（Apache 2.0 ライセンス）
+
+**必要なもの**
+
+- Java と Tomcat のインストール
+
+### Installation
+
+- https://jena.apache.org/download/ からFusekiを探してダウンロード
+- 例えば、wget で 3.16.0 をダウンロードする場合、以下のようにする
+
+- 解凍したフォルダ内で、以下のコマンドを実行するとサーバが立ち上がるので、Webブラウザ上で`http://localhost:3030`からアクセスできるようになる。
+
+- デフォルトではlocalhost 以外からのアクセスが一部禁止されている（トップページは表示されるが、データセットのロードができない）ため、ホストの外からアクセスしたい場合は `./run/shiro.ini` の以下の行をコメントアウトする。
+
+- データセットをロードするには、ブラウザからアクセスしたあと、manage datasetsメニューのadd new datasetタブから好きな名前とDataset typeを選んでDatasetを作成する。その後、datasetメニューに移動してupload filesタブからファイルをアップロードできる。
+- クエリの実行はdataset のメニューから、データセットごとに実行できる。
+- Web API越しに実行する場合は、http://localhost:3030/<データセット名>/query にGETリクエストを送ると実行できる
+
+**Tomcatを使う場合**
+
+- ダウンロードしたtarファイルを解凍後、中に入っているfuseki.warをTomcatのwebapps ディレクトリにコピーする
+- 例えば、Tomcatのインストールディレクトリが`/opt/tomcat/` なら
+
+- fusekiの実行に/etc/fuseki が必要らしいので、ディレクトリを作成してからtomcatのユーザに権限を付与する
+
+- これで、ブラウザから http://localhost:8080/fuseki でアクセスできるようになる。
+- デフォルトではlocalhost 以外からのアクセスが一部禁止されている（トップページは表示されるが、データセットのロードができない）ため、ホストの外からアクセスしたい場合は `/ets/fuseki/shiro.ini` の以下の行をコメントアウトする。
+
+**コマンドラインからデータのロードを実行する場合**
+
+- tdbloaderを含んだapache-jenaのパッケージをダウンロードする
+
+- zipファイルの展開後、./bin/tdb2.tdbloaderを使ってロードする。
+- 名前付きグラフとしてロードする場合は、tdb2.tdbloader 実行時に--graph=グラフのURL のようにオプションを追加する
+
+- ロードしたデータをfusekiサーバから参照したい場合は、ブラウザ上でmanage datasets → add new dataset から好きな名前で（ここではsample_datasetとする）データセットを作る。データセットタイプはPersistent（TDB2）にする。
+- 新しいデータセットを作成後、以下のコマンドでデータセットのディレクトリに先ほどtdb2.tdbloaderで作成したファイルを移動する
+
+- 一度fuseki-serverのプロセスを再起動すると、データセットがロードされた状態になる
+
+## RDF4j
+
+RDF4jはEclipse財団の支援するコミュニティによって開発されたトリプルストアであり、実装言語はJavaである。３条項BSDライセンスを採用したオープンソースプロジェクトである。
+
+RDF4j 3.3.0に関して、弊社内Linuxサーバへのインストールを行い、インストール方法、データセットのロード方法をdocs/md/fuseki.mdに記載しました。ロード時間に関しては、Fusekiと同様ブラウザ経由でのアップロードに関しては実験いたしました。
+
+RDF4J 3.3.0に関してもコマンドライン経由でのデータのロードを試みましたが、実行時間の関係でご指定いただいた約3,000,000トリプルのRDFデータセット全体をロードすることはできなかったため、一旦約100,000トリプルのデータセットに制限してロード時間を計測させていただきました。
+
+**ウェブサイト**
+
+[https://rdf4j.org/](https://rdf4j.org/)
+
+**本記事の対象バージョン**
+
+3.3.0
+
+**ライセンス**
+
+オープンソース（Eclipse Distribution License (EDL), v1.0.）
+
+**必要なもの**
+
+Java と Tomcat のインストール
+
+### Installation
+
+**Webサーバとして実行する場合**
+
+RDFJ Server and Workbenchを使う
+
+- まず、https://rdf4j.org/download/ からRDF4J 3.3.0 SDK (zip) をダウンロード
+- zipファイルを解凍後、war/rdf4j-*.warをTomcatのwebappsディレクトリに以下にコピーする。
+- 例えばTomcat のインストール先が/opt/tomcatなら以下のようなコマンドでコピーできる
+
+- ブラウザから、`http://localhost:8080/rdf4j-workbench`にアクセスするとトップページが表示される。
+- Repositories -> New repository から、IDとタイトルなどを入力してリポジトリを作成する。
+- リポジトリ作成後、Modify->Addからファイルをアップロードしてデータをインポートできる。
+
+**### コンソールからデータをロードする場合**
+
+- zipを解凍したフォルダ内の bin/console.sh を実行するとCUIが起動する。
+- まずサーバに接続
+
+**>**
+
+- 次にリポジトリを作成する。最初にリポジトリのタイプ（native, memoryなど）を選択してから、リポジトリ名など必要事項を入力する。デフォルトで良い場合は何も入力しない。
+
+**>**
+
+- なお、すでにリポジトリを作成済みの場合は`open <repository_name>`のようにすると開くことができる）
+- 最後に、loadコマンドでロードを行う。into以下は省略可能
+
+**>**
+
+Java プログラムから使用することも可能であるが、これについては実施していない。
+
+## rdfstore-js
+
+rdfstore-js 0.9.17（https://github.com/antoniogarrote/rdfstore-js）に関して、弊社内Linuxサーバへのインストールを行い、インストール方法とNode.jsからの実行方法をdocs/md/rdfstore-js.mdに記載しました。
+
+**ウェブサイト**
+
+[https://github.com/antoniogarrote/rdfstore-js](https://github.com/antoniogarrote/rdfstore-js)
+
+**本記事の対象バージョン**
+
+0.9.17 (2016/09/04リリース）
+
+**ライセンス**
+
+オープンソース（MITライセンス）
+
+### Installation
+
+- npmをインストール
+
+- rdfstore-js で作業するためのディレクトリを作って移動
+
+- npm を使って必要なパッケージをインストール
+
+- テキストエディタなどで、以下のようなファイルを作成する。ファイル名は test.js とする。
+- /path/to/dataset.ttl はロードしたいttlファイルのパスに変更する。
+
+**const**
+
+**const**
+
+**function**
+
+**const**
+
+**function**
+
+**function**
+
+- ファイル作成後、以下のコマンドで実行する。
+- 大きめのファイルを扱う場合は、Node.jsのメモリ制限に引っかかることがあるので --max-old-space-size を指定する（単位はMB）
+
+## Neptune
+
+前提として、AWSにアカウントがあることが必須となる.
+
+AWSコンソールから、Neptuneを起動する.
+
+新しいVPNの作成を選べば、簡単に作成できる.
+
+## Neo4j
+
+Neo4jはNeo4j社によって開発されたプロパティグラフを扱うグラフDBであり、クエリ言語としてCypherを利用することができる。ライセンスとしてはオープンソースのCommunity Editionに加え、有償のEnterprise版やクラウド上での利用を想定したAuraが存在する。実装はJava言語によって行われている。
+
+## Neo4j＋Neosemanticsの使い方に関するドキュメントの作成
+
+トリプルストアと異なるデータモデルであるプロパティグラフを扱うデータベースであるNeo4jに対し、RDFデータをプロパティグラフに変換しながらロードを行うプラグインであるNeosemanticsを利用する方法に関し、インデックスの張り方などを含めた調査およびドキュメントの作成を行いました。また、既存の各種トリプルストアに関するドキュメントに関しても、APIを通したクエリの実行方法や、名前付きとしてのロード方法などを追記いたしました。
+
+## Neo4jのクエリ実行時間をCUIから計測する方法に関する記載
+
+Neo4jに対して、curlコマンドを使用してコマンドラインからクエリを実行する方法に関して、docs/md/neo4j.mdに追記させていただきました。
+
+**ウェブサイト**
+
+[https://neo4j.com/](https://neo4j.com/)
+
+**本記事の対象バージョン**
+
+4.1.0 Community Edition
+
+**ライセンスなど**
+
+オープンソース（Community Editionに限る。GPL v3）
+
+**必要なもの**
+
+Java のインストール
+
+**参考**
+
+Manual
+
+https://neo4j.com/docs/operations-manual/current/installation/
+
+### Installation
+
+Ubuntu 18.04の場合
+
+**参考**
+
+Manual
+
+[https://neo4j.com/docs/operations-manual/current/installation/linux/debian/](https://neo4j.com/docs/operations-manual/current/installation/linux/debian/)
+
+- Neo4jのパッケージリポジトリを追加する
+
+- aptでインストール
+
+- Neo4jをサービスとして起動する
+
+- 停止する場合は以下のコマンド
+
+- localhost:7474にアクセスするとNeo4j Browserが立ち上がるはず。
+- デフォルトだとユーザ名とパスワードは両方ともneo4jになっているので、これでログイン（ログイン後にパスワードの変更を求められる）
+
+**NeoSemanticsを使用する場合**
+
+参考：Tutorial [https://neo4j.com/labs/neosemantics/tutorial/](https://neo4j.com/labs/neosemantics/tutorial/)
+
+参考：Configuration [https://neo4j.com/docs/labs/nsmntx/current/config/](https://neo4j.com/docs/labs/nsmntx/current/config/)
+
+- NeoSemanticsはRDFデータを変換しつつNeo4jにインポートできるようになるNeo4jプラグイン
+- まずNeoSemanticsのjarをダウンロード
+
+- これをNeo4jのpluginsフォルダに移動
+
+- Neo4jの再起動
+
+- うまくいっていれば、Neo4j Browser上で`call dbms.procedures()`というコマンドの実行結果の中に、n10sから始まるものが含まれているはず。
+- ロードする前にconfigを初期化しておく必要があるので`n10s.graphconfig.init`を呼び出す。
+
+- また、Resourceのuriにユニーク制約を張っておく。
+
+- ロードする際にはプレフィックスを省略表記にするかなどをオプションで設定できる(参考：[Reference](https://neo4j.com/docs/labs/nsmntx/current/reference/))。
+- 例えば、次のような形で指定可能
+
+- あとは`n10s.rdf.import.fetch`でデータをロードする。リモートのデータをロードする場合はurlの指定をhttp:// から始める。ローカルのデータをロードする場合はfile:// から始めれば良い。以下は/home/user_name/file_name.ntをロードする場合の例。
+
+**curlでクエリを実行する方法**
+
+実行時間を計測したい場合など、ブラウザを経由せず、curl等を用いてコマンドラインからクエリを実行したほうがよい場合がある。
+
+- Neo4j BrowserやNeo4j Consoleを使用する場合、一応クエリごとの実行時間は表示してくれるが、これはあまり信用してはいけないらしい（以下のURLで don't rely on that exact timing と言われている）
+- https://neo4j.com/developer/neo4j-browser/
+- なおEnterprise版だと、`dbms.logs.query.*`のようなオプションが用意されているらしい。
+- コマンドラインのスクリプトから起動する場合など、curlでクエリを実行したい場合にはcurlの`-d, --data`オプションにクエリを指定して、`/db/data/transaction/commit`に対して実行すればよい。
+- 例えば、以下のようなスクリプトを手元に用意する。名前は仮に`curl_cypher.sh`とする。
+
+- また、サンプルのクエリとして以下のようなファイルを、`sample_query.cyp`として保存する。
+
+- その後、`sh ./curl_cypher.sh sample_cypher.cyp`のようにして実行することで、結果がJSON形式で表示される。
+- 実行時間を計測したい場合は、`time sh ./curl_cypher.sh sample_cypher.cyp`のようにすればよい。
+
+### Configuration
+
+**外部から接続したい場合**
+
+以下を行うと、任意のホストからの接続を許可することになるので、セキュリティ上の問題が起きないよう注意すること
+
+/etc/neo4j/neo4j.confを開くと、以下のような記述があるので
+
+**#**
+
+コメントアウトを解除する
+
+Neo4jを再起動する
+
+## Oracle Graph Server and Client (Oracle Labs PGX)
+
+**本記事の対象バージョン**
+
+20.4.0
+
+**ライセンスなど**
+
+OTN license
+
+[https://www.oracle.com/downloads/licenses/standard-license.html](https://www.oracle.com/downloads/licenses/standard-license.html)
+
+**必要なもの**
+
+Java のインストール
+
+### Installation
+
+**Ubuntu 18.04の場合**
+
+- 2021/1 現在、公式に配布されているのは rpm パッケージのみなので、Ubuntuにインストールするためにまず deb パッケージ に変換してからインストールする。
+- 参考：[https://phoenixnap.com/kb/install-rpm-packages-on-ubuntu]
+
+- インストール後、標準では `/opt/oracle/graph/` にインストールされる。とりあえずコマンドライン上で試すのであれば、`bin/opg-jshell` が試しやすい
+
+- `sudo systemctl start pgx` のようにしてサーバプロセスとして起動することもできるが、その場合 `/etc/oracle/graph/server.conf` や `/etc/oracle/graph/pgx.conf` にセキュリティ関係の設定を適切に編集する必要があるほか、Oracle DB などを IdentityProvider として使用する必要があるため割愛。
+- `opg-jshell` 内でPGQLを実行する場合は、例えば以下のようにする
+
+**opg-jshell>**
+
+**opg-jshell>**
+
+また、クエリの実行時間計測は以下のコードで行える。なお、query変数には事前にクエリの文字列を代入しておくものとする。
+
+## ArangoDB
+
+ArangoDB は ArangoDB GmbHが開発するオープンソースのマルチモデルDBであり、キーバリュー型のデータ、ドキュメントデータ、グラフデータを同じDBエンジン上で扱うことを可能とする。クエリ言語はAQL（ArangoDB Query Languade）と呼ばれ、異なる３種のデータモデルに対し、共通の言語でクエリを発行できるようになっている。ライセンスはオープンソースのCommunityに加え、並列実行などの機能を追加したEnterprise、フルマネージド版のOasisが存在している。実装言語としてはC++が用いられている。
+
+# データセット
+
+パフォーマンステスト用のデータセットとして、NCBI taxonomy dataをftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz を用いた。
+
+[https://graphdb.dbcls.jp/benchmark/taxonomy_2019-05-01.ttl](https://graphdb.dbcls.jp/benchmark/taxonomy_2019-05-01.ttl) (1.2GB, 30M triples)
+
+[https://graphdb.dbcls.jp/benchmark/taxonomy_2019-05-01.nt](https://graphdb.dbcls.jp/benchmark/taxonomy_2019-05-01.nt) (3.8GB, 30M triples)
+
+[https://graphdb.dbcls.jp/benchmark/taxonomy_2019-05-01.pg](https://graphdb.dbcls.jp/benchmark/taxonomy_2019-05-01.pg) (935MB, 15M nodes, 20M edges)
+
+[https://graphdb.dbcls.jp/benchmark/taxon_40674.nt](https://graphdb.dbcls.jp/benchmark/taxon_40674.nt) (907KB, 166894 triples)
+
+また、Oracle Labs PGXに同等のデータをロードするため、ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gzを変換するRubyスクリプトtaxdump2pg.rbを作成した。本スクリプトは、https://github.com/dbcls/rdfsummit/blob/master/taxdump2owl/taxdump2owl.rb を元に作成しており、PG tools (https://pg-format.readthedocs.io/en/latest/) で扱うことのできるpgフォーマットでtaxonomyデータを作成する。さらにこのpgフォーマットから。pg2pgxコマンドを使用することで、Oracle Labs PGXにロード可能なデータ形式への変換を行った。
+
+# クエリ
+
+## SPARQLクエリ
+
+count_taxa
+
+PREFIX taxon: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+
+SELECT (COUNT(?taxid) AS ?count)
+
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+
+WHERE {
+
+?taxid a taxon:Taxon .
+
+}
+
+count_classes
+
+SELECT (COUNT(?instance) AS ?count) ?class
+
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+
+WHERE {
+
+?instance a ?class .
+
+}
+
+GROUP BY ?class
+
+ORDER BY DESC(?count)
+
+count_from_graph
+
+count_in_graph
+
+count_in_taxon
+
+PREFIX taxid: <http://identifiers.org/taxonomy/>
+
+SELECT (COUNT(DISTINCT ?taxid) AS ?count)
+
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+
+WHERE {
+
+?taxid rdfs:subClassOf* taxid:9443 .
+
+}
+
+count_in_taxon_label
+
+get_hierarchy
+
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+PREFIX taxid: <http://identifiers.org/taxonomy/>
+
+PREFIX taxon: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+
+SELECT ?order ?order_name ?family ?family_name ?species ?name
+
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+
+WHERE {
+
+?species taxon:rank taxon:Species ;
+
+rdfs:label ?name ;
+
+rdfs:subClassOf+ taxid:40674 ;
+
+rdfs:subClassOf+ ?family ;
+
+rdfs:subClassOf+ ?order .
+
+?family taxon:rank taxon:Family ;
+
+rdfs:label ?family_name .
+
+?order taxon:rank taxon:Order ;
+
+rdfs:label ?order_name .
+
+}
+
+ORDER BY ?order_name ?family_name ?name
+
+filter_regex
+
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT *
+
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+
+WHERE {
+
+?taxid rdfs:label ?label .
+
+FILTER regex(?label, "Homo ")
+
+}
+
+common_ancestor
+
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+PREFIX taxid: <http://identifiers.org/taxonomy/>
+
+SELECT ?ancestor ?p ?o
+
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+
+WHERE {
+
+?ancestor ?p ?o .
+
+?tax1 rdfs:subClassOf ?ancestor .
+
+?tax2 rdfs:subClassOf ?ancestor .
+
+taxid:9606 rdfs:subClassOf* ?tax1 .
+
+taxid:511145 rdfs:subClassOf* ?tax2 .
+
+FILTER(?tax1 != ?tax2)
+
+}
+
+taxon_info
+
+taxon_info_ordered
+
+## 
+
+## Cypherクエリ
+
+count_taxa
+
+count_classes
+
+count_from_graph および count_in_graph
+（Neo4j + Neosemanticsでは名前付きグラフとしてロードされないため、今回は同一クエリとして計測）
+
+count_in_taxon
+
+MATCH (tax:Resource)-[r:subClassOf*..]->(n2:Resource
+{uri:'http://identifiers.org/taxonomy/9443'})
+
+RETURN DISTINCT COUNT(tax)
+
+count_in_taxon_label
+
+MATCH (taxid:Resource)-[rdfs:subClassOf*..]->(:Resource {label:'Primates'})
+
+RETURN COUNT(DISTINCT(taxid))
+
+get_hierarchy
+
+MATCH
+
+(species:Resource)-[:subClassOf*1..]->(:Resource
+{uri:'http://identifiers.org/taxonomy/40674'}),
+
+(species:Resource)-[:rank]->(taxon:Resource
+{uri:'http://ddbj.nig.ac.jp/ontologies/taxonomy/Species'})
+
+MATCH
+
+(species)-[:subClassOf*1..]->(family:Resource)-[:rank]->
+
+(:Resource {uri:'http://ddbj.nig.ac.jp/ontologies/taxonomy/Family'})
+
+MATCH
+
+(species)-[:subClassOf*1..]->(order:Resource)-[:rank]->(:Resource
+{uri:'http://ddbj.nig.ac.jp/ontologies/taxonomy/Order'})
+
+RETURN
+
+order.uri, order.label, family.uri, family.label, species.uri, species.label
+
+filter_regex
+
+MATCH (taxid:Resource)
+
+WHERE taxid.label =~ '.*Homo .*'
+
+RETURN taxid
+
+common_ancestor
+
+MATCH (tax9606:Resource {uri:'http://identifiers.org/taxonomy/9606'}),
+
+(tax9606)-[:subClassOf*1..]->(ancestor:Resource)
+
+MATCH
+
+(tax511145:Resource {uri:'http://identifiers.org/taxonomy/511145'}),
+
+(ancestor)<-[:subClassOf*1..]-(tax511145)
+
+MATCH
+
+(ancestor:Resource)-[p]->(o)
+
+RETURN ancestor, p, o
+
+taxon_info
+
+MATCH (n:Resource
+{uri:'http://identifiers.org/taxonomy/9606'})-[r]->(n2:Resource)
+
+RETURN r, n2
+
+taxon_info_ordered
+
+MATCH (n:Resource
+{uri:'http://identifiers.org/taxonomy/9606'})-[r]->(n2:Resource)
+
+RETURN r, n2 ORDER BY r.uri, n2.uri
+
+## PGQLクエリ
+
+Oracle Labs PGXで性能測定を行うために記述したクエリ群を以下に示す。
+
+common_ancestor.pgql
+
+count_classes.pgql
+
+count_in_graph.pgql
+
+count_in_taxon_label.pgql
+
+count_in_taxon.pgql
+
+count_taxa.pgql
+
+filter_regex.pgql
+
+get_hierarchy.pgql
+
+taxon_info_ordered.pgql
+
+taxon_info.pgql
+
+# 計測結果
+
+1. taxonomy_2019-05-01.nt での計測結果
+
+各種データベースに taxonomy_2019-05-01.nt データを用いてロード速度を計測したところ、以下の通りになった。なお、トリプルストアとの比較のために Neo4j＋Neosemantics 、およびOracle Labs PGXを用いたものに関しても計測を行った。当該データに関し、表や図の中では単に
+
+「Neo4j」「Oracle PGX」と表記する（Oracle PGXに関しては、クエリの実行時間のみ調査を行った）。
+
+[Untitled](https://www.notion.so/ec61b83511dc41cdbd777f8d8567bd57)
+
+さらに各種データベースに関して、クエリセットの実行時間の調査を行った。調査対象は上記11クエリになっており、各クエリに関して３回ずつ実行した上で、平均を調べた。トリプルストア間の実行時間の比較を下図に示す。なお、トリプルストアによってはクエリの結果がキャッシュされる場合があるためか、初回と２回目以降の時間が大きく変わるものがあったため、初回のみの時間と平均の時間の両方を記載する。縦軸の単位はミリ秒である。
+
+![%E3%83%88%E3%83%AA%E3%83%95%E3%82%9A%E3%83%AB%E3%82%B9%E3%83%88%E3%82%A2%E5%8F%8A%E3%81%B2%2064263/image3.png](%E3%83%88%E3%83%AA%E3%83%95%E3%82%9A%E3%83%AB%E3%82%B9%E3%83%88%E3%82%A2%E5%8F%8A%E3%81%B2%2064263/image3.png)
+
+![%E3%83%88%E3%83%AA%E3%83%95%E3%82%9A%E3%83%AB%E3%82%B9%E3%83%88%E3%82%A2%E5%8F%8A%E3%81%B2%2064263/image2.png](%E3%83%88%E3%83%AA%E3%83%95%E3%82%9A%E3%83%AB%E3%82%B9%E3%83%88%E3%82%A2%E5%8F%8A%E3%81%B2%2064263/image2.png)
+
+## taxon_40674.ntを用いた計測結果
+
+小規模データとしてtaxon_40674.ntを利用した場合の各種トリプルストアのロード速度とクエリの実行時間の調査を行った。計測は３回行い、初回のみの値と平均の値をグラフとした。縦軸の単位は秒になっている。
+
+![%E3%83%88%E3%83%AA%E3%83%95%E3%82%9A%E3%83%AB%E3%82%B9%E3%83%88%E3%82%A2%E5%8F%8A%E3%81%B2%2064263/image1.png](%E3%83%88%E3%83%AA%E3%83%95%E3%82%9A%E3%83%AB%E3%82%B9%E3%83%88%E3%82%A2%E5%8F%8A%E3%81%B2%2064263/image1.png)
+
+![%E3%83%88%E3%83%AA%E3%83%95%E3%82%9A%E3%83%AB%E3%82%B9%E3%83%88%E3%82%A2%E5%8F%8A%E3%81%B2%2064263/image4.png](%E3%83%88%E3%83%AA%E3%83%95%E3%82%9A%E3%83%AB%E3%82%B9%E3%83%88%E3%82%A2%E5%8F%8A%E3%81%B2%2064263/image4.png)
+
+# 考察と課題
+
+今回は、特定のLinuxマシンの上で、パフォーマンスの測定を行った。しかし、再現性を確保する観点から、任意のマシンの上で同じ実験を遂行することができることが望ましい。そこで、各データベースエンジンのインストールプロセスをDocker化したうえで、パフォーマンス測定まで行うことができるようにする。
+
+また、今回は特定のデータセットのみを用いて測定を行った。一般的なRDFに適用できる情報ではあるが、どこまでデータサイズに関して、スケールするかについては未検討である。そこで、特にパフォーマンスの良かったエンジンについては、大メモリマシンで、データセットをスケールさせてパフォーマンスを調査することが必要になる。
+
+## 各種トリプルストアおよびプロパティグラフDBのDocker化
+
+Docker環境に対して、トリプルストアやプロパティグラフDBを容易にデプロイできることを目的とし、以下のソフトウェアのDockerfile、および必要なファイル群を作成の上、graphdbsリポジトリのdocker_filesディレクトリに配備しました。
+
+- Virtuoso 7.2.5.2
+- Neo4j 4.2.3 Community Edition
+- GraphDB 9.6.0 Free Edition
+- Blazegraph 2.1.5
