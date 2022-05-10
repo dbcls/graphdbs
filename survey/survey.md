@@ -62,28 +62,47 @@ cd /path/to/install/directory/var/lib/virtuoso/db/
 ```
 http://localhost:8890/sparql でSPARQLエンドポイントが起動していることを確認する。
 
-**ロード**
-
 **データの取得**
 ```
 curl -LOR http://example.com/example.ttl
 ```
 
-**SQL>**
+**ロード**
+```
+isql 1111 dba dba
+SQL> DB.DBA.TTLP_MT(file_to_string_output('example.ttl'), '', 'http://example.com/example.ttl', 0);
+```
 
 ### Configuration
 
 デフォルトから設定を変更したい場合
 
 - 設定ファイルの編集
+```
+vi /path/to/install/directory/var/lib/virtuoso/db/virtuoso.ini
+```
 
 問い合わせによって、virtuoso-temp.dbのサイズが肥大化していくことがある。その場合、virtuoso.iniの中でTempAllocationPct(virtuoso.dbに対して、何％まで許容するか)を設定する。[参照](http://docs.openlinksw.com/virtuoso/dbadm/)
+```
+TempAllocationPct        = 100
+```
 
 ### Troubleshooting
 
 ./configure で OpenSSLに関するエラーが出ることがある。この場合は、libssl1.0-dev をインストールする。
+```
+sudo apt install -y libssl1.0-dev
+```
 
 Ubuntu 20.04 LTSでは、パッケージ libssl1.0-dev が見つからないことがある。この場合は、/etc/apt/sources.list の末尾に以下を追加して apt update を行う。
+```
+deb http://security.ubuntu.com/ubuntu bionic-security main
+```
+
+```
+sudo apt update
+sudo apt install -y libssl1.0-dev
+```
 
 ## GraphDB
 
@@ -113,8 +132,14 @@ http://graphdb.ontotext.com/documentation/free/release-notes.html
 - ユーザ登録が完了すると、登録したメールアドレスにインストール用バイナリのダウンロード用リンクが送られてくる
 - Download as a stand-alone serverのリンクをクリックしてダウンロード（Desktop installationではない方）
 - ダウンロード後、zipを解凍してそのフォルダへ移動
+```
+$ cd path/to/unzipped/folder
+```
 
 - GraphDBをワークベンチモードで起動
+```
+$ sudo ./bin/graphdb
+```
 
 - ブラウザで localhost:7200 にアクセスすると、GraphDBのホーム画面が表示される
 - 新しいリポジトリを作るため、左のメニューから、Setup->Repositories->Create new repositoryと選択する
@@ -122,7 +147,9 @@ http://graphdb.ontotext.com/documentation/free/release-notes.html
 - ターミナル上で、以下のコマンドを実行して ttl データをインポート
 - なお、loadrdfコマンドではインポートするグラフに名前をつけることができない模様。
 - このため、グラフ名をつける必要がある場合はブラウザ上のhttp://localhost:7200/import から行う必要あり？
-
+```
+$ sudo ./bin/loadrdf -f -i <repository_name> -m parallel <path to dataset>
+```
 - インポートが完了したら、ブラウザに戻り左のメニューからSPARQLをクリックする
 - リポジトリのリストが表示されるのでリポジトリを選択する
 - SPARQLのエディタが表示されるのでSPARQLを入力後、RUNで実行できる
@@ -153,22 +180,39 @@ Linuxサーバへインストールを行ったStardog 7.3.2に関して、デ�
 ### Installation
 
 Stardogの最新版をダウンロードして解凍して移動
+```
+wget https://downloads.stardog.com/stardog/stardog-latest.zip
+unzip stardog-latest.zip
+cd stardog
+```
 
 Stardogのサーバを起動。
+```
+./bin/stardog-admin server start
 
-- 初回起動時にはライセンスに関する質問をされるので、利用規約への同意やメールアドレス、
+```
 
-Stardogから送られる情報をメールで受け取りたいかなどを聞かれるので、答える。
+- 初回起動時にはライセンスに関する質問をされるので、利用規約への同意やメールアドレス、Stardogから送られる情報をメールで受け取りたいかなどを聞かれるので、答える。
 
 - この時点で5820番ポートでサーバが起動するが、このままの状態ではWebブラウザからアクセスしても何も表示されない。
 - GUIが必要な場合は、別途Stardog Studioをインストールする必要があるらしい https://www.stardog.com/studio/
 - なおデフォルトのユーザ名/パスワードはadmin/admin
 - コマンドライン上でクエリを実行できればいい場合は、以下を参照のこと。
 - データをロードしてDBを作るため、以下のようなコマンドを使用する。
+```
+./bin/stardog-admin db create -n myDB /path/to/some/data.ttl
+```
 
 - 名前付きグラフにロードしたい場合は、入力するRDFファイルの名前の前に@<グラフのURL>のようにする。以下はhttp://examples.org の例
+```
+./bin/stardog-admin db create -n myDB @http://examples.org /path/to/some/data.ttl
+```
 
 - クエリはコマンドライン上から以下のように実行できる
+```
+./bin/stardog query myDB "SELECT DISTINCT ?s WHERE { ?s ?p ?o } LIMIT 10"
+
+```
 
 - Web API越しにSPARQLを実行したい場合は http://localhost:5820/<DB名>/query に対してGETリクエストを送る
 
@@ -205,22 +249,34 @@ Free, Developer, Enterpriseの3形態あり。Free だと 5000,000 トリプル�
 https://franz.com/franz/agraph/ftp/pri/acl/ag/ag7.0.0/linuxamd64.64/agraph-7.0.0-linuxamd64.64.tar.gz.lhtml?l=agfree
 
 - tar ファイルを解凍後、解凍したフォルダに移動し、インストールしたいディレクトリを指定してインストール
-
+```
+cd agraph-7.0.0
+sudo ./install-agraph /path/to/install/directory
+```
 - インストールの際、いくつか質問されるので答えていく。ユーザ名とパスワード以外はデフォルトで良さそう。
 - ユーザ名とパスワードに関しては、後でデータセットをロードする時に必要になる。
 - ユーザはデフォルトだとagraphになるが、シェルのユーザ名と同じにしておくと良い。
 - インストールしたディレクトリに移動後、以下のコマンドでサーバを起動
-
+```
+sudo ./bin/agraph-control --config ./lib/agraph.cfg start
+```
 - ブラウザで、`http://127.0.0.1:10035` にアクセスする。
 - ユーザ名とパスワードを入力して、サインインする。
 - リポジトリを好きな名前で作成する。
 - コマンドラインに戻り、以下のコマンドでロードを行う。`repository_name`と`path/to/dataset`は適宜読み替える。（ブラウザ上のimport RDFからロードすることも可能）
-
+```
+./bin/agtool load repository_name path/to/dataset
+```
 - グラフ名を指定したい場合は、 -g オプションを使用する
-
+```
+./bin/agtool load repository_name -g http://example.org path/to/dataset
+```
 - ロード完了後、ブラウザ上でqueries のタブを選択し、クエリを入力して実行する。
 - Web APIからSPARQLを実行したい場合は、 http://localhost:10035/repositories/<リポジトリ名> に対してPOSTで実行する（queryパラメータにクエリの内容を含める）。GETで送るとエラーになるので注意。
 - 実行中のサーバを止めたい場合は、以下のコマンドを実行する。
+```
+sudo ./bin/agraph-control --config ./lib/agraph.cfg stop
+```
 
 ## Blazegraph
 
@@ -252,15 +308,23 @@ Java 9以上
 
 - Blazegraph のリポジトリから最新リリースのjarファイルをダウンロードする(https://github.com/blazegraph/database/releases)。
 - 以下は wget でダウンロードする例。
-
+```
+wget https://github.com/blazegraph/database/releases/download/BLAZEGRAPH_2_1_6_RC/blazegraph.jar
+```
 - ダウンロードされたjarファイルを、以下のコマンドで実行する
 - 実行するとWebサーバが起動するので、http://localhost:9999/ でアクセスできる
 - `Go to http://<自分のサーバのIP>/blazegraph/` のような表示も出るが、こちらでもアクセス可能
-
+```
+java -server -Xmx4g -jar <downloaded_dir>/blazegraph.jar
+```
 - データをロードするにはブラウザ内で、Updateタブを選択して以下のようなコマンドを入れて下の方のUpdateボタンをクリックする。
-
+```
+load <file:///path/to/your.ttl>
+```
 - 名前付きグラフにする場合は、以下のようにINTO GRAPH <グラフのURL>をつける
-
+```
+load <file:///path/to/your.ttl> INTO GRAPH  <http://examples.org>
+```
 - 実行すると、一番下に小さく`Running update...`と表示されるので完了するまで待つ。
 - クエリを実行する場合は、Queryタブに移動してクエリを入力後、Executeボタンをクリックして実行できる。
 - Web APIから実行したい場合は、http://localhost:9999/sparql に対してGETメソッドでリクエストを送ればよい。
@@ -297,11 +361,17 @@ Apache Jena Fuseki 3.16.0に関して、弊社内Linuxサーバへのインス�
 
 - https://jena.apache.org/download/ からFusekiを探してダウンロード
 - 例えば、wget で 3.16.0 をダウンロードする場合、以下のようにする
-
+```
+wget https://ftp.yz.yamagata-u.ac.jp/pub/network/apache/jena/binaries/apache-jena-fuseki-3.16.0.tar.gz
+```
 - 解凍したフォルダ内で、以下のコマンドを実行するとサーバが立ち上がるので、Webブラウザ上で`http://localhost:3030`からアクセスできるようになる。
-
+```
+./fuseki-server
+```
 - デフォルトではlocalhost 以外からのアクセスが一部禁止されている（トップページは表示されるが、データセットのロードができない）ため、ホストの外からアクセスしたい場合は `./run/shiro.ini` の以下の行をコメントアウトする。
-
+```
+/$/** = localhostFilter
+```
 - データセットをロードするには、ブラウザからアクセスしたあと、manage datasetsメニューのadd new datasetタブから好きな名前とDataset typeを選んでDatasetを作成する。その後、datasetメニューに移動してupload filesタブからファイルをアップロードできる。
 - クエリの実行はdataset のメニューから、データセットごとに実行できる。
 - Web API越しに実行する場合は、http://localhost:3030/<データセット名>/query にGETリクエストを送ると実行できる
@@ -310,22 +380,36 @@ Apache Jena Fuseki 3.16.0に関して、弊社内Linuxサーバへのインス�
 
 - ダウンロードしたtarファイルを解凍後、中に入っているfuseki.warをTomcatのwebapps ディレクトリにコピーする
 - 例えば、Tomcatのインストールディレクトリが`/opt/tomcat/` なら
-
+```
+cp ./fuseki.war /opt/tomcat/webapps/
+```
 - fusekiの実行に/etc/fuseki が必要らしいので、ディレクトリを作成してからtomcatのユーザに権限を付与する
-
+```
+sudo mkdir /etc/fuseki && sudo chgrp tomcat /etc/fuseki && sudo chown tomcat /etc/fuseki
+```
 - これで、ブラウザから http://localhost:8080/fuseki でアクセスできるようになる。
 - デフォルトではlocalhost 以外からのアクセスが一部禁止されている（トップページは表示されるが、データセットのロードができない）ため、ホストの外からアクセスしたい場合は `/ets/fuseki/shiro.ini` の以下の行をコメントアウトする。
-
+```
+/$/** = localhostFilter
+```
 **コマンドラインからデータのロードを実行する場合**
 
 - tdbloaderを含んだapache-jenaのパッケージをダウンロードする
-
+```
+wget [https://apache.cs.utah.edu/jena/binaries/apache-jena-3.16.0.zip](https://apache.cs.utah.edu/jena/binaries/apache-jena-3.16.0.zip)
+```
 - zipファイルの展開後、./bin/tdb2.tdbloaderを使ってロードする。
 - 名前付きグラフとしてロードする場合は、tdb2.tdbloader 実行時に--graph=グラフのURL のようにオプションを追加する
-
+```
+cd <apache-jena*.zipを解凍した場所>
+mkdir tmp # いったんtmpにロード
+./bin/tdb2.tdbloader --loc ./tmp <RDFデータファイルのパス>
+```
 - ロードしたデータをfusekiサーバから参照したい場合は、ブラウザ上でmanage datasets → add new dataset から好きな名前で（ここではsample_datasetとする）データセットを作る。データセットタイプはPersistent（TDB2）にする。
 - 新しいデータセットを作成後、以下のコマンドでデータセットのディレクトリに先ほどtdb2.tdbloaderで作成したファイルを移動する
-
+```
+mv ./tmp/* <fusekiのインストール場所>/run/databases/sample_dataset/
+```
 - 一度fuseki-serverのプロセスを再起動すると、データセットがロードされた状態になる
 
 ## RDF4j
@@ -365,22 +449,38 @@ RDFJ Server and Workbenchを使う
 - ブラウザから、`http://localhost:8080/rdf4j-workbench`にアクセスするとトップページが表示される。
 - Repositories -> New repository から、IDとタイトルなどを入力してリポジトリを作成する。
 - リポジトリ作成後、Modify->Addからファイルをアップロードしてデータをインポートできる。
-
+```
+cp rdf4j-*.war /opt/tomcat/webapps/
+```
 **### コンソールからデータをロードする場合**
 
 - zipを解凍したフォルダ内の bin/console.sh を実行するとCUIが起動する。
 - まずサーバに接続
-
-**>**
+```
+> connect http://localhost:8085/rdf4j-server
+Disconnecting from default data directory
+Connected to http://localhost:8085/rdf4j-server
+```
 
 - 次にリポジトリを作成する。最初にリポジトリのタイプ（native, memoryなど）を選択してから、リポジトリ名など必要事項を入力する。デフォルトで良い場合は何も入力しない。
-
-**>**
+```
+> create native
+Please specify values for the following variables:
+Repository ID [native]: 
+Repository title [Native store]: 
+Query Iteration Cache size [10000]: 
+Triple indexes [spoc,posc]: 
+EvaluationStrategyFactory [org.eclipse.rdf4j.query.algebra.evaluation.impl.StrictEvaluationStrategyFactory]: 
+Repository created
+```
 
 - なお、すでにリポジトリを作成済みの場合は`open <repository_name>`のようにすると開くことができる）
 - 最後に、loadコマンドでロードを行う。into以下は省略可能
-
-**>**
+```
+> load <input_path> into <name_of_graph>
+Loading data...
+Data has been added to the repository (2565 ms)
+```
 
 Java プログラムから使用することも可能であるが、これについては実施していない。
 
@@ -403,28 +503,42 @@ rdfstore-js 0.9.17（https://github.com/antoniogarrote/rdfstore-js）に関し�
 ### Installation
 
 - npmをインストール
-
+```
+$ sudo apt install npm
+```
 - rdfstore-js で作業するためのディレクトリを作って移動
-
+```
+$ mkdir ./rdfstore-js
+$ cd rdfstore-js
+```
 - npm を使って必要なパッケージをインストール
-
+```
+$ npm install nodejs
+$ npm install rdfstore
+```
 - テキストエディタなどで、以下のようなファイルを作成する。ファイル名は test.js とする。
 - /path/to/dataset.ttl はロードしたいttlファイルのパスに変更する。
+```
+const rdfstore = require('rdfstore');
+const fs = require('fs');
 
-**const**
-
-**const**
-
-**function**
-
-**const**
-
-**function**
-
-**function**
+rdfstore.create(function(err, store){
+  const rdf = fs.createReadStream('/path/to/dataset.ttl');
+  store.load('text/turtle', rdf, function(s,d){
+    console.log(s,d);
+    store.execute("SELECT * WHERE { ?s ?p ?o } LIMIT 10",
+      function(success, results){
+        console.log(success, results);
+      });
+  });
+});
+```
 
 - ファイル作成後、以下のコマンドで実行する。
-- 大きめのファイルを扱う場合は、Node.jsのメモリ制限に引っかかることがあるので --max-old-space-size を指定する（単位はMB）
+- 大きめのファイルを扱う場合は、Node.jsのメモリ制限に引っかかることがあるので `--max-old-space-size` を指定する（単位はMB）
+```
+$ node --max-old-space-size=4096 test.js
+```
 
 ## Neptune
 
@@ -479,13 +593,23 @@ Manual
 [https://neo4j.com/docs/operations-manual/current/installation/linux/debian/](https://neo4j.com/docs/operations-manual/current/installation/linux/debian/)
 
 - Neo4jのパッケージリポジトリを追加する
-
+```
+wget -O - https://debian.neo4j.com/neotechnology.gpg.key | sudo apt-key add -
+echo 'deb https://debian.neo4j.com stable latest' | sudo tee -a /etc/apt/sources.list.d/neo4j.list
+sudo apt-get update
+```
 - aptでインストール
-
+```
+sudo apt-get install neo4j
+```
 - Neo4jをサービスとして起動する
-
+```
+sudo service neo4j start
+```
 - 停止する場合は以下のコマンド
-
+```
+sudo service neo4j stop
+```
 - localhost:7474にアクセスするとNeo4j Browserが立ち上がるはず。
 - デフォルトだとユーザ名とパスワードは両方ともneo4jになっているので、これでログイン（ログイン後にパスワードの変更を求められる）
 
@@ -497,20 +621,41 @@ Manual
 
 - NeoSemanticsはRDFデータを変換しつつNeo4jにインポートできるようになるNeo4jプラグイン
 - まずNeoSemanticsのjarをダウンロード
-
+```
+wget https://github.com/neo4j-labs/neosemantics/releases/download/4.1.0.1/neosemantics-4.1.0.1.jar
+```
 - これをNeo4jのpluginsフォルダに移動
-
+```
+sudo mv neosemantics-4.1.0.1.jar /var/lib/neo4j/plugins/
+```
 - Neo4jの再起動
-
+```
+sudo service neo4j restart
+```
 - うまくいっていれば、Neo4j Browser上で`call dbms.procedures()`というコマンドの実行結果の中に、n10sから始まるものが含まれているはず。
 - ロードする前にconfigを初期化しておく必要があるので`n10s.graphconfig.init`を呼び出す。
-
+```
+CALL n10s.graphconfig.init();
+```
 - また、Resourceのuriにユニーク制約を張っておく。
-
+```
+CREATE CONSTRAINT n10s_unique_uri ON (r:Resource)
+ASSERT r.uri IS UNIQUE
+```
 - ロードする際にはプレフィックスを省略表記にするかなどをオプションで設定できる(参考：[Reference](https://neo4j.com/docs/labs/nsmntx/current/reference/))。
 - 例えば、次のような形で指定可能
-
+```
+CALL n10s.graphconfig.init({
+  handleVocabUris: 'MAP'
+})
+```
 - あとは`n10s.rdf.import.fetch`でデータをロードする。リモートのデータをロードする場合はurlの指定をhttp:// から始める。ローカルのデータをロードする場合はfile:// から始めれば良い。以下は/home/user_name/file_name.ntをロードする場合の例。
+```
+CALL n10s.rdf.import.fetch(
+  'file:///home/user_name/file_name.nt',
+  'Turtle'
+)
+```
 
 **curlでクエリを実行する方法**
 
@@ -521,9 +666,15 @@ Manual
 - なおEnterprise版だと、`dbms.logs.query.*`のようなオプションが用意されているらしい。
 - コマンドラインのスクリプトから起動する場合など、curlでクエリを実行したい場合にはcurlの`-d, --data`オプションにクエリを指定して、`/db/data/transaction/commit`に対して実行すればよい。
 - 例えば、以下のようなスクリプトを手元に用意する。名前は仮に`curl_cypher.sh`とする。
-
+```
+query=$(cat $1 | tr -d '\n')
+param="{ \"statements\": [ {\"statement\": \"$query\"}]}"
+curl -u neo4j:neo4j -H 'Content-type: application/json;charset=utf-8' -d "$param" http://localhost:7474/db/data/transaction/commit
+```
 - また、サンプルのクエリとして以下のようなファイルを、`sample_query.cyp`として保存する。
-
+```
+MATCH (n) RETURN n LIMIT 10
+```
 - その後、`sh ./curl_cypher.sh sample_cypher.cyp`のようにして実行することで、結果がJSON形式で表示される。
 - 実行時間を計測したい場合は、`time sh ./curl_cypher.sh sample_cypher.cyp`のようにすればよい。
 
@@ -534,12 +685,21 @@ Manual
 以下を行うと、任意のホストからの接続を許可することになるので、セキュリティ上の問題が起きないよう注意すること
 
 /etc/neo4j/neo4j.confを開くと、以下のような記述があるので
-
-**#**
+```
+#dbms.default_listen_address=0.0.0.0
+```
 
 コメントアウトを解除する
 
+```
+dbms.default_listen_address=0.0.0.0
+```
+
 Neo4jを再起動する
+
+```
+sudo service neo4j restart
+```
 
 ## Oracle Graph Server and Client (Oracle Labs PGX)
 
@@ -563,17 +723,30 @@ Java のインストール
 
 - 2021/1 現在、公式に配布されているのは rpm パッケージのみなので、Ubuntuにインストールするためにまず deb パッケージ に変換してからインストールする。
 - 参考：[https://phoenixnap.com/kb/install-rpm-packages-on-ubuntu]
-
+```
+sudo add-apt-repository universe
+sudo apt-get update
+sudo apt install alien
+sudo alien --scripts oracle-graph-20.4.0.x86_64.rpm # --scriptsオプションをつけないとインストール時に権限周りで失敗する
+sudo dpkg -i oracle-graph_20.4.0-1_amd64.deb 
+```
 - インストール後、標準では `/opt/oracle/graph/` にインストールされる。とりあえずコマンドライン上で試すのであれば、`bin/opg-jshell` が試しやすい
-
+```
+sudo /opt/oracle/graph/bin/opg-jshell
+```
 - `sudo systemctl start pgx` のようにしてサーバプロセスとして起動することもできるが、その場合 `/etc/oracle/graph/server.conf` や `/etc/oracle/graph/pgx.conf` にセキュリティ関係の設定を適切に編集する必要があるほか、Oracle DB などを IdentityProvider として使用する必要があるため割愛。
 - `opg-jshell` 内でPGQLを実行する場合は、例えば以下のようにする
-
-**opg-jshell>**
-
-**opg-jshell>**
+```
+opg-jshell> var G = session.readGraphWithProperties("/tmp/example.pgx.json") // 読み込みたいpgx 用の json を指定
+G ==> PgxGraph[name=sample.pgx,N=554,E=1528,created=1612683135450]
+opg-jshell> G.queryPgql("SELECT * MATCH (a)-[]->(b) LIMIT 10").print() // 任意のリレーションを最大10個取得して表示
+```
 
 また、クエリの実行時間計測は以下のコードで行える。なお、query変数には事前にクエリの文字列を代入しておくものとする。
+```
+var start = System.currentTimeMillis(); G.queryPgql(query);
+var end = System.currentTimeMillis(); end - start
+```
 
 ## ArangoDB
 
@@ -598,249 +771,277 @@ ArangoDB は ArangoDB GmbHが開発するオープンソースのマルチモデ
 ## SPARQLクエリ
 
 count_taxa
-
+```
 PREFIX taxon: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-
 SELECT (COUNT(?taxid) AS ?count)
-
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-
 WHERE {
-
-?taxid a taxon:Taxon .
-
+  ?taxid a taxon:Taxon .
 }
+```
 
 count_classes
-
+```
 SELECT (COUNT(?instance) AS ?count) ?class
-
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-
 WHERE {
-
-?instance a ?class .
-
+  ?instance a ?class .
 }
-
 GROUP BY ?class
-
 ORDER BY DESC(?count)
+```
 
 count_from_graph
+```
+SELECT (COUNT(*) AS ?count)
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+WHERE {
+  ?s ?p ?o
+}
+```
 
 count_in_graph
+```
+SELECT (COUNT(*) AS ?count)
+WHERE {
+  GRAPH <http://ddbj.nig.ac.jp/ontologies/taxonomy/> { 
+    ?s ?p ?o
+  }
+}
+```
 
 count_in_taxon
-
+```
 PREFIX taxid: <http://identifiers.org/taxonomy/>
-
 SELECT (COUNT(DISTINCT ?taxid) AS ?count)
-
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-
 WHERE {
-
-?taxid rdfs:subClassOf* taxid:9443 .
-
+  ?taxid rdfs:subClassOf* taxid:9443 .
 }
+```
 
 count_in_taxon_label
-
-get_hierarchy
-
+```
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-PREFIX taxid: <http://identifiers.org/taxonomy/>
+SELECT (COUNT(DISTINCT ?taxid) AS ?count) ?taxon
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+WHERE {
+  ?taxid rdfs:subClassOf* ?taxon .
+  ?taxon rdfs:label "Primates" .
+}
+GROUP BY ?taxon
+```
 
+get_hierarchy
+```
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX taxid: <http://identifiers.org/taxonomy/>
 PREFIX taxon: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 
 SELECT ?order ?order_name ?family ?family_name ?species ?name
-
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-
 WHERE {
-
-?species taxon:rank taxon:Species ;
-
-rdfs:label ?name ;
-
-rdfs:subClassOf+ taxid:40674 ;
-
-rdfs:subClassOf+ ?family ;
-
-rdfs:subClassOf+ ?order .
-
-?family taxon:rank taxon:Family ;
-
-rdfs:label ?family_name .
-
-?order taxon:rank taxon:Order ;
-
-rdfs:label ?order_name .
-
+  ?species taxon:rank taxon:Species ;
+      rdfs:label ?name ;
+      rdfs:subClassOf+ taxid:40674 ;
+      rdfs:subClassOf+ ?family ;
+      rdfs:subClassOf+ ?order .
+  ?family taxon:rank taxon:Family ;
+      rdfs:label ?family_name .
+  ?order taxon:rank taxon:Order ;
+      rdfs:label ?order_name .
 }
-
 ORDER BY ?order_name ?family_name ?name
+```
 
 filter_regex
-
+```
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT *
-
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-
 WHERE {
-
-?taxid rdfs:label ?label .
-
-FILTER regex(?label, "Homo ")
-
+  ?taxid rdfs:label ?label .
+  FILTER regex(?label, "Homo ")
 }
+```
 
 common_ancestor
-
+```
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-
 PREFIX taxid: <http://identifiers.org/taxonomy/>
 
 SELECT ?ancestor ?p ?o
-
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-
 WHERE {
-
-?ancestor ?p ?o .
-
-?tax1 rdfs:subClassOf ?ancestor .
-
-?tax2 rdfs:subClassOf ?ancestor .
-
-taxid:9606 rdfs:subClassOf* ?tax1 .
-
-taxid:511145 rdfs:subClassOf* ?tax2 .
-
-FILTER(?tax1 != ?tax2)
-
+  ?ancestor ?p ?o .
+  ?tax1 rdfs:subClassOf ?ancestor .
+  ?tax2 rdfs:subClassOf ?ancestor .
+  taxid:9606 rdfs:subClassOf* ?tax1 .
+  taxid:511145 rdfs:subClassOf* ?tax2 .
+  FILTER(?tax1 != ?tax2)
 }
+```
 
 taxon_info
+```
+PREFIX taxid: <http://identifiers.org/taxonomy/>
+
+SELECT *
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+WHERE {
+  taxid:9606 ?p ?o .
+}
+```
 
 taxon_info_ordered
+```
+PREFIX taxid: <http://identifiers.org/taxonomy/>
 
-## 
+SELECT ?p ?o
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+WHERE {
+  taxid:9606 ?p ?o .
+}
+ORDER BY ?p ?o
+```
 
 ## Cypherクエリ
 
 count_taxa
+```
+MATCH (n:Taxon) RETURN COUNT(n)
+```
 
 count_classes
+```
+MATCH (n:Resource) RETURN DISTINCT count(labels(n)), labels(n)
+```
 
 count_from_graph および count_in_graph
 （Neo4j + Neosemanticsでは名前付きグラフとしてロードされないため、今回は同一クエリとして計測）
+```
+MATCH (n)-[r]->() RETURN COUNT(r)
+```
 
 count_in_taxon
-
+```
 MATCH (tax:Resource)-[r:subClassOf*..]->(n2:Resource
-{uri:'http://identifiers.org/taxonomy/9443'})
-
-RETURN DISTINCT COUNT(tax)
+  {uri:'http://identifiers.org/taxonomy/9443'})
+  RETURN DISTINCT COUNT(tax)
+```
 
 count_in_taxon_label
-
+```
 MATCH (taxid:Resource)-[rdfs:subClassOf*..]->(:Resource {label:'Primates'})
-
 RETURN COUNT(DISTINCT(taxid))
+```
 
 get_hierarchy
+```
+MATCH
+  (species:Resource)-[:subClassOf*1..]->(:Resource 
+     {uri:'http://identifiers.org/taxonomy/40674'}),
+  (species:Resource)-[:rank]->(taxon:Resource 
+     {uri:'http://ddbj.nig.ac.jp/ontologies/taxonomy/Species'})
 
 MATCH
-
-(species:Resource)-[:subClassOf*1..]->(:Resource
-{uri:'http://identifiers.org/taxonomy/40674'}),
-
-(species:Resource)-[:rank]->(taxon:Resource
-{uri:'http://ddbj.nig.ac.jp/ontologies/taxonomy/Species'})
-
+  (species)-[:subClassOf*1..]->(family:Resource)-[:rank]->
+    (:Resource {uri:'http://ddbj.nig.ac.jp/ontologies/taxonomy/Family'})
 MATCH
-
-(species)-[:subClassOf*1..]->(family:Resource)-[:rank]->
-
-(:Resource {uri:'http://ddbj.nig.ac.jp/ontologies/taxonomy/Family'})
-
-MATCH
-
-(species)-[:subClassOf*1..]->(order:Resource)-[:rank]->(:Resource
-{uri:'http://ddbj.nig.ac.jp/ontologies/taxonomy/Order'})
-
+  (species)-[:subClassOf*1..]->(order:Resource)-[:rank]->(:Resource 
+    {uri:'http://ddbj.nig.ac.jp/ontologies/taxonomy/Order'})
 RETURN
-
-order.uri, order.label, family.uri, family.label, species.uri, species.label
+  order.uri, order.label, family.uri, family.label, species.uri, species.label
+```
 
 filter_regex
-
+```
 MATCH (taxid:Resource)
-
 WHERE taxid.label =~ '.*Homo .*'
-
 RETURN taxid
+```
 
 common_ancestor
-
+```
 MATCH (tax9606:Resource {uri:'http://identifiers.org/taxonomy/9606'}),
-
-(tax9606)-[:subClassOf*1..]->(ancestor:Resource)
-
+      (tax9606)-[:subClassOf*1..]->(ancestor:Resource)
 MATCH
-
-(tax511145:Resource {uri:'http://identifiers.org/taxonomy/511145'}),
-
-(ancestor)<-[:subClassOf*1..]-(tax511145)
-
-MATCH
-
-(ancestor:Resource)-[p]->(o)
-
+      (tax511145:Resource {uri:'http://identifiers.org/taxonomy/511145'}),
+      (ancestor)<-[:subClassOf*1..]-(tax511145)
+MATCH      
+      (ancestor:Resource)-[p]->(o)
 RETURN ancestor, p, o
+```
 
 taxon_info
-
+```
 MATCH (n:Resource
 {uri:'http://identifiers.org/taxonomy/9606'})-[r]->(n2:Resource)
-
 RETURN r, n2
+```
 
 taxon_info_ordered
-
+```
 MATCH (n:Resource
 {uri:'http://identifiers.org/taxonomy/9606'})-[r]->(n2:Resource)
-
 RETURN r, n2 ORDER BY r.uri, n2.uri
+```
 
 ## PGQLクエリ
 
 Oracle Labs PGXで性能測定を行うために記述したクエリ群を以下に示す。
 
 common_ancestor.pgql
+```
+SELECT * MATCH (tax9606)-/:subClassOf+/->(ancestor)<-/:subClassOf+/-(tax511145) WHERE id(tax9606) = '9606' AND id(tax511145) = '511145'
+```
 
 count_classes.pgql
+```
+SELECT DISTINCT COUNT(n.label_), n.label_ MATCH (n) GROUP BY n.label_
+```
 
 count_in_graph.pgql
+```
+SELECT COUNT(r) MATCH (n)-[r]->()
+```
 
 count_in_taxon_label.pgql
+```
+SELECT COUNT(DISTINCT(taxid)) MATCH (taxid)-/:subClassOf+/->(r) WHERE r.label = 'Primates'
+```
 
 count_in_taxon.pgql
+```
+SELECT COUNT(tax) MATCH (tax)-/:subClassOf*/->(n2) WHERE id(n2) = '9443'
+```
 
 count_taxa.pgql
+```
+SELECT COUNT(n) MATCH (n) WHERE n.label_ = 'Taxon'
+```
 
 filter_regex.pgql
+```
+SELECT id(n) MATCH (n) WHERE JAVA_REGEXP_LIKE( n.label, '.*Homo .*' )
+```
 
 get_hierarchy.pgql
+```
+SELECT order.label, id(family), family.label, id(species), species.label MATCH (species)-/:subClassOf+/->(ancestor), (species)-/:subClassOf+/->(family), (species)-/:subClassOf+/->(order) WHERE species.rank = 'Species' AND id(ancestor) = '40674' AND family.rank = 'Family' AND order.rank = 'Order'
+```
 
 taxon_info_ordered.pgql
+```
+SELECT * MATCH (n)-[r]->(n2) WHERE id(n) = '9606' ORDER BY id(r), id(n2)
+```
 
 taxon_info.pgql
+```
+SELECT * MATCH (n)-[r]->(n2) WHERE id(n) = '9606'
+```
 
 # 計測結果
 
