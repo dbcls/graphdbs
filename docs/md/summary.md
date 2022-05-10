@@ -1,14 +1,14 @@
 # トリプルストア及びグラフデータベースに関する技術調査
 
-# 背景
+## 背景
 
 近年、RDF関連のソフトウェア開発が進展し、世界中で様々なRDFストア（トリプルストアと呼ばれる）が公開されてきた。よく用いられている実装の一例としてはOpenLink Software Virtuosoがあるが、その他にも多くの新しい実装が活発に開発されてきており、多くの実装について、性質や性能が自明ではない。また、グラフを基礎としたデータモデルを採用しているデータベースとしては、プロパティ・グラフモデルに基づくデータベース実装も出てきており、近年より活発に開発が行われている。トリプルストアに加えて、プロパティ・グラフモデルに基づくデータベース実装に言及するとき、グラフデータベースと呼ばれることが多い。
 
 このように活発に開発が続けられているトリプルストア及びグラフデータベースの分野は、進展が早くまた製品も多様性に富むため、現状を把握するのは容易ではないが、各データベースの有用性を評価するために、標準準拠状況、性能の観点から継続的に調査を行うことが望ましい。こうした評価情報は、RDF等の基盤技術を利用している研究機関において共有されるべき重要な情報である。
 
-# トリプルストアの各実装
+## トリプルストアの各実装
 
-## Virtuoso
+### Virtuoso
 
 Virtuosoは、OpenLink Software社の開発するデータベースエンジンである。Open-source版とcommercial版がある。本調査では、open-source版を用いている。RDBMSを基盤としているが、RDFも扱えるようになっている。もともとrow-wiseであったが、Virtuoso 7からはcolumn-wiseを用いるように拡張された。graph identifier gと、(s, p, o) からなる4つ組(quads)をストアする。インデックスは、<g, s, p, o>と<o, g, p, s>である。
 
@@ -34,7 +34,7 @@ GPLv2
 
 automake, libtool, gperf パッケージをaptでインストールする必要がある。
 
-### Installation
+#### Installation
 
 **ソースを取得**
 ```
@@ -73,7 +73,7 @@ isql 1111 dba dba
 SQL> DB.DBA.TTLP_MT(file_to_string_output('example.ttl'), '', 'http://example.com/example.ttl', 0);
 ```
 
-### Configuration
+#### Configuration
 
 デフォルトから設定を変更したい場合
 
@@ -87,7 +87,7 @@ vi /path/to/install/directory/var/lib/virtuoso/db/virtuoso.ini
 TempAllocationPct        = 100
 ```
 
-### Troubleshooting
+#### Troubleshooting
 
 ./configure で OpenSSLに関するエラーが出ることがある。この場合は、libssl1.0-dev をインストールする。
 ```
@@ -104,7 +104,7 @@ sudo apt update
 sudo apt install -y libssl1.0-dev
 ```
 
-## GraphDB
+### GraphDB
 
 GraphDBは、Ontotext社の開発したトリプルストアであり、ライセンスとしてはFree版とStandard版、Enterprise版が存在する。実装言語はJavaのため、JVMの動作する基板上であれば使用可能である。
 
@@ -126,7 +126,7 @@ http://graphdb.ontotext.com/documentation/free/release-notes.html
 
 無料版が存在するが、同時に発行できるクエリは２つまでとの記述有り。有料ライセンスはStandard版とEnterprice版の二種
 
-### Installation
+#### Installation
 
 - GrahDBのフリーエディションを使用するため、サイト上でユーザ登録をする https://www.ontotext.com/products/graphdb/graphdb-free/
 - ユーザ登録が完了すると、登録したメールアドレスにインストール用バイナリのダウンロード用リンクが送られてくる
@@ -155,7 +155,7 @@ $ sudo ./bin/loadrdf -f -i <repository_name> -m parallel <path to dataset>
 - SPARQLのエディタが表示されるのでSPARQLを入力後、RUNで実行できる
 - APIからSPARQLを実行したい場合は、http://localhost:7200/repositories/<リポジトリ名> にGETリクエストを送ればよい
 
-## Stardog
+### Stardog
 
 Stardog 7.3.2 ([https://www.stardog.com/get-started/](https://www.stardog.com/get-started/))に関して、弊社内Linuxサーバへのインストールを行い、インストール方法をdocs/md/stardog.mdに記載しました。
 
@@ -177,7 +177,7 @@ Linuxサーバへインストールを行ったStardog 7.3.2に関して、デ�
 
 完全にフリーなライセンスは存在しないが、30日分の体験版、1年のアカデミックライセンスの体験版がある。
 
-### Installation
+#### Installation
 
 Stardogの最新版をダウンロードして解凍して移動
 ```
@@ -216,7 +216,7 @@ Stardogのサーバを起動。
 
 - Web API越しにSPARQLを実行したい場合は http://localhost:5820/<DB名>/query に対してGETリクエストを送る
 
-## AllegroGraph
+### AllegroGraph
 
 AllegroGraph はFranz社の開発したマルチモデルデータベースであり、ドキュメントデータとトリプルデータの両方をサポートしている。ライセンスとしてはFree,Developer, Enterpriseの三種類が存在する。実装言語はJava, Python, Common Lispである。
 
@@ -278,7 +278,7 @@ sudo ./bin/agraph-control --config ./lib/agraph.cfg start
 sudo ./bin/agraph-control --config ./lib/agraph.cfg stop
 ```
 
-## Blazegraph
+### Blazegraph
 
 BlazegraphはSYSTAP社が開発したオープンソースのトリプルストアであり、WikidataのSPARQLエンドポイントとして採用されている。実装言語はJavaであり、SPARQLに加えてGremlin APIもサポートしている。
 
@@ -304,7 +304,7 @@ BlazeGraph 2.1.6に関して、弊社内Linuxサーバへのインストール�
 
 Java 9以上
 
-### Installation
+#### Installation
 
 - Blazegraph のリポジトリから最新リリースのjarファイルをダウンロードする(https://github.com/blazegraph/database/releases)。
 - 以下は wget でダウンロードする例。
@@ -329,7 +329,7 @@ load <file:///path/to/your.ttl> INTO GRAPH  <http://examples.org>
 - クエリを実行する場合は、Queryタブに移動してクエリを入力後、Executeボタンをクリックして実行できる。
 - Web APIから実行したい場合は、http://localhost:9999/sparql に対してGETメソッドでリクエストを送ればよい。
 
-## Apache Jena Fuseki
+### Apache Jena Fuseki
 
 Apache Jena Fuseki はApacheソフトウェア財団のコミュニティによって開発されたトリプルストアである。より正確には、Apache Jenaがトリプルストアとしての機能の核となる部分であり、Fusekiはhttpのインターフェース部分を指す。実装言語はJavaであり、単独のWebサーバとしても実行できるほか、TomcatなどのServletとしても使用することができる。オープンソースであり、ライセンスはApache ライセンスを採用している。
 
@@ -357,7 +357,7 @@ Apache Jena Fuseki 3.16.0に関して、弊社内Linuxサーバへのインス�
 
 - Java と Tomcat のインストール
 
-### Installation
+#### Installation
 
 - https://jena.apache.org/download/ からFusekiを探してダウンロード
 - 例えば、wget で 3.16.0 をダウンロードする場合、以下のようにする
@@ -412,7 +412,7 @@ mv ./tmp/* <fusekiのインストール場所>/run/databases/sample_dataset/
 ```
 - 一度fuseki-serverのプロセスを再起動すると、データセットがロードされた状態になる
 
-## RDF4j
+### RDF4j
 
 RDF4jはEclipse財団の支援するコミュニティによって開発されたトリプルストアであり、実装言語はJavaである。３条項BSDライセンスを採用したオープンソースプロジェクトである。
 
@@ -436,7 +436,7 @@ RDF4J 3.3.0に関してもコマンドライン経由でのデータのロード
 
 Java と Tomcat のインストール
 
-### Installation
+#### Installation
 
 **Webサーバとして実行する場合**
 
@@ -484,7 +484,7 @@ Data has been added to the repository (2565 ms)
 
 Java プログラムから使用することも可能であるが、これについては実施していない。
 
-## rdfstore-js
+### rdfstore-js
 
 rdfstore-js 0.9.17（https://github.com/antoniogarrote/rdfstore-js）に関して、弊社内Linuxサーバへのインストールを行い、インストール方法とNode.jsからの実行方法をdocs/md/rdfstore-js.mdに記載しました。
 
@@ -500,7 +500,7 @@ rdfstore-js 0.9.17（https://github.com/antoniogarrote/rdfstore-js）に関し�
 
 オープンソース（MITライセンス）
 
-### Installation
+#### Installation
 
 - npmをインストール
 ```
@@ -540,7 +540,7 @@ rdfstore.create(function(err, store){
 $ node --max-old-space-size=4096 test.js
 ```
 
-## Neptune
+### Neptune
 
 前提として、AWSにアカウントがあることが必須となる.
 
@@ -548,15 +548,15 @@ AWSコンソールから、Neptuneを起動する.
 
 新しいVPNの作成を選べば、簡単に作成できる.
 
-## Neo4j
+### Neo4j
 
 Neo4jはNeo4j社によって開発されたプロパティグラフを扱うグラフDBであり、クエリ言語としてCypherを利用することができる。ライセンスとしてはオープンソースのCommunity Editionに加え、有償のEnterprise版やクラウド上での利用を想定したAuraが存在する。実装はJava言語によって行われている。
 
-## Neo4j＋Neosemanticsの使い方に関するドキュメントの作成
+### Neo4j＋Neosemanticsの使い方に関するドキュメントの作成
 
 トリプルストアと異なるデータモデルであるプロパティグラフを扱うデータベースであるNeo4jに対し、RDFデータをプロパティグラフに変換しながらロードを行うプラグインであるNeosemanticsを利用する方法に関し、インデックスの張り方などを含めた調査およびドキュメントの作成を行いました。また、既存の各種トリプルストアに関するドキュメントに関しても、APIを通したクエリの実行方法や、名前付きとしてのロード方法などを追記いたしました。
 
-## Neo4jのクエリ実行時間をCUIから計測する方法に関する記載
+### Neo4jのクエリ実行時間をCUIから計測する方法に関する記載
 
 Neo4jに対して、curlコマンドを使用してコマンドラインからクエリを実行する方法に関して、docs/md/neo4j.mdに追記させていただきました。
 
@@ -582,7 +582,7 @@ Manual
 
 https://neo4j.com/docs/operations-manual/current/installation/
 
-### Installation
+#### Installation
 
 Ubuntu 18.04の場合
 
@@ -678,7 +678,7 @@ MATCH (n) RETURN n LIMIT 10
 - その後、`sh ./curl_cypher.sh sample_cypher.cyp`のようにして実行することで、結果がJSON形式で表示される。
 - 実行時間を計測したい場合は、`time sh ./curl_cypher.sh sample_cypher.cyp`のようにすればよい。
 
-### Configuration
+#### Configuration
 
 **外部から接続したい場合**
 
@@ -686,7 +686,7 @@ MATCH (n) RETURN n LIMIT 10
 
 /etc/neo4j/neo4j.confを開くと、以下のような記述があるので
 ```
-#dbms.default_listen_address=0.0.0.0
+##dbms.default_listen_address=0.0.0.0
 ```
 
 コメントアウトを解除する
@@ -701,7 +701,7 @@ Neo4jを再起動する
 sudo service neo4j restart
 ```
 
-## Oracle Graph Server and Client (Oracle Labs PGX)
+### Oracle Graph Server and Client (Oracle Labs PGX)
 
 **本記事の対象バージョン**
 
@@ -717,7 +717,7 @@ OTN license
 
 Java のインストール
 
-### Installation
+#### Installation
 
 **Ubuntu 18.04の場合**
 
@@ -748,11 +748,11 @@ var start = System.currentTimeMillis(); G.queryPgql(query);
 var end = System.currentTimeMillis(); end - start
 ```
 
-## ArangoDB
+### ArangoDB
 
 ArangoDB は ArangoDB GmbHが開発するオープンソースのマルチモデルDBであり、キーバリュー型のデータ、ドキュメントデータ、グラフデータを同じDBエンジン上で扱うことを可能とする。クエリ言語はAQL（ArangoDB Query Languade）と呼ばれ、異なる３種のデータモデルに対し、共通の言語でクエリを発行できるようになっている。ライセンスはオープンソースのCommunityに加え、並列実行などの機能を追加したEnterprise、フルマネージド版のOasisが存在している。実装言語としてはC++が用いられている。
 
-# データセット
+## データセット
 
 パフォーマンステスト用のデータセットとして、NCBI taxonomy dataをftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz を用いた。
 
@@ -766,9 +766,9 @@ ArangoDB は ArangoDB GmbHが開発するオープンソースのマルチモデ
 
 また、Oracle Labs PGXに同等のデータをロードするため、ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gzを変換するRubyスクリプトtaxdump2pg.rbを作成した。本スクリプトは、https://github.com/dbcls/rdfsummit/blob/master/taxdump2owl/taxdump2owl.rb を元に作成しており、PG tools (https://pg-format.readthedocs.io/en/latest/) で扱うことのできるpgフォーマットでtaxonomyデータを作成する。さらにこのpgフォーマットから。pg2pgxコマンドを使用することで、Oracle Labs PGXにロード可能なデータ形式への変換を行った。
 
-# クエリ
+## クエリ
 
-## SPARQLクエリ
+### SPARQLクエリ
 
 count_taxa
 ```
@@ -907,7 +907,7 @@ WHERE {
 ORDER BY ?p ?o
 ```
 
-## Cypherクエリ
+### Cypherクエリ
 
 count_taxa
 ```
@@ -989,7 +989,7 @@ MATCH (n:Resource
 RETURN r, n2 ORDER BY r.uri, n2.uri
 ```
 
-## PGQLクエリ
+### PGQLクエリ
 
 Oracle Labs PGXで性能測定を行うために記述したクエリ群を以下に示す。
 
@@ -1043,7 +1043,7 @@ taxon_info.pgql
 SELECT * MATCH (n)-[r]->(n2) WHERE id(n) = '9606'
 ```
 
-# 計測結果
+## 計測結果
 
 1. taxonomy_2019-05-01.nt での計測結果
 
@@ -1053,17 +1053,17 @@ SELECT * MATCH (n)-[r]->(n2) WHERE id(n) = '9606'
 
 さらに各種データベースに関して、クエリセットの実行時間の調査を行った。調査対象は上記11クエリになっており、各クエリに関して３回ずつ実行した上で、平均を調べた。トリプルストア間の実行時間の比較を下図に示す。なお、トリプルストアによってはクエリの結果がキャッシュされる場合があるためか、初回と２回目以降の時間が大きく変わるものがあったため、初回のみの時間と平均の時間の両方を記載する。縦軸の単位はミリ秒である。
 
-## taxon_40674.ntを用いた計測結果
+### taxon_40674.ntを用いた計測結果
 
 小規模データとしてtaxon_40674.ntを利用した場合の各種トリプルストアのロード速度とクエリの実行時間の調査を行った。計測は３回行い、初回のみの値と平均の値をグラフとした。縦軸の単位は秒になっている。
 
-# 考察と課題
+## 考察と課題
 
 今回は、特定のLinuxマシンの上で、パフォーマンスの測定を行った。しかし、再現性を確保する観点から、任意のマシンの上で同じ実験を遂行することができることが望ましい。そこで、各データベースエンジンのインストールプロセスをDocker化したうえで、パフォーマンス測定まで行うことができるようにする。
 
 また、今回は特定のデータセットのみを用いて測定を行った。一般的なRDFに適用できる情報ではあるが、どこまでデータサイズに関して、スケールするかについては未検討である。そこで、特にパフォーマンスの良かったエンジンについては、大メモリマシンで、データセットをスケールさせてパフォーマンスを調査することが必要になる。
 
-## 各種トリプルストアおよびプロパティグラフDBのDocker化
+### 各種トリプルストアおよびプロパティグラフDBのDocker化
 
 Docker環境に対して、トリプルストアやプロパティグラフDBを容易にデプロイできることを目的とし、以下のソフトウェアのDockerfile、および必要なファイル群を作成の上、graphdbsリポジトリのdocker_filesディレクトリに配備しました。
 
