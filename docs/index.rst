@@ -26,3 +26,4 @@ Here we summarize documentations that include installation processes of those im
    md/orientdb
    md/janusgraph
    md/tigergraph
+   md/summary
