@@ -445,14 +445,14 @@ RDFJ Server and Workbenchを使う
 - まず、https://rdf4j.org/download/ からRDF4J 3.3.0 SDK (zip) をダウンロード
 - zipファイルを解凍後、war/rdf4j-*.warをTomcatのwebappsディレクトリに以下にコピーする。
 - 例えばTomcat のインストール先が/opt/tomcatなら以下のようなコマンドでコピーできる
-
-- ブラウザから、`http://localhost:8080/rdf4j-workbench`にアクセスするとトップページが表示される。
-- Repositories -> New repository から、IDとタイトルなどを入力してリポジトリを作成する。
-- リポジトリ作成後、Modify->Addからファイルをアップロードしてデータをインポートできる。
 ```
 cp rdf4j-*.war /opt/tomcat/webapps/
 ```
-**### コンソールからデータをロードする場合**
+- ブラウザから、`http://localhost:8080/rdf4j-workbench`にアクセスするとトップページが表示される。
+- Repositories -> New repository から、IDとタイトルなどを入力してリポジトリを作成する。
+- リポジトリ作成後、Modify->Addからファイルをアップロードしてデータをインポートできる。
+
+**コンソールからデータをロードする場合**
 
 - zipを解凍したフォルダ内の bin/console.sh を実行するとCUIが起動する。
 - まずサーバに接続
