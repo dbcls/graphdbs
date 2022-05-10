@@ -1,28 +1,18 @@
-# トリプルストア及びグラフデータベースに関する技術調査 (2021年度更新)
+# トリプルストア及びグラフデータベースに関する技術調査
 
 # 背景
 
 近年、RDF関連のソフトウェア開発が進展し、世界中で様々なRDFストア（トリプルストアと呼ばれる）が公開されてきた。よく用いられている実装の一例としてはOpenLink Software Virtuosoがあるが、その他にも多くの新しい実装が活発に開発されてきており、多くの実装について、性質や性能が自明ではない。また、グラフを基礎としたデータモデルを採用しているデータベースとしては、プロパティ・グラフモデルに基づくデータベース実装も出てきており、近年より活発に開発が行われている。トリプルストアに加えて、プロパティ・グラフモデルに基づくデータベース実装に言及するとき、グラフデータベースと呼ばれることが多い。
 
-このように活発に開発が続けられているトリプルストア及びグラフデータベースの分野は、進展が早くまた製品も多様性に富むため、現状を把握するのは容易ではないが、各データベースの有用性を評価するために、標準準拠状況、性能の観点から継続的に調査を行うことが望ましい。こうした評価情報は、RDF等の基盤技術を利用している研究機関において共有されるべき重要な情報であり、統合データベースにおける基盤技術開発とデータベース運用を行っている本機構が取り組むべき課題である。
+このように活発に開発が続けられているトリプルストア及びグラフデータベースの分野は、進展が早くまた製品も多様性に富むため、現状を把握するのは容易ではないが、各データベースの有用性を評価するために、標準準拠状況、性能の観点から継続的に調査を行うことが望ましい。こうした評価情報は、RDF等の基盤技術を利用している研究機関において共有されるべき重要な情報である。
 
-# 調査実施内容
-
-各トリプルストアに関して、インストールやデータのロード、クエリの実行方法に関する調査を行いました。
-
-作業内容の詳細に関しては、それぞれの調査結果や手順をGitHubレポジトリ([https://github.com/dbcls/graphdbs](https://github.com/dbcls/graphdbs)) および Googleスプレッドシート([https://docs.google.com/spreadsheets/d/1gZzRT0Q5TTFrho09XY_SsMfYzU5reiYGIKJpsiXYnRQ](https://docs.google.com/spreadsheets/d/1gZzRT0Q5TTFrho09XY_SsMfYzU5reiYGIKJpsiXYnRQ))上に記載しています。
-
-9/7〜9/11のBioHackathon 2020および9/18のSPARQLthonにおいて、リモート会議として調査の報告や今後の方針に関する議論、論文化に向けた課題の議論等、担当者および外部有識者との間で打ち合わせを行いました。
-
-# 各データベースエンジンに関する情報のまとめ (主に定性的な情報について)
+# トリプルストアの各実装
 
 ## Virtuoso
 
-Virtuosoは、OpenLink Software社の開発するデータベースエンジンである。Open-source版とcommercial版がある. 今までのところ、open-source版を用いている. RDBMSを基盤としており、RDFを扱えるようになっている。もともとrow-wiseであったが、Virtuoso 7からはcolumn-wiseを用いるように拡張された。graph identifier gと、(s, p, o) からなる4つ組(quads)をストアする。インデックスは、<g, s, p, o>と<o, g, p, s>である。
+Virtuosoは、OpenLink Software社の開発するデータベースエンジンである。Open-source版とcommercial版がある。本調査では、open-source版を用いている。RDBMSを基盤としているが、RDFも扱えるようになっている。もともとrow-wiseであったが、Virtuoso 7からはcolumn-wiseを用いるように拡張された。graph identifier gと、(s, p, o) からなる4つ組(quads)をストアする。インデックスは、<g, s, p, o>と<o, g, p, s>である。
 
-多くのRDFワークロードでは、削除が少なく、大量の読み込みを必要とするアクセスパターンがあります。デフォルトのインデックススキームは、これらに最適化されています。このような状況では，この方式はスペースを大幅に節約し，より良い作業セットを実現します．通常、このレイアウトは、4つのフルインデックスを使用したレイアウトの60～70％のスペースで済みます。
-
-これが現実的ではない場合、インデックススキームはフルインデックスのみを持つべきです。つまり、各キーがクワッドの主キーのすべての列を保持します。これは、CREATE INDEX文でDISTINCT NO PRIMARY KEY REFオプションが指定されていない場合に当てはまります。このような場合、削除されてもすべてのインデックスは厳密に同期されます。
+多くのRDFワークロードでは、削除が少なく、大量の読み込みを必要とするため、デフォルトのインデックススキームは、これらに最適化されている。このような状況で、この方式はスペースを大幅に節約し、より良い作業セットを実現する。通常、このレイアウトは、4つのフルインデックスを使用したレイアウトの60～70％のスペースで済む。これが現実的ではない場合、インデックススキームはフルインデックスのみを持つべきである。つまり、各キーがクワッドの主キーのすべての列を保持する。これは、CREATE INDEX文でDISTINCT NO PRIMARY KEY REFオプションが指定されていない場合に当てはまる。このような場合、削除されてもすべてのインデックスは厳密に同期される。
 
 [http://docs.openlinksw.com/virtuoso/rdfperfrdfscheme/](http://docs.openlinksw.com/virtuoso/rdfperfrdfscheme/)
 
@@ -47,20 +37,37 @@ automake, libtool, gperf パッケージをaptでインストールする必要�
 ### Installation
 
 **ソースを取得**
+```
+git clone git@github.com:openlink/virtuoso-opensource.git
+cd virtuoso-opensource
+git checkout v7.2.5.1
+```
 
 **コンパイル**
+```
+./autogen.sh
+./configure --prefix=/path/to/install/directory --with-readline
+make
+make install
+```
 
 ポート1111を既に使用していると、makeの途中で失敗する。（テストに1111を使おうとするため）
 
 configure に --with-port=1112 オプションを付けるなどすれば失敗を回避できるかもしれないが、1111を空けておくのが確実。
 
 **起動**
-
+```
+cd /path/to/install/directory/var/lib/virtuoso/db/
+/path/to/install/directory/bin/virtuoso-t +wait
+```
 http://localhost:8890/sparql でSPARQLエンドポイントが起動していることを確認する。
 
 **ロード**
 
 **データの取得**
+```
+curl -LOR http://example.com/example.ttl
+```
 
 **SQL>**
 
