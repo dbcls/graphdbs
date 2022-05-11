@@ -1,2 +1,2 @@
 #!/bin/sh
-spang-bench -e http://localhost:8890/sparql sparql/index.json -an5
+spang-bench -e http://localhost:8890/sparql queries/sparql/index.json -an5
