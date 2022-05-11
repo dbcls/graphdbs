@@ -3,7 +3,7 @@
 
 SELECT (COUNT(*) AS ?count)
 WHERE {
-  GRAPH <http://ddbj.nig.ac.jp/ontologies/taxonomy/> { 
+  GRAPH <http://ddbj.nig.ac.jp/ontologies/taxonomy/> {
     ?s ?p ?o
   }
 }
