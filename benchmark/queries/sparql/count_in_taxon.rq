@@ -1,0 +1,10 @@
+#!/usr/bin/env spang2
+
+# @title count number of species under a taxon
+# @endpoint test
+# @param id=9443
+
+SELECT (COUNT(DISTINCT ?taxid) AS ?count)
+WHERE {
+  ?taxid rdfs:subClassOf* taxid:{{id}} .
+}

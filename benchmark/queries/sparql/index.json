@@ -1,0 +1,38 @@
+[
+  {
+    "query": "taxon_info.rq"
+  },
+  {
+    "query": "taxon_info_ordered.rq"
+  },
+  {
+    "query": "count_taxa.rq"
+  },
+  {
+    "query": "count_in_graph.rq"
+  },
+  {
+    "query": "count_from_graph.rq"
+  },
+  {
+    "query": "count_classes.rq"
+  },
+  {
+    "query": "count_in_taxon.rq"
+  },
+  {
+    "query": "count_in_taxon_label.rq"
+  },
+  {
+    "query": "common_ancestor_node.rq"
+  },
+  {
+    "query": "common_ancestor.rq"
+  },
+  {
+    "query": "get_hierarchy.rq"
+  },
+  {
+    "query": "filter_regex.rq"
+  }
+]

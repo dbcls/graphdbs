@@ -1,0 +1,8 @@
+#!/usr/bin/env spang2
+# @endpoint test
+
+SELECT *
+WHERE {
+  taxid:9606 ?p ?o .
+}
+ORDER BY ?p ?o
