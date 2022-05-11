@@ -1,4 +1,4 @@
-# Benchmark
+# Benchmarking
 
 The following is an example test case for benchmarking Virtuoso.
 
