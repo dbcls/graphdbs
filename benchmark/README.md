@@ -10,7 +10,7 @@ $ bunzip2 --keep data/taxonomy_2019-05-01.ttl.bz2
 ```
 **Build docker image**
 ```
-$ cat virtuoso.dockerfile | docker build -t benchmark:virtuoso7.2.5.1 -
+$ cat dockerfiles/virtuoso.dockerfile | docker build -t benchmark:virtuoso7.2.5.1 -
 ```
 * Build context `.` is large. Use `-` instead.
 
