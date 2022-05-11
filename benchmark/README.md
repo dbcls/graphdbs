@@ -1,5 +1,7 @@
 # Benchmark
 
+The following is an example test case for benchmarking Virtuoso.
+
 **Data preparation**
 ```
 $ git clone https://github.com/dbcls/graphdbs.git
