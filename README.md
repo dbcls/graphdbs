@@ -6,7 +6,7 @@ https://dbcls.github.io/graphdbs/
 
 https://graphdbs.readthedocs.io/
 
-## Benchmark
+## Benchmarking
 See [benchmark](https://github.com/dbcls/graphdbs/tree/master/benchmark) directory.
 
 ## Update list
