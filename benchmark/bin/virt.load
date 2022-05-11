@@ -1,0 +1,377 @@
+#!/usr/bin/perl -w
+use strict;
+use File::Basename;
+use Getopt::Std;
+my $PROGRAM = basename $0;
+my $USAGE=
+"Usage: $PROGRAM NAME -f RDF.ttl [GRAPH_NAME] > log 2> err &
+       cat RDF.ttl | $PROGRAM NAME GRAPH_NAME > log 2> err &
+
+-c: check numbers of triples
+-a SUFFIX: add suffix to graph name (http://graph_name_SUFFIX)
+
+-x: RDF/XML
+
+single mode:
+-b: auto set base IRI
+
+parallel mode:
+-d INPUT_DIR
+-p N : number of parallelization (default 4)
+-U UNIT_SIZE : number of triples in each tmp input file (default 10M)
+-F format: .format files (with -p and -d)
+";
+
+my $TMP_DIR = "load.tmp";
+
+my $TMP_FILE = "$TMP_DIR/$PROGRAM.$$";
+my $TMP_SCRIPT = "$TMP_DIR/$PROGRAM.script.$$";
+END {
+    $TMP_FILE && -f $TMP_FILE and
+    	unlink $TMP_FILE;
+    $TMP_SCRIPT && -f $TMP_SCRIPT and
+    	unlink $TMP_SCRIPT;
+}
+
+################################################################################
+### Analize command line arguments #############################################
+################################################################################
+
+### First argument ###
+if (!@ARGV) {
+    print STDERR $USAGE;
+    print STDERR `virt -V`;
+    exit 1;
+}
+my $VERSION = shift(@ARGV);
+
+### Options ###
+my %OPT;
+getopts('f:ca:xbd:p:U:F:', \%OPT);
+
+my $PWD = `pwd`;
+chomp($PWD);
+my $INPUT_FILE;
+my $INPUT_DIR;
+my $DATASET_NAME;
+if ($OPT{f}) {
+    $INPUT_FILE = $OPT{f};
+    $INPUT_FILE = "$PWD/$OPT{f}" if $OPT{f} !~ /^\//;
+    ! -f $INPUT_FILE and die $INPUT_FILE;
+    $DATASET_NAME = basename $INPUT_FILE;
+} elsif ($OPT{d}) {
+    $INPUT_DIR = $OPT{d};
+    $INPUT_DIR = "$PWD/$OPT{d}" if $OPT{d} !~ /^\//;
+    ! -d $INPUT_DIR and die $INPUT_DIR;
+    $DATASET_NAME = basename $INPUT_DIR;
+}
+
+my $GRAPH_NAME;
+if (@ARGV) {
+    ($GRAPH_NAME) = @ARGV;
+    $GRAPH_NAME =~ s/^<(.+)>$/$1/;
+} else {
+    # $DATASET_NAME =~ s/^mbgd_//;
+    $DATASET_NAME =~ s/.ttl$//;
+    if ($OPT{s}) {
+	$DATASET_NAME .= "_$OPT{s}";
+    }
+    # $GRAPH_NAME = "http://mbgd.genome.ad.jp/rdf/resource/$DATASET_NAME";
+    $GRAPH_NAME = "http://localhost/$DATASET_NAME";
+}
+
+my $CHECK_NUMBER_OF_TRIPLES = 0;
+if ($OPT{c}) {
+    $CHECK_NUMBER_OF_TRIPLES = 1;
+}
+
+### Load ###
+my $VIRTUOSO_DB_DIR = `virt $VERSION -P`;
+chdir $VIRTUOSO_DB_DIR || die "ERROR: Can't chdir to $VIRTUOSO_DB_DIR\n";
+
+if (! -e $TMP_DIR) {
+    umask(0);
+    mkdir $TMP_DIR, 0775 || die;
+}
+
+print "############################################################\n";
+print "# Loading <$GRAPH_NAME>\n";
+print "\n";
+
+my $START_TIME = time;
+
+if ($OPT{p}) {
+    my $n_para = $OPT{p};
+    my $unit_size = $OPT{U} || "10M";
+    my $format = "ttl";
+    if ($OPT{x}) {
+	$format = "xml";
+    }
+    if ($OPT{F}) {
+	$format = $OPT{F};
+    }
+    if (! -t) {
+	print "# Input: STDIN\n";
+	print "# Dividing into files ($VIRTUOSO_DB_DIR/$TMP_DIR/$PROGRAM.$$.divide.*.$format)\n";
+	my $start_time = time;
+	system "cat | ${format}_divide.pl -n $unit_size -p $PROGRAM.$$.divide. $TMP_DIR";
+	my $end_time = time;
+	print_time($end_time - $start_time);
+    } elsif ($INPUT_FILE) {
+	print "# Input file: $INPUT_FILE\n";
+	print "# Dividing into files ($VIRTUOSO_DB_DIR/$TMP_DIR/$PROGRAM.$$.divide.*.$format)\n";
+	my $start_time = time;
+	system "cat $INPUT_FILE | ${format}_divide.pl -n $unit_size -p $PROGRAM.$$.divide. $TMP_DIR";
+	my $end_time = time;
+	print_time($end_time - $start_time);
+    } elsif ($INPUT_DIR) {
+	print "# Input dir: $INPUT_DIR\n";
+	if (-e "$TMP_FILE") {
+	    die "$TMP_FILE exits";
+	} else {
+	    print "# ln -s $INPUT_DIR $VIRTUOSO_DB_DIR/$TMP_FILE\n";
+	    system "ln -s $INPUT_DIR $TMP_FILE";
+	}
+    } else {
+	die;
+    }
+
+    print "\n";
+    print "# Delete and prepare load list\n";
+    isql("DELETE FROM DB.DBA.LOAD_LIST;", t => 1);
+    if ($INPUT_DIR) {
+	isql("ld_dir_all('$TMP_FILE', '*.$format', '$GRAPH_NAME');", t => 1);
+    } else {
+	isql("ld_dir('$TMP_DIR', '$PROGRAM.$$.divide.*.$format', '$GRAPH_NAME');", t => 1);
+    }
+    print "\n";
+
+    my $sec_for_loading = rdf_loader_run($n_para);
+    print "\n";
+    print_time($sec_for_loading, " for load");
+    print "\n";
+    print "# Checkpoint\n";
+    isql("checkpoint;", t => 1);
+    print "\n";
+    my $triples = check_number_of_triples_para($format, check => $CHECK_NUMBER_OF_TRIPLES);
+    if ($triples and $sec_for_loading) {
+	print_speed($triples, $sec_for_loading);
+    }
+    if ($INPUT_DIR) {
+	system "rm $TMP_FILE";
+    } else {
+	system "rm $TMP_DIR/$PROGRAM.$$.divide.*.$format";
+    }
+} else {
+    if (! -t) {
+	print "# Input: STDIN ($VIRTUOSO_DB_DIR/$TMP_FILE)\n";
+	print "\n";
+	system "cat > $TMP_FILE";
+    } elsif ($INPUT_FILE) {
+	print "# Input file: $INPUT_FILE\n";
+	print "# ln -s $INPUT_FILE $VIRTUOSO_DB_DIR/$TMP_FILE\n";
+	print "\n";
+	system "ln -s $INPUT_FILE $TMP_FILE";
+    } else {
+	die;
+    }
+
+    # print "# Loading ...\n";
+    my $load_function = "DB.DBA.TTLP_MT";
+    if ($OPT{x}) {
+	$load_function = "DB.DBA.RDF_LOAD_RDFXML_MT";
+    }
+    my $base_iri = "";
+    if ($OPT{b}) {
+	$base_iri = $GRAPH_NAME;
+    }
+    my @command = ("log_enable(2);",
+		   "$load_function(file_to_string_output('$TMP_FILE'), '$base_iri', '$GRAPH_NAME', 0);",
+		   "checkpoint;");
+    my $results = isql(join("\n", @command));
+    my @time = extract_times_3_from_results($results);
+    my $sec_for_loading;
+    if (@time) {
+	print join(" ", @time), " sec (log_enable, load, checkpoint)\n";
+	$sec_for_loading = $time[1];
+	print_time($sec_for_loading, " for load");
+	print "\n";
+	print "# Checkpoint\n";
+	print_time($time[2]);
+    } else {
+	print $results;
+    }
+    print "\n";
+    my $triples = check_number_of_triples($TMP_FILE, check => $CHECK_NUMBER_OF_TRIPLES);
+    if ($triples and $sec_for_loading) {
+	print_speed($triples, $sec_for_loading);
+    }
+}
+
+my $END_TIME = time;
+print "\n";
+print_time($END_TIME - $START_TIME, " in total");
+print "\n";
+
+################################################################################
+### Functions ##################################################################
+################################################################################
+sub isql {
+    my ($command, %opt) = @_;
+    
+    if ($opt{t}) {
+	my $result = `echo \"$command\" | virt $VERSION -t`;
+	chomp($result);
+	print_time($result);
+    } else {
+	my $result = `echo \"$command\" | virt $VERSION`;
+	return "$result\n";
+    }
+}
+
+sub extract_times_3_from_results {
+    my ($results) = @_;
+
+    # if ($results =~ /EXIT; to exit\.\nSQL> \nDone\. -- (\d+) msec\.\nSQL> \nDone\. -- (\d+) msec\.\nSQL> \nDone\. -- (\d+) msec\.\nSQL> $/s) {
+    if ($results =~ /\nSQL> \nDone\. -- (\d+) msec\.\nSQL> \nDone\. -- (\d+) msec\.\nSQL> \nDone\. -- (\d+) msec\.\nSQL> $/s) {
+	my @msec = ($1, $2, $3);
+	my @sec = ();
+	for my $msec (@msec) {
+	    push @sec, sprintf("%.3f", $msec/1000);
+	}
+	return @sec;
+    }
+}
+
+sub check_number_of_triples_para {
+    my ($format, %opt) = @_;
+
+    my $triples;
+    if ($opt{check}) {
+	if ($format eq "ttl") {
+	    if ($INPUT_DIR) {
+		my @file_list = `find_file_recur -s ttl $TMP_FILE/`;
+		chomp(@file_list);
+		$triples = `cat @file_list | ttl_count.pl`;
+	    } else {
+		$triples = `cat $TMP_DIR/$PROGRAM.$$.divide.*.$format | ttl_count.pl`;
+	    }
+	    chomp($triples);
+	    print "$triples triples are input\n";
+	}
+    }
+
+    my $loaded = `virt $VERSION -G '$GRAPH_NAME'`;
+    chomp($loaded);
+    print_triples($loaded, " are loaded");
+
+    if ($opt{check}) {
+	if ($triples ne $loaded) {
+	    print "WARNING: inconsistent number of triples\n";
+	}
+    }
+
+    if ($loaded =~ /^\d+$/) {
+	return $loaded;
+    }
+}
+
+sub check_number_of_triples {
+    my ($input_file, %opt) = @_;
+
+    my $triples;
+    if ($opt{check}) {
+	if ($OPT{x}) {
+	    $triples = `cat $TMP_FILE | rdfcount-huge`;
+	} elsif ($input_file and $input_file =~ /\.ttl$/) {
+	    $triples = `cat $TMP_FILE | ttl_count.pl`;
+	} else {
+	    $triples = `cat $TMP_FILE | rdfcount`;
+	}
+	chomp($triples);
+	print "$triples triples are input\n";
+    }
+
+    my $loaded = `virt $VERSION -G '$GRAPH_NAME'`;
+    chomp($loaded);
+    print_triples($loaded, " are loaded");
+
+    if ($opt{check}) {
+	if ($triples ne $loaded) {
+	    print "WARNING: inconsistent number of triples\n";
+	}
+    }
+
+    if ($loaded =~ /^\d+$/) {
+	return $loaded;
+    }
+}
+
+sub rdf_loader_run {
+    my ($n_para) = @_;
+
+    print "# Running loader in parallelization of $n_para ...\n";
+
+    open(TMP_SCRIPT, ">$TMP_SCRIPT") || die;
+    for (my $i=0; $i<$n_para; $i++) {
+	print TMP_SCRIPT "echo 'rdf_loader_run();' | virt $VERSION -t &\n";
+    }
+    print TMP_SCRIPT "wait\n";
+    close(TMP_SCRIPT);
+
+    my $start_time = time;
+    my @time = `bash $TMP_SCRIPT`;
+    my $end_time = time;
+    chomp(@time);
+    print "@time\n";
+    return ($end_time - $start_time);
+}
+
+sub print_speed {
+    my ($triples, $sec) = @_;
+
+    my $speed = $triples / ($sec / 60);
+    printf "%d (%.1f M) triples per min\n", $speed, $speed / 1000000;
+}
+
+sub print_time {
+    my ($sec, $text) = @_;
+
+    if (! defined $sec) {
+	return;
+    }
+
+    print "$sec sec";
+    if ($sec >= 3600) {
+	my $hours = $sec / 3600;
+	printf " (%.1f hours)", $hours;
+    } elsif ($sec >= 60) {
+	my $minutes = $sec / 60;
+	printf " (%.1f min)", $minutes;
+    }
+    if ($text) {
+	print $text;
+    }
+    print "\n";
+}
+
+sub print_triples {
+    my ($triples, $text) = @_;
+
+    print "$triples";
+    if ($triples >= 1000000000) {
+	# printf " (%d G)", $triples / 1000000000;
+	printf " (%.1f G)", $triples / 1000000000;
+    } elsif ($triples >= 1000000) {
+	printf " (%.1f M)", $triples / 1000000;
+	# printf " (%d M)", $triples / 1000000;
+    } elsif ($triples >= 1000) {
+	printf " (%.1f K)", $triples / 1000;
+	# printf " (%d K)", $triples / 1000;
+    }
+    print " triples";
+    if ($text) {
+	print $text;
+    }
+    print "\n";
+}

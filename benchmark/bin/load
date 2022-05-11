@@ -1,0 +1,4 @@
+#!/bin/sh
+cp -a etc/virtuoso.2GB.ini /usr/local/virtuoso-opensource/var/lib/virtuoso/db/virtuoso.ini
+virt local start
+virt.load local -f data/taxonomy_2019-05-01.ttl http://ddbj.nig.ac.jp/ontologies/taxonomy/

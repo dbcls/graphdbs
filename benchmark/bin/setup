@@ -1,0 +1,4 @@
+#!/bin/sh
+cd /root
+ln -s /work/etc/.virt
+ln -s /work/etc/.spang

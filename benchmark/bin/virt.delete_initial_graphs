@@ -1,0 +1,52 @@
+#!/usr/bin/perl -w
+use strict;
+use File::Basename;
+use Getopt::Std;
+my $PROGRAM = basename $0;
+my $USAGE=
+"Usage: $PROGRAM NICK_NAME
+";
+
+my %OPT;
+getopts('', \%OPT);
+
+if (@ARGV != 1) {
+    print STDERR $USAGE;
+    print STDERR `virt -V`;
+    exit 1;
+}
+my $NICK_NAME = shift @ARGV;
+
+### Main ###
+
+delete_rule($NICK_NAME, 'ldp', 'http://www.w3.org/ns/ldp#');
+delete_rule($NICK_NAME, 'http://www.w3.org/2002/07/owl#', 'http://www.w3.org/2002/07/owl#');
+
+delete_graphs($NICK_NAME);
+
+################################################################################
+### Functions ##################################################################
+################################################################################
+sub delete_rule {
+    my ($nick_name, $rule_name, $graph) = @_;
+
+    print "# Delete $rule_name $graph\n";
+    system "virt $nick_name -d $rule_name '$graph'";
+    print "\n";
+}
+
+sub delete_graphs {
+    my ($nick_name) = @_;
+
+    my @graph_name = ('http://www.w3.org/ns/ldp#',
+		      'http://www.openlinksw.com/schemas/virtrdf#',
+		      'http://localhost:8890/DAV/',
+		      'http://www.w3.org/2002/07/owl#',
+		      'http://localhost:8890/sparql'
+	);
+    for my $graph_name (@graph_name) {
+	print "# Delete <$graph_name>\n";
+	system "virt $nick_name -D '$graph_name'";
+	print "\n";
+    }
+}

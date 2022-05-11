@@ -1,0 +1,353 @@
+#!/usr/bin/perl -w
+use strict;
+use File::Basename;
+use Getopt::Std;
+# use FindBin;
+my $PROGRAM = basename $0;
+my $USAGE=
+"Usage: echo 'ISQL COMMAND;' | $PROGRAM DB
+       $PROGRAM DB 'ISQL COMMAND;'
+       $PROGRAM DB -e 'QUERY'
+       $PROGRAM DB [OPTION]
+       $PROGRAM DB [start|stop|clear]
+-G : show graphs (bug?)
+-G http://graph : count triples of graph
+-D http://graph : delete graph
+-r : show rules
+-r RULE http://graph : create RULE
+-d RULE http://graph : delete RULE
+-i : inspect text index progress
+-I : make text index
+-c : checkpoint
+";
+# -p: print settings
+# -P: print settings without newline
+# -t: extract time
+# -s: SPARQL from STDIN # query should be saved in tmp file to pass isql.
+# virt -V: list DBs
+
+################################################################################
+### Settings ###################################################################
+################################################################################
+
+# my $THIS_DIR = "$FindBin::Bin";
+
+my %VIRTUOSO_DB = ();
+# read_ini_file("$THIS_DIR/virt.ini", \%VIRTUOSO_DB);
+read_ini_file("$ENV{HOME}/.virt/db", \%VIRTUOSO_DB);
+
+my $HTTP_LOG_DIR = "logs";
+
+################################################################################
+### Analize command line arguments #############################################
+################################################################################
+
+### First argument ###
+# DB or -V
+if (!@ARGV) {
+    print STDERR $USAGE;
+    print STDERR "\nDB\n";
+    for my $db_name (sort {$a cmp $b} keys %VIRTUOSO_DB) {
+	print STDERR "", $db_name, ": ", $VIRTUOSO_DB{$db_name}, "\n";
+    }
+    exit 1;
+}
+if ($ARGV[0] eq "-V") {
+    print STDERR "\nDB\n";
+    for my $db_name (sort {$a cmp $b} keys %VIRTUOSO_DB) {
+	print STDERR "", $db_name, ": ", $VIRTUOSO_DB{$db_name}, "\n";
+    }
+    exit 1;
+} elsif ($ARGV[0] =~ /^-\w/) {
+    print STDERR "$ARGV[0]: invalid option\n";
+    exit 1;
+}
+
+my $DB_NAME = shift(@ARGV);
+if ($VIRTUOSO_DB{$DB_NAME}) {
+    $ENV{VIRTUOSO_DB} = $VIRTUOSO_DB{$DB_NAME};
+} else {
+    print STDERR "ERROR: $DB_NAME is not allowed.\n";
+    exit;
+}
+
+### Settings ###
+my ($USER, $PASS) = ("dba", "dba");
+my %PASSWD = ();
+read_ini_file("$ENV{HOME}/.virt/pass", \%PASSWD);
+if ($PASSWD{$DB_NAME}) {
+    $PASS = $PASSWD{$DB_NAME};
+}
+
+my $PORT = `cat $ENV{VIRTUOSO_DB}/virtuoso.ini | grep '^ServerPort' | head -1`;
+chomp($PORT);
+if ($PORT =~ /^ServerPort\s*= *(\d+)$/) {
+    $PORT = $1;
+} else {
+    die $PORT;
+}
+
+my $SERVER_ROOT = `cat $ENV{VIRTUOSO_DB}/virtuoso.ini | grep '^ServerRoot' | head -1`;
+my $VIRTUOSO_COMMAND;
+my $ISQL;
+if ($SERVER_ROOT =~ /^ServerRoot\s*= *(\S+)\/var\/lib\/virtuoso\/vsp$/) {
+    my $dir = $1;
+    $VIRTUOSO_COMMAND = "$dir/bin/virtuoso-t +wait";
+    $ISQL = "$dir/bin/isql $PORT $USER $PASS";
+} elsif (-f "$ENV{VIRTUOSO_DB}/../bin/virtuoso") {
+    $VIRTUOSO_COMMAND = "$ENV{VIRTUOSO_DB}/../bin/virtuoso +wait";
+    $ISQL = "$ENV{VIRTUOSO_DB}/../bin/isql $PORT $USER $PASS"
+} else {
+    die $SERVER_ROOT;
+}
+
+### Check second argument ###
+# [start|stop|clear] -> specific operation
+if (@ARGV && $ARGV[0] eq "start") {
+    print "$SERVER_ROOT";
+    chdir $ENV{VIRTUOSO_DB} || die "ERROR: Can't chdir to $ENV{VIRTUOSO_DB}\n";
+    if (! -e $HTTP_LOG_DIR) {
+	mkdir $HTTP_LOG_DIR || die;
+    }
+    print "$VIRTUOSO_COMMAND\n";
+    system "$VIRTUOSO_COMMAND";
+    exit;
+} elsif (@ARGV && $ARGV[0] eq "stop") {
+    my $PID = `cat $ENV{VIRTUOSO_DB}/virtuoso.lck`;
+    chomp($PID);
+    if ($PID eq "") {
+	print STDERR "WARNING: Virtuoso is not running!\n";
+	exit(1);
+    } elsif ($PID =~ /^VIRT_PID=(\d+)$/) {
+	$PID = $1;
+	print "kill $PID\n";
+	system "kill $PID";
+	exit;
+    } else {
+	die;
+    }
+} elsif (@ARGV && $ARGV[0] eq "clear") {
+    chdir $ENV{VIRTUOSO_DB} || die "ERROR: Can't chdir to $ENV{VIRTUOSO_DB}\n";
+    system "pwd";
+    system "rm -i virtuoso.trx virtuoso-temp.db virtuoso.db";
+    exit;
+}
+
+### Options ###
+my %OPT;
+getopts('e:GC:D:rRdpPtsiIc', \%OPT);
+
+if ($OPT{p}) {
+    print $ENV{VIRTUOSO_DB}, "\n";
+    exit;
+} elsif ($OPT{P}) {
+    print $ENV{VIRTUOSO_DB};
+    exit;
+}
+
+### Execute ###
+if ($OPT{r}) {
+    if (@ARGV == 2) {
+	isql("rdfs_rule_set('$ARGV[0]', '$ARGV[1]'); ", extract_line => "time_1");
+    } elsif (@ARGV == 0) {
+	isql("SELECT * FROM sys_rdf_schema ;", extract_line => "rules");
+    } else {
+	die $USAGE;
+    }
+} elsif ($OPT{i}) {
+	isql("SELECT COUNT(*) FROM DB.DBA.VTLOG_DB_DBA_RDF_OBJ;", extract_line => "1");
+} elsif ($OPT{I}) {
+	print isql("DB.DBA.VT_INC_INDEX_DB_DBA_RDF_OBJ();");
+} elsif ($OPT{c}) {
+	print isql("checkpoint;");
+} elsif ($OPT{d}) {
+    if (@ARGV == 2) {
+	isql("rdfs_rule_set('$ARGV[0]', '$ARGV[1]', 1); ", extract_line => "time_1");
+    } else {
+	die $USAGE;
+    }
+} elsif ($OPT{G}) {
+    if (@ARGV == 1) {
+	isql("SPARQL SELECT COUNT(*) FROM <$ARGV[0]> where {?s ?p ?o.};", extract_line => "1");
+    } elsif (@ARGV == 0) {
+	isql("DB.DBA.SPARQL_SELECT_KNOWN_GRAPHS();", extract_line => "multi");
+    } else {
+	die $USAGE;
+    }
+} elsif ($OPT{C}) {
+    print isql("SPARQL SELECT COUNT(*) FROM <$OPT{C}> where {?s ?p ?o.};");
+} elsif ($OPT{D}) {
+    isql(join("\n", "log_enable(2);", "sparql clear graph <$OPT{D}>;", "checkpoint;"), extract_line => "times_3");
+} elsif ($OPT{e}) {
+    isql("SPARQL $OPT{e};", extract_line => "multi");
+} elsif (! -t) {
+    if ($OPT{s}) {
+	my @query = <STDIN>;
+	my $query = join("", @query);
+	isql("SPARQL $query;", extract_line => "multi");
+    } else {
+	my $results = `cat | $ISQL`;
+	if ($OPT{t}) {
+	    my $time = extract_time_from_results($results);
+	    if (defined $time) {
+		print $time, "\n";
+		exit;
+	    }
+	}
+	print $results;
+    }
+} elsif (@ARGV) {
+    print isql("@ARGV"); 
+} else {
+    print "$ISQL\n";
+    system "$ISQL";
+}
+
+################################################################################
+### Functions ##################################################################
+################################################################################
+sub isql {
+    my ($command, %opt) = @_;
+
+    my $result = `echo \"$command\" | $ISQL`;
+
+    if ($opt{extract_line}) {
+        if ($opt{extract_line} eq "1") {
+            my @line = extract_lines_from_results($result);
+            if (@line == 1) {
+                print "$line[0]\n";
+            } else {
+                print "$result\n";
+            }
+        } elsif ($opt{extract_line} eq "multi") {
+            my @line = extract_lines_from_results($result);
+            print join("\n", @line), "\n";
+        } elsif ($opt{extract_line} eq "rules") {
+            print extract_rules_from_results($result);
+        } elsif ($opt{extract_line} eq "time_1") {
+            my $time = extract_time_from_results($result);
+            if (defined $time) {
+                print "$time sec\n";
+            } else {
+                print $result;
+            }
+        } elsif ($opt{extract_line} eq "times_3") {
+            my @time = extract_times_3_from_results($result);
+            if (@time) {
+                print join(" ", @time), " sec (log_enable, delete, checkpoint)\n";
+            } else {
+                print $result;
+            }
+        } else {
+            die;
+        }
+    } else {
+        return "$result\n";
+    }
+}
+
+sub extract_time_from_results {
+    my ($results) = @_;
+
+    my $sec;
+    # if ($results =~ /EXIT; to exit\.\nSQL> \nDone\. -- (\d+) msec\.\nSQL> $/s) {
+    if ($results =~ /\nSQL> \nDone\. -- (\d+) msec\.\nSQL> $/s) {
+	my $msec = $1;
+	$sec = sprintf("%.3f", $msec/1000);
+    }
+
+    return $sec;
+}
+
+sub extract_times_3_from_results {
+    my ($results) = @_;
+
+    # if ($results =~ /EXIT; to exit\.\nSQL> \nDone\. -- (\d+) msec\.\nSQL> \nDone\. -- (\d+) msec\.\nSQL> \nDone\. -- (\d+) msec\.\nSQL> $/s) {
+    if ($results =~ /\nSQL> \nDone\. -- (\d+) msec\.\nSQL> \nDone\. -- (\d+) msec\.\nSQL> \nDone\. -- (\d+) msec\.\nSQL> $/s) {
+	my @msec = ($1, $2, $3);
+	my @sec = ();
+	for my $msec (@msec) {
+	    push @sec, sprintf("%.3f", $msec/1000);
+	}
+	return @sec;
+    }
+}
+
+sub extract_rules_from_results {
+    my ($results) = @_;
+
+    my @result = split("\n", $results);
+    my $i = 0;
+    for (; $i<@result; $i++) {
+	$result[$i] eq "" and last;
+    }
+    $i++;
+
+    if ($result[$i] eq "") {
+	return "";
+    }
+
+    my $contents = "";
+    for (; $i<@result; $i++) {
+	$result[$i] eq "" and last;
+	my @f = split(/\s+/, $result[$i]);
+	if (@f == 3) {
+	    $contents .= "$f[0]\t$f[1]\n";
+	} else {
+	    die $result[$i];
+	}
+    }
+
+    if ($contents) {
+	return $contents;
+    } else {
+	return $results;
+    }
+}
+
+sub extract_lines_from_results {
+    my ($results) = @_;
+
+    my @result = split("\n", $results);
+    my $i = 0;
+    for (; $i<@result; $i++) {
+        $result[$i] eq "" and last;
+    }
+    $i++;
+
+    my @content = ();
+    for (; $i<@result; $i++) {
+        $result[$i] eq "" and last;
+        push @content, $result[$i];
+    }
+
+    if (@content) {
+        return @content;
+    } else {
+        return @result;
+    }
+}
+
+sub read_ini_file {
+    my ($file, $r_hash) = @_;
+
+    if (! -f $file) {
+	return;
+    }
+
+    open(INI_FILE, "$file") || die;
+    while (<INI_FILE>) {
+	chomp;
+	if (/^\s*$/) {
+	    next;
+	}
+	if (/^\s*#/) {
+	    next;
+	}
+	my ($db_name, $db_dir) = split;
+	${$r_hash}{$db_name} = $db_dir;
+    }
+    close(INI_FILE);
+
+    return;
+}
