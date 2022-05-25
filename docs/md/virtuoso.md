@@ -145,3 +145,6 @@ Virtuoso 42000 Error SQ199: Maximum size (32767) of a code vector exceeded by 39
 	}
 ```
 以上4カ所の修正で、結果的には、数万から10万要素でも答えが返ってくるようになる. ただし数万以上ともなると急激に遅くなり、何分もかかる。
+
+### Performance Tuning
+http://vos.openlinksw.com/owiki/wiki/VOS/VirtRDFPerformanceTuning
