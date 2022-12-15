@@ -661,7 +661,7 @@
     "Front-end": "",
     "Standardization": "",
     "Source code": "",
-    "Comment": "",
+    "Comment": "2012-2017 GraphSQL",
     "": "",
     "URL": "https://www.tigergraph.com/"
   },
@@ -880,5 +880,41 @@
     "Comment": "",
     "": "",
     "URL": ""
+  },
+  {
+    "Hide": "",
+    "Name": "ArcadeDB",
+    "Company": "",
+    "First release": "",
+    "Last update": "",
+    "Version": "22.1.3 ",
+    "Data model": "",
+    "Implementation": "",
+    "Query language": "",
+    "Back-end": "",
+    "Front-end": "",
+    "Standardization": "",
+    "Source code": "https://github.com/ArcadeData/arcadedb",
+    "Comment": "",
+    "": "https://blog.arcadedb.com/welcome-to-arcadedb",
+    "URL": "https://arcadedb.com/"
+  },
+  {
+    "Hide": "",
+    "Name": "Apache AGE",
+    "Company": "",
+    "First release": "",
+    "Last update": "",
+    "Version": "",
+    "Data model": "",
+    "Implementation": "",
+    "Query language": "",
+    "Back-end": "",
+    "Front-end": "",
+    "Standardization": "",
+    "Source code": "",
+    "Comment": "",
+    "": "",
+    "URL": "https://age.apache.org/"
   }
 ]
