@@ -15,5 +15,5 @@ See [benchmark](https://github.com/dbcls/graphdbs/tree/master/benchmark) directo
 Update `json/engines.json` and `json/references.json` as follows.
 ```
 $ cd graphdbs
-$ ./bin/scripts/update_json_data.sh
+$ ./scripts/update_json_data.sh
 ```
