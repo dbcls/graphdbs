@@ -1,6 +1,4 @@
-# List of Graph Databases
-
-https://dbcls.github.io/graphdbs/
+# Graph Databases
 
 ## Documentation
 
