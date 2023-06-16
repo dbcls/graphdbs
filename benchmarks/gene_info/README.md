@@ -3,7 +3,7 @@
 ## Original data
 
 NCBI Homo_sapiens.gene_info
-* Downloaded from ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Mammalia/Homo_sapiens.gene_info.gz (2021-02-10)
+* ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Mammalia/Homo_sapiens.gene_info.gz (2021-02-10)
 * See the directory [original_data](https://github.com/dbcls/graphdbs/tree/master/benchmarks/gene_info/original_data) for details.
 
 ## Created RDF
