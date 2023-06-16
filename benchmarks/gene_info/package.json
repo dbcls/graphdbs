@@ -1,0 +1,10 @@
+{
+  "name": "human-ncbigene-rdf",
+  "version": "1.0.0",
+  "description": "",
+  "main": "make_rdf.js",
+  "dependencies": {
+    "commander": "^7.2.0",
+    "fs": "0.0.1-security"
+  }
+}

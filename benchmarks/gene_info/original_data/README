@@ -1,0 +1,1527 @@
+README:  Gene                       Last modified:  July 17, 2020
+
+NOTE: As files are added or modified in this ftp site, notification will be
+sent via the Gene News RSS feed.
+
+You may subscribe to the Gene News RSS feed here:
+            https://www.ncbi.nlm.nih.gov/feed/rss.cgi?ChanKey=genenews
+
+A comparison of the files previously available from LocusLink to those now 
+   available from Entrez Gene is provided here:
+
+https://www.ncbi.nlm.nih.gov/entrez/query/static/help/LL2G.html#files
+
+Files are provided in several directories and subdirectories.  
+  This document is comprehensive, and subdivided according to the path in 
+  which files are found. 
+
+  Most of the files in this path are re-calculated daily. Gene does not,
+  however, compare previous and current data, so the date on the file may 
+  change without any change in content.
+
+Changes not affecting use of the ftp site:
+15 Dec 2009: removed references to LocusLink
+             altered the labels in the interactions section, by appending 1 
+             and 2
+
+I.     DATA directory
+II.    DATA directory, ASN_BINARY subdirectory
+III.   DATA directory, GENE_INFO subdirectory
+IV.    DATA directory, expression subdirectory
+V.     GeneRIF directory (includes reports of interactions)
+VI.    tools directory
+VII.   gene-related files from genome annotation
+VIII.  gene-GeneReviews relationships
+IX.    Archives
+===========================================================================
+===========================================================================
+I.     Files in the DATA directory
+===========================================================================
+===========================================================================
+gene2accession                                  recalculated daily
+---------------------------------------------------------------------------
+           This file is a comprehensive report of the accessions that are 
+           related to a GeneID.  It includes sequences from the international
+           sequence collaboration, Swiss-Prot, and RefSeq. The RefSeq subset
+           of this file is also available as gene2refseq.
+
+           Because this file is updated daily, the RefSeq subset does not 
+           reflect any RefSeq release. Versions of RefSeq RNA and protein 
+           records may be more recent than those included in an annotation
+           release (build) or those in the current RefSeq release.
+
+           To identify the annotation release/build to which the 
+           genomic RefSeqs belong, please refer to the species-specific
+           README_CURRENT_RELEASE or README_CURRENT_BUILD
+           file in the genomes ftp site:
+
+             ftp://ftp.ncbi.nih.gov/genomes/
+ 
+           For example:
+             ftp://ftp.ncbi.nih.gov/genomes/H_sapiens/README_CURRENT_RELEASE
+             ftp://ftp.ncbi.nih.gov/genomes/Ailuropoda_melanoleuca/README_CURRENT_BUILD            
+
+           More notes about this file:
+
+           tab-delimited
+           one line per genomic/RNA/protein set of sequence accessions
+           Column header line is the first line in the file.
+
+           NOTE: Because this file is comprehensive, it may include
+           some RefSeq accessions that are not current, because they are
+           part of the annotation of the current genomic assembly. In other 
+           words, the annotation of a genome is not continuous, but depends
+           on a data freeze. Sub-genomic RefSeqs, however, are updated 
+           continuously. Thus some RefSeqs may have been replaced or 
+           suppressed after a data freeze assocated with a genomic annotation. 
+           Until the release of a new genomic annotation, all
+           RefSeqs that are included in the current annotation are reported
+           in this file.
+---------------------------------------------------------------------------
+
+tax_id:
+           the unique identifier provided by NCBI Taxonomy
+           for the species or strain/isolate
+
+GeneID:
+           the unique identifier for a gene
+
+status:
+           status of the RefSeq if a refseq, else '-'
+           RefSeq values are: INFERRED, MODEL, NA, PREDICTED, PROVISIONAL,
+           REVIEWED, SUPPRESSED, VALIDATED
+
+RNA nucleotide accession.version:
+           may be null (-) for some genomes
+
+RNA nucleotide gi:
+           the gi for an RNA nucleotide accession, '-' if not applicable
+
+protein accession.version:
+           will be null (-) for RNA-coding genes
+
+protein gi:
+           the gi for a protein accession, '-' if not applicable
+
+genomic nucleotide accession.version:
+           may be null (-) 
+
+genomic nucleotide gi:
+           the gi for a genomic nucleotide accession, '-' if not applicable
+
+start position on the genomic accession:
+            position of the gene feature on the genomic accession,
+            '-' if not applicable
+            position 0-based
+
+            NOTE: this file does not report the position of each exon.
+            For positions on RefSeq contigs and chromosomes, 
+            use the gff3 file in the appropriate build directory.
+            For example, for the human genome,
+            ftp://ftp.ncbi.nih.gov/genomes/H_sapiens/GFF/
+
+            This file has one line for each feature.
+
+            WARNING: Positions in gff3 files are one-based, not 0-based
+
+            NOTE: if genes are merged after an annotation is released, there 
+            may be more than one location reported on a genomic sequence 
+            per GeneID, each resulting from the annotation before the merge.
+
+end position on the genomic accession:
+            position of the gene feature on the genomic accession,
+            '-' if not applicable
+            position 0-based
+
+            NOTE: this file does not report the position of each exon.
+            For positions on RefSeq contigs and chromosomes, 
+            use the gff3 file in the appropriate build directory.
+            For example, for the human genome,
+            ftp://ftp.ncbi.nih.gov/genomes/H_sapiens/GFF/
+
+            This file has one line for each feature.
+
+            WARNING: Positions in gff3 files are one-based, not 0-based
+
+            NOTE: if genes are merged after an annotation is released, there 
+            may be more than one location reported on a genomic sequence 
+            per GeneID, each resulting from the annotation before the merge.
+
+orientation:
+            orientation of the gene feature on the genomic accession,
+            '?' if not applicable
+
+assembly:
+            the name of the assembly
+            '-' if not applicable
+
+mature peptide accession.version:
+           will be null (-) if absent
+
+mature peptide gi:
+           the gi for a mature peptide accession, '-' if not applicable
+
+Symbol:
+           the default symbol for the gene
+
+
+===========================================================================
+gene2ensembl                                    recalculated daily
+---------------------------------------------------------------------------
+           This file reports matches between NCBI and Ensembl annotation
+           based on comparison of rna and protein features.
+
+           Matches are collected as follows.
+           For a protein to be identified as a match between RefSeq and
+           Ensembl, there must be at least 80% overlap between the two.
+           Furthermore, splice site matches must meet certain conditions:
+           either 60% or more of the splice sites must match, or there may 
+           be at most one splice site mismatch.
+
+           For rna features, the best match between RefSeq and Ensembl is 
+           selected based on splice site and overlap comparisons. For coding 
+           transcripts, there is no minimum threshold for reporting other than 
+           the protein comparison criteria above. For non-coding transcripts, 
+           the splice site criteria are the same as for protein matching, but 
+           the overlap threshold is reduced to 50%.
+
+           Furthermore, both the rna and the protein features must meet these 
+           minimum matching criteria to be considered a good match.  In 
+           addition, only the best matches will be reported in this file.  
+           Other matches that satisified the matching criteria but were
+           not the best matches will not be reported in this file.
+
+           A summary report of species that have been compared is contained
+           in another FTP file, README_ensembl (see next item).
+
+           Ensembl gene identifiers are also reported in the dbXrefs column
+           in the gene_info FTP file.  Due to differences in how these files
+           are processed, the Ensembl gene identifiers in these two files
+           may not be in complete concordance.
+
+           More notes about this file:
+
+           tab-delimited
+           one line per match between RefSeq and Ensembl rna/protein
+           Column header line is the first line in the file.
+
+
+---------------------------------------------------------------------------
+
+tax_id:
+           the unique identifier provided by NCBI Taxonomy
+           for the species or strain/isolate
+
+GeneID:
+           the unique identifier for a gene
+
+Ensembl_gene_identifier:
+           the matching Ensembl identifier for the gene
+
+RNA nucleotide accession.version:
+           the identifier for the matching RefSeq rna
+           will be null (-) if only the protein matched
+
+Ensembl_rna_identifier:
+           the identifier for the matching Ensembl rna
+           may include a version number
+           will be null (-) if only the protein matched
+
+protein accession.version:
+           the identifier for the matching RefSeq protein
+           will be null (-) if only the mRNA matched
+
+Ensembl_protein_identifier:
+           the identifier for the matching Ensembl protein
+           may include a version number
+           will be null (-) if only the mRNA matched
+
+
+===========================================================================
+gene2vega                                    archived
+---------------------------------------------------------------------------
+           This file is no longer being updated.  The last update was on
+           December 3, 2018.
+
+           This file reports matches between NCBI and Vega annotation.
+
+           Matches are derived from the comparisons between NCBI and
+           Ensembl annotation (which are reported in the gene2ensembl FTP
+           file).  That is, where there is a match between NCBI and 
+           Ensembl annotation, and there is a correspondence between that 
+           Ensembl annotation and Vega annotation, then the inferred 
+           relationship between the NCBI and Vega annotations are reported 
+           here.
+
+           More notes about this file:
+
+           tab-delimited
+           one line per match between RefSeq and Vega rna/protein
+           Column header line is the first line in the file.
+
+
+---------------------------------------------------------------------------
+
+tax_id:
+           the unique identifier provided by NCBI Taxonomy
+           for the species or strain/isolate
+
+GeneID:
+           the unique identifier for a gene
+
+Vega_gene_identifier:
+           the matching Vega identifier for the gene
+
+RNA nucleotide accession.version:
+           the identifier for the matching RefSeq rna
+           will be null (-) if only the protein matched
+
+Vega_rna_identifier:
+           the identifier for the matching Vega rna
+           may include a version number
+           will be null (-) if only the protein matched
+
+protein accession.version:
+           the identifier for the matching RefSeq protein
+           will be null (-) if only the mRNA matched
+
+Vega_protein_identifier:
+           the identifier for the matching Vega protein
+           may include a version number
+           will be null (-) if only the mRNA matched
+
+
+===========================================================================
+README_ensembl                                         recalculated weekly
+---------------------------------------------------------------------------
+           This file reports the overall status of comparison between 
+           NCBI and Ensembl annotation.  The detailed report is contained
+           in the gene2ensembl FTP file (see previous item).
+
+           More notes about this file:
+
+           tab-delimited
+           one line per species
+           Column header line is the first line in the file.
+
+---------------------------------------------------------------------------
+
+tax_id:
+           the unique identifier provided by NCBI Taxonomy
+           for the species or strain/isolate
+
+ncbi_release:
+           the NCBI release number
+
+ncbi_assembly:
+           the NCBI assembly name
+
+ensembl_release:
+           the Ensembl release number
+
+ensembl_assembly:
+           the Ensembl assembly name
+
+date_compared:
+           the date when the comparison was performed, in YYYYMMDD format
+
+
+
+===========================================================================
+gene2go                                         recalculated daily
+---------------------------------------------------------------------------
+           This file reports the GO terms that have been associated
+            with Genes in Entrez Gene.
+           It is generated by processing the gene_association files
+            on the GO ftp site: 
+            http://www.geneontology.org/GO.current.annotations.shtml
+           and comparing the DB_Object_ID to annotation in Gene,
+           as also reported in gene_info.gz
+
+           Multiple gene_associations file may be used for any genome.
+           If so, duplicate information is not reported; but unique
+           contributions of GO terms, evidence codes, and citations are.
+ 
+           The file that is used to establish the rules for 
+           the files and fields that are used for each taxon 
+           is documented in go_process.xml
+
+
+           MODIFIED: May 9, 2006 to include the category of the GO term.
+
+           MODIFIED: May 21, 2007 to use '-' for empty fields.
+
+           Data elements which are not applicable are shown as '-'.
+
+           tab-delimited
+           One line per GeneID/GO term/representative GO evidence code.
+           Column header line is the first line in the file.
+---------------------------------------------------------------------------
+
+tax_id:
+           the unique identifier provided by NCBI Taxonomy
+           for the species or strain/isolate
+
+GeneID:
+           the unique identifier for a gene
+
+GO ID:
+           the GO ID, formatted as GO:0000000
+
+Evidence:
+           the evidence code in the gene_association file
+
+Qualifier: 
+           a qualifier for the relationship between the gene
+           and the GO term
+
+GO term:
+           the term indicated by the GO ID
+
+PubMed:
+           pipe-delimited set of PubMed uids reported as evidence
+           for the association
+
+Category:
+           the GO category (Function, Process, or Component)
+
+
+===========================================================================
+gene2pubmed                                     recalculated daily
+---------------------------------------------------------------------------
+           This file can be considered as the logical equivalent of
+           what is reported as Gene/PubMed Links visible in Gene's 
+           and PubMed's Links menus. Although gene2pubmed is re-calculated daily,
+           some of the source documents (GeneRIFs, for example) are not
+           updated that frequently, so timing depends on the update
+           frequency of the data source.
+
+           Documentation about how these links are maintained
+           is provided here:
+
+           https://www.ncbi.nlm.nih.gov/entrez/query/static/entrezlinks.html#gene
+
+           tab-delimited
+           one line per set of tax_id/GeneID/PMID
+           Column header line is the first line in the file.
+---------------------------------------------------------------------------
+
+tax_id:
+           the unique identifier provided by NCBI Taxonomy
+           for the species or strain/isolate
+
+GeneID:
+           the unique identifier for a gene
+
+
+PubMed ID (PMID):
+           the unique identifier in PubMed for a citation
+
+
+===========================================================================
+gene2refseq                                     recalculated daily
+---------------------------------------------------------------------------
+           tab-delimited
+           one line per genomic/RNA/protein set of RefSeqs
+           Column header line is the first line in the file.
+
+           Because this file is updated daily, the RefSeq subset does not 
+             reflect any RefSeq release. Versions of RefSeq RNA and protein 
+             records may be more recent than those included in an annotation
+             release (build) or those in the current RefSeq release.
+
+             To identify the annotation release/build to which the 
+             genomic RefSeqs belong, please refer to the species-specific
+             README_CURRENT_RELEASE or README_CURRENT_BUILD file in the genomes ftp site:
+             
+             ftp://ftp.ncbi.nih.gov/genomes/
+ 
+             For example:
+             ftp://ftp.ncbi.nih.gov/genomes/H_sapiens/README_CURRENT_RELEASE
+             ftp://ftp.ncbi.nih.gov/genomes/Ailuropoda_melanoleuca/README_CURRENT_BUILD
+        
+             
+
+           NOTE: Because this file is comprehensive, it may include
+           some RefSeq accessions that are not current, because they are
+           part of the annotation of the current genomic assembly. In other 
+           words, the annotation of a genome is not continuous, but depends
+           on a data freeze. Sub-genomic RefSeqs, however, are updated 
+           continuously. Thus some RefSeqs may have been replaced or 
+           suppressed after a data freeze associated with a genomic annotation. 
+           Until the release of a new genomic annotation, all
+           RefSeqs included in the current annotation are reported
+           in this file.
+
+
+           NOTE: This file is the RefSeq subset of gene2accession.
+---------------------------------------------------------------------------
+
+tax_id:
+           the unique identifier provided by NCBI Taxonomy
+           for the species or strain/isolate
+
+GeneID:
+           the unique identifier for a gene
+
+status:
+           status of the RefSeq
+           values are: INFERRED, MODEL, NA, PREDICTED, PROVISIONAL,
+           REVIEWED, SUPPRESSED, VALIDATED
+
+RNA nucleotide accession.version:
+           may be null (-) for some genomes
+
+RNA nucleotide gi:
+           the gi for an RNA nucleotide accession, '-' if not applicable
+
+protein accession.version:
+           will be null (-) for RNA-coding genes
+
+protein gi:
+           the gi for a protein accession, '-' if not applicable
+
+genomic nucleotide accession.version:
+           may be null (-) if a RefSeq was provided after
+           the genomic accession was submitted
+
+genomic nucleotide gi:
+           the gi for a genomic nucleotide accession, '-' if not applicable
+
+start position on the genomic accession:
+            position of the gene feature on the genomic accession,
+            '-' if not applicable
+            position 0-based
+
+            NOTE: this file does not report the position of each exon
+            for positions on RefSeq contigs and chromosomes, 
+            use the gff format files in the desired build directory
+            at ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/
+            For example, for human at the time this was written:
+            ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_mammalian/Homo_sapiens/all_assembly_versions/GCF_000001405.31_GRCh38.p5/GCF_000001405.31_GRCh38.p5_genomic.gff.gz
+            WARNING: positions in these files are one-based, not 
+            0-based
+
+            NOTE: if genes are merged after an annotation is released, there 
+            may be more than one location reported on a genomic sequence 
+            per GeneID, each resulting from the annotation before the merge.
+
+end position on the genomic accession:
+            position of the gene feature on the genomic accession,
+            '-' if not applicable
+            position 0-based
+
+            NOTE: this file does not report the position of each exon
+            for positions on RefSeq contigs and chromosomes, 
+            use the gff format files in the desired build directory
+            at ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/
+            For example, for human at the time this was written:
+            ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_mammalian/Homo_sapiens/all_assembly_versions/GCF_000001405.31_GRCh38.p5/GCF_000001405.31_GRCh38.p5_genomic.gff.gz
+            WARNING: positions in these files are one-based, not 
+            0-based
+
+            NOTE: if genes are merged after an annotation is released, there 
+            may be more than one location reported on a genomic sequence 
+            per GeneID, each resulting from the annotation before the merge.
+
+orientation:
+            orientation of the gene feature on the genomic accession,
+            '?' if not applicable
+
+assembly:
+            the name of the assembly
+            '-' if not applicable
+
+mature peptide accession.version:
+           will be null (-) if absent
+
+mature peptide gi:
+           the gi for a mature peptide accession, '-' if not applicable
+
+Symbol:
+           the default symbol for the gene
+
+===========================================================================
+gene2sts                                        archived
+---------------------------------------------------------------------------
+           This file is no longer being updated.  The last update was on
+           July 26, 2017.
+
+           tab-delimited
+           one line per GeneID, UniSTS ID pair
+           Column header line is the first line in the file.
+---------------------------------------------------------------------------
+GeneID:
+           the unique identifier for a gene
+
+UniSTS ID:
+           the unique identifier given to a primer pair by UniSTS
+
+
+===========================================================================
+gene2unigene                                    archived
+---------------------------------------------------------------------------
+           This file is no longer being updated.  The last update was on
+           June 19, 2019.
+
+           This file can be considered as the logical equivalent of
+           what is reported as Gene/UniGene Links visible in Gene's 
+           and UniGene's Links menus.
+
+           Documentation about how these links are maintained
+           is provided here:
+
+           https://www.ncbi.nlm.nih.gov/entrez/query/static/entrezlinks.html
+       
+           tab-delimited
+           Column header line is the first line in the file.
+           Note: tax_id is not provided in a separate column.  The prefix 
+                 of the UniGene cluster can be used to determine 
+                 the species 
+---------------------------------------------------------------------------
+
+GeneID:
+           the unique identifier for a gene
+
+
+UniGene cluster:
+
+                        
+===========================================================================
+gene_group                                      recalculated daily
+---------------------------------------------------------------------------
+           report of genes and their relationships to other genes
+
+           tab-delimited
+           one line per pair of GeneIDs
+           Column header line is the first line in the file.
+  
+           NOTE: This file is not comprehensive, and contains 
+           a subset of information summarizing gene-gene relationships.  
+
+           Relationships are reported symmetrically, where appropriate, and 
+           currently include:
+
+               Ortholog*
+               Potential readthrough sibling
+               Readthrough child
+               Readthrough parent
+               Readthrough sibling
+               Region member
+               Region parent
+               Related functional gene
+               Related pseudogene
+
+           *Note that Ortholog records appear in the gene_orthologs
+           file, and are excluded from the gene_group file.
+           Note also that the gene_group and gene_orthologs files use the 
+           same column format.
+
+---------------------------------------------------------------------------
+
+tax_id:
+           the unique identifier provided by NCBI Taxonomy
+           for the species or strain/isolate
+
+GeneID:
+           the current unique identifier for a gene
+
+relationship:
+           the type of relationship between the two genes, 
+           e.g. GeneID has a 'relationship' to Other GeneID
+
+Other tax_id:
+           the related gene's tax_id
+
+Other GeneID:
+           the related gene's GeneID
+
+
+===========================================================================
+gene_orthologs                                  recalculated daily
+---------------------------------------------------------------------------
+           report of orthologous genes
+
+           tab-delimited
+           one line per pair of GeneIDs
+           Column header line is the first line in the file.
+
+           The column format is the same as the gene_group file.  In this 
+           file, the relationship column value is always "Ortholog".
+
+           This file does not report relationships symmetrically.  Instead,
+           a primary organism/gene is identified for each ortholog, and is
+           represented in the first two columns.  All other orthologous
+           organisms/genes are represented in the last two columns.  Thus,
+           each record in the file represents a pair of orthologous genes.
+           If there are N orthologous genes in a group, then there will be
+           N-1 records (pairs) represented in the gene_orthologs file.
+
+           Ortholog gene groups are calculated by NCBI's Eukaryotic Genome
+           Annotation pipeline for the NCBI Gene dataset using a combination
+           of protein sequence similarity and local synteny information.
+           Orthologous gene relationships may additionally be assigned after
+           manual review by a RefSeq genome curator. Orthology is determined
+           between a genome being annotated and a reference genome, typically
+           human, and the set of pairwise orthologs are tracked as a group.
+
+           For fish other than zebrafish, orthologs are computed in a
+           two-layer process. 1:1 orthologs are computed vs zebrafish, and
+           zebrafish orthologs are computed vs human. If the fish gene has a
+           zebrafish ortholog that has a human ortholog, then the fish gene
+           is combined into the human ortholog group and reported vs the human
+           gene. Otherwise it is reported vs the zebrafish gene. To determine
+           all fish:zebrafish orthologs for a given tax_id, join the data to
+           find the fish:human:zebrafish and fish:zebrafish data.
+
+
+===========================================================================
+gene_history                                    recalculated daily
+---------------------------------------------------------------------------
+           comprehensive information about GeneIDs that are no longer current
+
+           tab-delimited
+           one line per GeneID
+           Column header line is the first line in the file.
+---------------------------------------------------------------------------
+
+tax_id:
+           the unique identifier provided by NCBI Taxonomy
+           for the species or strain/isolate
+
+GeneID:
+           the current unique identifier for a gene
+
+Discontinued GeneID:
+           the GeneID that is no longer current
+
+Discontinued Symbol:
+           the symbol that was assigned to the discontinued GeneID,
+           if the discontinued record was not replaced with another
+
+Discontinue Date:
+           the date the gene record was discontinued or replaced, in 
+           YYYYMMDD format
+
+
+===========================================================================
+gene_info                                       recalculated daily
+---------------------------------------------------------------------------
+           tab-delimited
+           one line per GeneID
+           Column header line is the first line in the file.
+           Note: subsets of gene_info are available in the DATA/GENE_INFO
+                 directory (described later)
+           This file is identical in content to GENE_INFO/All_Data.gene_info.gz
+                 even though their file sizes and timestamps may differ
+                 slightly
+---------------------------------------------------------------------------
+
+tax_id:
+           the unique identifier provided by NCBI Taxonomy
+           for the species or strain/isolate
+
+GeneID:
+           the unique identifier for a gene
+           ASN1:  geneid
+
+Symbol:
+           the default symbol for the gene
+           ASN1:  gene->locus
+
+LocusTag:
+           the LocusTag value
+           ASN1:  gene->locus-tag
+
+Synonyms:
+           bar-delimited set of unofficial symbols for the gene
+
+dbXrefs:
+           bar-delimited set of identifiers in other databases
+           for this gene.  The unit of the set is database:value.
+           Note that HGNC and MGI include 'HGNC' and 'MGI', respectively,
+           in the value part of their identifier.  Consequently,
+           dbXrefs for these databases will appear like:
+             HGNC:HGNC:1100
+             This would be interpreted as database='HGNC', value='HGNC:1100'
+           Example for MGI:
+             MGI:MGI:104537
+             This would be interpreted as database='MGI', value='MGI:104537'
+
+chromosome:
+           the chromosome on which this gene is placed.
+           for mitochondrial genomes, the value 'MT' is used.
+
+map location:
+           the map location for this gene
+
+description:
+           a descriptive name for this gene
+
+type of gene:
+           the type assigned to the gene according to the list of options
+           provided in https://www.ncbi.nlm.nih.gov/IEB/ToolBox/CPP_DOC/lxr/source/src/objects/entrezgene/entrezgene.asn
+
+
+Symbol from nomenclature authority:
+            when not '-', indicates that this symbol is from a
+            a nomenclature authority
+
+Full name from nomenclature authority:
+            when not '-', indicates that this full name is from a
+            a nomenclature authority
+
+Nomenclature status:
+            when not '-', indicates the status of the name from the 
+            nomenclature authority (O for official, I for interim)
+
+Other designations:
+            pipe-delimited set of some alternate descriptions that
+            have been assigned to a GeneID
+            '-' indicates none is being reported.
+
+Modification date:
+            the last date a gene record was updated, in YYYYMMDD format
+
+Feature type:
+            pipe-delimited set of annotated features and their classes or 
+            controlled vocabularies, displayed as feature_type:feature_class 
+            or feature_type:controlled_vocabulary, when appropriate; derived 
+            from select feature annotations on RefSeq(s) associated with the 
+            GeneID
+
+===========================================================================
+gene_neighbors                                     recalculated daily
+---------------------------------------------------------------------------
+           This file reports neighboring genes for all genes placed on a 
+           given genomic sequence.
+
+           More notes about this file:
+
+           tab-delimited
+           one line per GeneID and genomic placement
+           Column header line is the first line in the file.
+           genomic sequences in scope for reporting include all top-level 
+               sequences and curated genomic (NG_ accessions)
+
+---------------------------------------------------------------------------
+
+tax_id:
+           the unique identifier provided by NCBI Taxonomy
+           for the species or strain/isolate
+
+GeneID:
+           the unique identifier for a gene
+
+genomic accession.version:
+
+genomic gi:
+           the gi for a genomic nucleotide accession
+
+start position:
+           start position of the gene feature on the genomic accession
+           position value is 0-based
+
+end position:
+           end position of the gene feature on the genomic accession
+           position value is 0-based
+
+orientation:
+           orientation of the gene feature on the genomic accession
+
+chromosome:
+           the chromosome on which this gene is placed.
+           for mitochondrial genomes, the value 'MT' is used.
+           '-' if not applicable
+
+GeneIDs on left:
+           bar-delimited set of GeneIDs for the nearest two non-overlapping
+               genes on the left, or '-' if there are none
+           additional GeneIDs may be included if the neighboring genes
+               overlap each other
+
+distance to left:
+           distance to the nearest gene on the left, or '-' if there is none
+
+GeneIDs on right:
+           bar-delimited set of GeneIDs for the nearest two non-overlapping
+               genes on the right, or '-' if there are none
+           additional GeneIDs may be included if the neighboring genes
+               overlap each other
+
+distance to right:
+           distance to the nearest gene on the right, or '-' if there is none
+
+overlapping GeneIDs:
+           bar-delimited set of GeneIDs for all overlapping genes, 
+               or '-' if there are none
+
+assembly:
+           the name of the assembly
+           '-' if not applicable
+
+
+===========================================================================
+gene_refseq_uniprotkb_collab            recalculated every month
+---------------------------------------------------------------------------
+           report of the relationship between NCBI Reference Sequence
+           protein accessions and UniProtKB protein accessions
+
+           tab-delimited
+           one line per pair
+           Column header line is the first line in the file.
+
+
+           NOTE: these relationships are based on the following:
+           1. identical sequence and tax_id
+           2. identical tax_id, common protein_id
+              (i.e. both sources cite the same source sequence)
+           3. comparable tax_id, common protein_id 
+              (RefSeq and UniProtKB may differ about the node 
+               in NCBI's taxonomy tree to which the sequence is assigned,
+               e.g. at the isolate or species level)
+
+NCBI protein accession:
+           the protein accession of the RefSeq
+
+UniProtKB protein accession:
+           the corresponding UniProtKB protein accession
+
+
+===========================================================================
+go_process.xml
+---------------------------------------------------------------------------
+           Rules for mapping information in the gene_info file
+           in this directory to the enumerated authority files
+
+===========================================================================
+mim2gene_medgen                                     daily
+---------------------------------------------------------------------------
+           report of the relationship between MIM numbers (OMIM), 
+           GeneIDs, and Records in MedGen
+
+           tab-delimited
+           one line per MIM number
+           Column header line is the first line in the file.
+           Tax_id is not included because this file is relevant only for
+             human, tax_id 9606.
+           see also: http://omim.org/help/faq
+           In June, 2015, this file was modified to add a Comment column,
+             to qualify the relationship between a gene and a disorder as
+             reported by OMIM. 
+
+---------------------------------------------------------------------------
+MIM number:
+           a MIM number associated with a GeneID
+GeneID:
+           the current unique identifier for a gene
+           the lack of a GeneID, for whatever reason, is represented as a '-'
+
+type:
+           type of relationship between the MIM number and the 
+           GeneID
+              current values are 
+                'gene'      the MIM number associated with a Gene, 
+                            or a GeneID that is assigned to a record
+                            where the molecular basis of the disease
+                            is not known
+                'phenotype' the MIM number associated with a disease
+                            that is associated with a gene
+
+           If NCBI has no record of this MIM number in its databases yet, there is a '-' provided
+           in the type column
+
+source:    
+           This value is provided only when there is a report of a relationship
+           between a MIM number that is a phenotype, and a GeneID.
+           The current expected values are GeneMap (from OMIM), GeneReviews, 
+           and NCBI.
+
+MedGenCUI: 
+           The accession assigned by MedGen to this phenotype.  If the accession starts
+           with a C followed by integers, the identifier is a concept ID (CUI) from UMLS.
+           https://www.nlm.nih.gov/research/umls/
+ 
+           If it starts with a CN, no CUI in UMLS was identified, and NCBI created
+           a placeholder. 
+
+Comment:   
+           optional value reporting the qualifiers OMIM provides when reporting
+           a gene/phenotype relationship
+           The values are based on the explanation of the
+             symbols provided by OMIM: http://omim.org/help/faq
+             nondisease: Brackets, "[ ]", indicate "nondiseases,"
+                          mainly genetic variations that lead to 
+                          apparently abnormal laboratory test values 
+                          (e.g., dysalbuminemic euthyroidal hyperthyroxinemia).
+             susceptibility: {} indicate mutations that contribute to 
+                         susceptibility to multifactorial disorders
+             QTL 1: {} and qtl
+             QTL 2: [] and qtl
+             somatic: somatic in the disease name
+             question: A question mark, "?", before the disease name 
+                         indicates an unconfirmed or possibly spurious mapping.
+
+
+===========================================================================
+stopwords_gene
+---------------------------------------------------------------------------
+           A list of stopwords that are automatically excluded from 
+           searches in Gene.
+
+see also:
+https://www.ncbi.nlm.nih.gov/books/NBK3841/#EntrezGene.Words_Excluded_From_Queries
+
+
+===========================================================================
+===========================================================================
+II.    Files in the DATA/ASN_BINARY directory
+---------------------------------------------------------------------------
+This directory and all its subdirectories contain complete extractions from 
+Entrez Gene in binary ASN.1 format, as Entrezgene sets.
+
+These files are in binary ASN.1 format, and can readily be converted to XML 
+via the tool gene2xml documented below.
+===========================================================================
+===========================================================================
+All_Data.ags.gz                    all records
+
+Archea_Bacteria                    directory for Genes from Archaea and
+                                      Bacteria
+
+    All_Archaea_Bacteria.ags.gz    all records from Archaea and Bacteria
+    Archaea.ags.gz                 Archaea only
+    Bacteria.ags.gz                Bacteria only
+
+Fungi                              directory for Genes from Fungi
+
+    All_Fungi.ags.gz               all records from Fungi, including
+                                       organelles
+
+    Ascomycota.ags.gz              Ascomycota only
+    Microsporidia.ags.gz           Microsporidia only
+    Saccharomyces_cerevisiae.ags.gz
+                                   Saccharomyces cerevisiae only
+
+Invertebrates                      directory for genes from invertebrates
+
+    All_Invertebrates.ags.gz       all records from invertebrates
+    Anopheles_gambiae.ags.gz       Anopheles gambiae only
+    Caenorhabditis_elegans.ags.gz  Caenorhabditis elegans only
+    Drosophila_melanogaster.ags.gz Drosophila melanogaster only
+
+Mammalia                           directory for genes from mammals
+
+    All_Mammalia.ags.gz            all records from mammals, including
+                                     organelles
+    Bos_taurus.ags.gz              Bos taurus only
+    Canis_familiaris.ags.gz        Canis familiaris only
+    Homo_sapiens.ags.gz            Homo sapiens only
+    Mus_musculus.ags.gz            Mus musculus only
+    Pan_troglodytes.ags.gz         Pan troglodytes only
+    Rattus_norvegicus.ags.gz       Rattus norvegicus only
+    Sus_scrofa.ags.gz              Sus scrofa only
+
+Non-mammalian_vertebrates          directory for non-mammalian vertebrates
+
+    All_Non-mammalian_vertebrates.ags.gz
+                                   all records from non-mammalian vertebrates
+    Danio_rerio.ags.gz             Danio rerio only
+    Gallus_gallus.ags.gz           Gallus gallus only
+    Xenopus_laevis.ags.gz          Xenopus laevis only
+    Xenopus_tropicalis.ags.gz      Xenopus tropicalis only
+
+Plants                             directory for plants
+
+    All_Plants.ags.gz              all records from plants
+    Arabidopsis_thaliana.ags.gz    Arabidopsis thaliana only
+    Oryza_sativa.ags.gz            Oryza sativa only
+    Zea_mays.ags.gz                Zea mays only
+
+Protozoa                           directory for protozoa
+
+    All_protozoa.ags.gz            all records from protozoa
+    Plasmodium_falciparum.ags.gz   Plasmodium falciparum only
+
+Viruses                            directory for viruses
+
+    All_Viruses.ags.gz             all records from viruses
+    Retroviridae.ags.gz            Retroviridae only
+    dsDNA_viruses,_no_RNA_stage.ags.gz 
+                                   dsDNA_viruses, no RNA stage only
+    dsRNA_viruses.ags.gz           dsRNA_viruses only
+    ssDNA_viruses.ags.gz           ssDNA_viruses only
+    ssRNA_negative-strand_viruses.ags.gz
+                                   ssRNA negative-strand viruses only
+    ssRNA_positive-strand_viruses,_no_DNA_stage.ags.gz
+                                   ssRNA positive-strand viruses, no DNA stage only
+
+
+===========================================================================
+===========================================================================
+III.    Files in the DATA/GENE_INFO directory
+---------------------------------------------------------------------------
+This directory and all its subdirectories contain extractions from
+Entrez Gene in the same format as the gene_info file (described earlier).
+Each file contains a subset of data for the species or taxonomic group 
+indicated by the file name.
+
+The content and directory structure mirror the content and structure of the
+ASN_BINARY directory. The file names in this directory are qualified to
+distinguish them from the binary ASN.1 files. For example, the gene_info
+subset file for human will be found in:
+
+    DATA/GENE_INFO/Mammalia/Homo_sapiens.gene_info.gz
+
+The gene_info.gz file will continue to be updated in its original location
+in the DATA directory.
+
+The DATA/GENE_INFO/All_Data.gene_info.gz file is identical in content to 
+DATA/gene_info.gz even though their file sizes and timestamps may differ
+slightly.
+
+===========================================================================
+===========================================================================
+IV.    Files in the DATA/expression directory
+---------------------------------------------------------------------------
+This directory and all its subdirectories contain reports of normalized RNA
+expression levels computed from RNA-seq data for human, mouse, and rat 
+genes. 
+
+For details, see the README_expression contained therein.
+
+
+===========================================================================
+===========================================================================
+V.   Files in the GeneRIF directory (Gene References into Function)
+===========================================================================
+===========================================================================
+generifs_basic.gz
+---------------------------------------------------------------------------
+            GeneRIFs describing a single Gene each
+            (rather than interactions between two genes' products)
+
+            Tab-delimited
+            Sorted by Tax ID, Gene ID, and the first PubMed ID in the list
+            
+            For more information, please review:
+            https://www.ncbi.nlm.nih.gov/gene/about-generif
+---------------------------------------------------------------------------
+
+Tax ID
+            the unique identifier provided by NCBI Taxonomy
+            for the species or strain/isolate
+
+Gene ID
+            the unique identifier for a gene
+
+PubMed ID (PMID) list
+            unique citation identifier(s) in PubMed;
+            multiple values are comma-separated
+            NOTE: if you process this by Excel, please be certain 
+            to treat this column as a string. Otherwise comma-delimited
+            PubMed uids may be converted to a single integer         
+ 
+last update timestamp
+            the last time this GeneRIF was modified,
+            in ISO 8601 format "yyyy-mm-dd hh:mm"
+
+GeneRIF text
+            GeneRIF text string, length <= 425 characters
+
+
+===========================================================================
+hiv_interactions.gz
+---------------------------------------------------------------------------
+            Descriptions of interactions between two genes' products --
+            specifically, one from Human and one from Human Immunodeficiency
+            Virus type 1 (HIV-1) -- from a collaboration with NIAID
+
+            For more information, please see:
+            https://www.ncbi.nlm.nih.gov/genome/viruses/retroviruses/hiv-1/interactions/
+
+            This file contains a subset of the interaction data reported in
+            interactions.gz, described below.
+
+            Tab-delimited
+            Sorted by:  human Gene ID, human accession.version,
+                        virus Gene ID, virus accession.version,
+                        first PubMed ID in the list
+---------------------------------------------------------------------------
+
+First gene of interacting pair (virus interactant)
+
+  Tax ID 1
+            the unique identifier provided by NCBI Taxonomy
+            for the species or strain/isolate
+
+  Gene ID 1
+            the unique identifier for a gene
+
+  product accession.version 1
+
+  product name 1
+
+Interaction short phrase
+            text string
+
+Second gene of interacting pair (human interactant)
+
+  Tax ID 2
+            the unique identifier provided by NCBI Taxonomy
+            for the species or strain/isolate
+
+  Gene ID 2
+            the unique identifier for a gene
+
+
+  product accession.version 2
+
+  product name 2
+
+PubMed ID (PMID) list
+            unique citation identifier(s) in PubMed;
+            multiple values are comma-separated
+
+            NOTE: if you process this by Excel, please be certain 
+            to treat this column as a string. Otherwise comma-delimited
+            PubMed uids may be converted to a single integer         
+
+
+last update timestamp
+            the last time this GeneRIF was modified,
+            in ISO 8601 format "yyyy-mm-dd hh:mm"
+
+GeneRIF text
+            text string, length <= 425 characters
+
+
+===========================================================================
+hiv_siRNA_interactions.gz
+---------------------------------------------------------------------------
+            Descriptions of HIV-1 virus and human protein interactions that 
+            regulate HIV-1 replication and infectivity.
+
+            All interactions are with Human immunodeficiency virus 1
+            (NC_001802.1, Tax ID 11676).
+
+            Tab-delimited
+---------------------------------------------------------------------------
+
+Tax ID
+            the unique identifier provided by NCBI Taxonomy
+            for the species or strain/isolate
+
+Gene ID
+            the unique identifier for a gene
+
+Interaction short phrase
+            text string
+
+product accession.version
+
+product name
+
+PubMed ID (PMID) list
+            unique citation identifier(s) in PubMed;
+            multiple values are comma-separated
+
+            NOTE: if you process this by Excel, please be certain 
+            to treat this column as a string. Otherwise comma-delimited
+            PubMed uids may be converted to a single integer         
+
+last update timestamp
+            the last time this GeneRIF was modified,
+            in ISO 8601 format "yyyy-mm-dd hh:mm"
+
+GeneRIF text
+            text string, length <= 425 characters
+
+
+===========================================================================
+interactions.gz
+---------------------------------------------------------------------------
+            Descriptions of interactions involving up to two interactants
+            and a resulting complex, at least one of which is a gene product.
+
+            If both interactants are associated with Gene IDs, the interacting
+            pair is reported once, using the convention that the interactant
+            with the smaller Gene ID is listed as the "first interactant",
+            as defined below.
+
+            This file includes the interaction data reported in
+            hiv_interactions.gz and hiv_siRNA_interactions.gz, described above.
+
+            Data elements which are not applicable are shown as "-".
+
+            Tab-delimited
+            Sorted by:  1st Tax ID, 1st Gene ID, 1st accession.version,
+                        2nd Tax ID,              2nd accession.version,
+                        first PubMed ID in the list
+---------------------------------------------------------------------------
+
+First interactant
+
+  Tax ID 1
+            the unique identifier provided by NCBI Taxonomy
+            for the species or strain/isolate
+
+  Gene ID 2
+            the unique identifier for a gene
+
+  interactant accession.version 1
+
+  interactant name 1
+
+Interaction short phrase
+            text string
+
+Second interactant
+
+  Tax ID 2
+            the unique identifier provided by NCBI Taxonomy
+            for the species or strain/isolate
+
+  interactant ID 2
+            an identifier for this interactant, within the database
+            specified by "interactant ID type" below
+            --  note:  depending on the database, this ID may be
+                either a numeric value or a character string
+
+  interactant ID type
+            the database within which the interactant ID may be found;
+            if this interactant is a gene product, its interactant ID type
+            is "GeneID", and the interactant ID is its numeric Gene ID.
+
+  interactant accession.version 2
+
+  interactant name 2
+
+Resulting complex
+
+  complex ID
+            an identifier for this complex, within the database
+            specified by "complex ID type" below
+            --  note:  depending on the database, this ID may be
+                either a numeric value or a character string
+
+  complex ID type
+            the database within which the complex ID may be found
+
+  complex name
+
+PubMed ID (PMID) list
+            unique citation identifier(s) in PubMed;
+            multiple values are comma-separated
+
+            NOTE: if you process this by Excel, please be certain 
+            to treat this column as a string. Otherwise comma-delimited
+            PubMed uids may be converted to a single integer         
+
+last update timestamp
+            the last time this GeneRIF was modified,
+            in ISO 8601 format "yyyy-mm-dd hh:mm"
+
+GeneRIF text
+            text string, length <= 425 characters
+
+Interaction source
+
+  interaction ID
+            an identifier for this interaction, within the database
+            specified by "interaction ID type" below
+            --  note:  depending on the database, this ID may be
+                either a numeric value or a character string
+
+  interaction ID type
+            the database within which the interaction ID may be found;
+            if there is no interaction ID, no interaction ID type is reported
+ 
+            additional information on interaction source databases is in
+            the file interaction_sources, described below.
+
+
+=========================================================================== 
+interaction_sources
+---------------------------------------------------------------------------
+            Additional information on sources of interactions listed in
+            interactions.gz, described above.
+
+            Tag/value pairs, one per line, delimited by colon and whitespace
+            Sources delimited by blank lines
+            Sorted by symbol
+---------------------------------------------------------------------------
+
+Symbol
+            the symbol used to represent this source in interactions.gz
+
+Webpage URL
+            the primary or general Web page for this source
+
+Template URL
+            a prefix which, when combined with the interaction ID from a
+            specific interaction record in interactions.gz, produces a full
+            URL which accesses further information on that interaction from
+            the source's Web site
+
+
+===========================================================================
+===========================================================================
+VI.     Files in the Tools directory
+===========================================================================
+===========================================================================
+i. taxidToGeneNames.pl
+---------------------------------------------------------------------------
+      A representative perl script, using ESearch and ESummary, to extract
+GeneIDs, names and names for a species (i.e. by Taxonomy's id). Usage notes 
+provided when no arguments are supplied are:
+
+Usage: taxidToGeneNames.pl [option] -t taxonomyId -o xml|tab
+    Options:   -h     Display this usage help information
+               -v     Verbose
+               -o     output options
+                        xml  - XML
+                        tab  - tab-delimited
+
+Output is written to STDOUT. 
+
+Sample execution statement:
+
+       taxidToGeneNames.pl -t 9615 -o xml > 9615_genes
+
+
+==========================================================================
+ii. gene2xml
+---------------------------------------------------------------------------
+    gene2xml is a standalone program that converts Entrez Gene ASN.1 into XML.
+    It also interconverts different formats of Entrez Gene ASN.1.  It is 
+    available for multiple platforms.
+
+
+directory path:
+ftp://ftp.ncbi.nlm.nih.gov/toolbox/ncbi_tools/cmdline/
+
+  gene2xml.Darwin-7.8.0-Power_Macintosh.gz
+  gene2xml.Linux-2.4.23-P3-4G-i686.gz
+  gene2xml.OSF1-V5.1-alpha.gz
+  gene2xml.SunOS-5.8-sun4u.gz
+  gene2xml.win32.exe.gz
+
+
+OR
+
+ftp://ftp.ncbi.nlm.nih.gov/asn1-converters/by_program/gene2xml/
+
+
+alpha.gz
+linux.gz
+mac.gz
+solaris.gz
+win.gz
+
+
+
+For comprehensive documentation, use either of these sources:
+
+ftp://ftp.ncbi.nlm.nih.gov/asn1-converters/documentation/gene2xml.txt
+
+OR
+
+ftp://ftp.ncbi.nlm.nih.gov/gene/tools/README
+
+
+===========================================================================
+iii. geneDocSum.pl
+---------------------------------------------------------------------------
+      A representative perl script, using ESearch and ESummary, to extract
+GeneIDs and other fields from the Document Summary (DocSum).  Usage notes
+provided when no arguments are supplied are:
+
+Usage: geneDocSum.pl [options] -q query -o xml|tab
+    Options:   -h     Display this usage help information
+               -v     Verbose
+               -q     Query to run against Entrez Gene, e.g. "has summary[prop]"
+               -o     Output options
+                        xml  - XML
+                        tab  - tab-delimited
+               -t     Tag from eutils xml to extract, e.g. "Summary"
+                        - is case sensitive
+                        - may be specified multiple times to extract multiple 
+                              tags & values
+                        - used only with "-o tab" option
+                        - to see all available xml tags in the DocSum, run first
+                              with "-o xml" option
+
+
+Output is written to STDOUT.
+
+Sample execution statement:
+
+       geneDocSum.pl -q "has_summary[prop] AND chimpanzee[orgn]" -o tab -t Name -t Summary
+
+
+===========================================================================
+iv. geneGoSummary.pl
+---------------------------------------------------------------------------
+      A representative perl script, using ESearch, to extract a summary of
+GeneOntology information.  Usage notes provided when no arguments are 
+supplied are:
+
+Usage: geneGoSummary.pl [options]
+    Options:   -h     Display this usage help information
+               -v     Verbose
+               -i     Input file (or - for stdin) with ranges
+               -g     gene2go file
+               -t     tax id
+
+
+The tax id defaults to 9606 (Homo sapiens).
+
+The gene2go file is specified with the -g argument, and the latest version of 
+this file must be downloaded and decompressed before running the 
+geneGoSummary.pl script.
+
+Output is written to STDOUT.
+
+Sample execution statement:
+
+    echo chr12:1000000-2000000 | geneGoSummary.pl -g gene2go
+
+
+==========================================================================
+VII. Gene-related files from genome annotation
+---------------------------------------------------------------------------
+
+As part of the genome annotation process, tab-delimited files are created that
+give the position of key features in both contig (RefSeq accessions of the 
+format NW_ or NT_) and chromosome coordinates, if applicable.
+
+----------------------------------------
+GFF files:
+----------------------------------------
+Start at
+ftp://ftp.ncbi.nih.gov/genomes/
+
+and find the genome-specific directories of interest.
+
+There is a GFF directory for each genome, e.g. 
+
+ftp://ftp.ncbi.nih.gov/genomes/H_sapiens/GFF/
+
+The most recent annotation is provided for in GFF format for each assembly for that species, 
+for both top-level sequences and scaffolds.  
+
+Complete details about NCBI's GFF files are provided in the README file in each 
+genome-specific directory.
+
+======================================================================
+VIII. Gene and GeneReviews
+----------------------------------------------------------------------
+GeneReviews' ftp site maintains a file listing the genes represented in a GeneReviews by human gene symbol.
+ftp://ftp.ncbi.nlm.nih.gov/pub/GeneReviews/README.html
+The README is ftp://ftp.ncbi.nlm.nih.gov/pub/GeneReviews/README.html
+======================================================================
+IX. Archives
+----------------------------------------------------------------------
+mim2gene as the symbolic link, and mim2gene_partial as the file to which mim2gene pointed, were removed 7/22/2013
+They were replaced with mim2gene_medgen.
