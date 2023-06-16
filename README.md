@@ -4,6 +4,10 @@
 
 https://graphdbs.readthedocs.io/
 
-## Benchmarking
-See [benchmark](https://github.com/dbcls/graphdbs/tree/master/benchmark) directory.
+## Benchmarks
 
+### RDFizing
+* [gene_info](https://github.com/dbcls/graphdbs/tree/master/benchmarks/gene_info)
+
+### Loading
+* [taxonomy](https://github.com/dbcls/graphdbs/tree/master/benchmarks/taxonomy)
