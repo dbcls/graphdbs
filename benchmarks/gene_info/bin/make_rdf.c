@@ -74,12 +74,23 @@ void filter_str(char* str, char* filtered_str) {
     filtered_str[strlen(filtered_str) - 2] = '\0';  // Remove trailing comma and space
 }
 
-int main() {
+int main(int argc, char* argv[]) {
+    if (argc != 2) {
+        printf("Usage: %s gene_info\n", argv[0]);
+        return 1;
+    }
+
+    FILE* fp = fopen(argv[1], "r");
+    if (fp == NULL) {
+        printf("Error opening file: %s\n", argv[1]);
+        return 1;
+    }
+
     print_prefix();
 
     char line[MAX_LINE_LENGTH];
-    fgets(line, sizeof(line), stdin); // Read and ignore the header line
-    while (fgets(line, sizeof(line), stdin) != NULL) {
+    fgets(line, sizeof(line), fp); // Read and ignore the header line
+    while (fgets(line, sizeof(line), fp) != NULL) {
         char *newline = strchr(line, '\n');
         if (newline != NULL) {
             *newline = '\0';  // Remove trailing newline
@@ -161,6 +172,8 @@ int main() {
             printf("    dct:modified \"%s\"^^xsd:date .\n", formatted_date);
         }
     }
+
+    fclose(fp);
 
     return 0;
 }
