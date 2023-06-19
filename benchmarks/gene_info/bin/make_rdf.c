@@ -5,6 +5,20 @@
 
 #define MAX_LINE_LENGTH 8192
 
+void print_prefix() {
+    printf("@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n");
+    printf("@prefix dct: <http://purl.org/dc/terms/> .\n");
+    printf("@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n");
+    printf("@prefix ncbigene: <http://identifiers.org/ncbigene/> .\n");
+    printf("@prefix taxid: <http://identifiers.org/taxonomy/> .\n");
+    printf("@prefix hgnc: <http://identifiers.org/hgnc/> .\n");
+    printf("@prefix mim: <http://identifiers.org/mim/> .\n");
+    printf("@prefix mirbase: <http://identifiers.org/mirbase/> .\n");
+    printf("@prefix ensembl: <http://identifiers.org/ensembl/> .\n");
+    printf("@prefix nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/> .\n");
+    printf("@prefix : <http://purl.org/net/orthordf/hOP/ontology#> .\n");
+}
+
 void format_str_array(char* str, char* formatted_str) {
     char* token = strtok(str, "|");
     while (token != NULL) {
@@ -61,22 +75,9 @@ void filter_str(char* str, char* filtered_str) {
 }
 
 int main() {
+    print_prefix();
+
     char line[MAX_LINE_LENGTH];
-    const char* PREFIXES = "\
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n\
-@prefix dct: <http://purl.org/dc/terms/> .\n\
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n\
-@prefix ncbigene: <http://identifiers.org/ncbigene/> .\n\
-@prefix taxid: <http://identifiers.org/taxonomy/> .\n\
-@prefix hgnc: <http://identifiers.org/hgnc/> .\n\
-@prefix mim: <http://identifiers.org/mim/> .\n\
-@prefix mirbase: <http://identifiers.org/mirbase/> .\n\
-@prefix ensembl: <http://identifiers.org/ensembl/> .\n\
-@prefix nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/> .\n\
-@prefix : <http://purl.org/net/orthordf/hOP/ontology#> .\n";
-
-    printf("%s", PREFIXES);
-
     fgets(line, sizeof(line), stdin); // Read and ignore the header line
     while (fgets(line, sizeof(line), stdin) != NULL) {
         char *newline = strchr(line, '\n');
