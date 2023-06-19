@@ -61,11 +61,6 @@ void format_link(char* str, char* formatted_link, char* filtered_db_xref) {
 }
 
 void print_entry(char* line) {
-    char *newline = strchr(line, '\n');
-    if (newline != NULL) {
-        *newline = '\0';  // Remove trailing newline
-    }
-
     char* token = strtok(line, "\t");
     char* field[16];
     int i = 0;
@@ -143,6 +138,13 @@ void print_entry(char* line) {
     }
 }
 
+void chomp(char* line) {
+    size_t len = strlen(line);
+    if (len > 0 && line[len - 1] == '\n') {
+        line[len - 1] = '\0';
+    }
+}
+
 int main(int argc, char* argv[]) {
     if (argc != 2) {
         printf("Usage: %s gene_info\n", argv[0]);
@@ -160,6 +162,7 @@ int main(int argc, char* argv[]) {
     char line[MAX_LINE_LENGTH];
     fgets(line, sizeof(line), fp); // Read and ignore the header line
     while (fgets(line, sizeof(line), fp) != NULL) {
+        chomp(line);
         print_entry(line);
     }
 
