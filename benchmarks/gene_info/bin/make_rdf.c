@@ -60,20 +60,6 @@ void format_link(char* str, char* formatted_link, char* filtered_db_xref) {
     filtered_db_xref[strlen(filtered_db_xref) - 2] = '\0';  // Remove trailing comma and space
 }
 
-void filter_str(char* str, char* filtered_str) {
-    char* token = strtok(str, "|");
-    while (token != NULL) {
-        if (strncmp(token, "MIM:", 4) != 0 && strncmp(token, "HGNC:HGNC:", 10) != 0 &&
-            strncmp(token, "Ensembl:", 8) != 0 && strncmp(token, "miRBase:", 8) != 0) {
-            strcat(filtered_str, "\"");
-            strcat(filtered_str, token);
-            strcat(filtered_str, "\", ");
-        }
-        token = strtok(NULL, "|");
-    }
-    filtered_str[strlen(filtered_str) - 2] = '\0';  // Remove trailing comma and space
-}
-
 void print_entry(char* line) {
     char *newline = strchr(line, '\n');
     if (newline != NULL) {
