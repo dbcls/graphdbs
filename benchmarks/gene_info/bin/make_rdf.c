@@ -5,7 +5,43 @@
 
 #define MAX_LINE_LENGTH 8192
 
-void print_prefix() {
+/* Prototype Declaration */
+void print_prefix();
+void print_entry(char* line);
+void format_str_array(char* str, char* formatted_str);
+void format_link(char* str, char* formatted_link, char* filtered_db_xref);
+void chomp(char* line);
+/* Prototype Declaration End */
+
+int main(int argc, char* argv[])
+{
+    if (argc != 2) {
+        printf("Usage: %s gene_info\n", argv[0]);
+        return 1;
+    }
+
+    FILE* fp = fopen(argv[1], "r");
+    if (fp == NULL) {
+        printf("Error opening file: %s\n", argv[1]);
+        return 1;
+    }
+
+    print_prefix();
+
+    char line[MAX_LINE_LENGTH];
+    fgets(line, sizeof(line), fp); // Read and ignore the header line
+    while (fgets(line, sizeof(line), fp) != NULL) {
+        chomp(line);
+        print_entry(line);
+    }
+
+    fclose(fp);
+
+    return 0;
+}
+
+void print_prefix()
+{
     printf("@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n");
     printf("@prefix dct: <http://purl.org/dc/terms/> .\n");
     printf("@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n");
@@ -19,48 +55,8 @@ void print_prefix() {
     printf("@prefix : <http://purl.org/net/orthordf/hOP/ontology#> .\n");
 }
 
-void format_str_array(char* str, char* formatted_str) {
-    char* token = strtok(str, "|");
-    while (token != NULL) {
-        strcat(formatted_str, "\"");
-        strcat(formatted_str, token);
-        strcat(formatted_str, "\" ,\n        ");
-        token = strtok(NULL, "|");
-    }
-    formatted_str[strlen(formatted_str) - 11] = '\0';  // Remove trailing comma and space
-}
-
-void format_link(char* str, char* formatted_link, char* filtered_db_xref) {
-    char* token = strtok(str, "|");
-    while (token != NULL) {
-        if (strncmp(token, "MIM:", 4) == 0) {
-            strcat(formatted_link, "mim:");
-            strcat(formatted_link, token + 4);
-            strcat(formatted_link, " ,\n        ");
-        } else if (strncmp(token, "HGNC:HGNC:", 10) == 0) {
-            strcat(formatted_link, "hgnc:");
-            strcat(formatted_link, token + 10);
-            strcat(formatted_link, " ,\n        ");
-        } else if (strncmp(token, "Ensembl:", 8) == 0) {
-            strcat(formatted_link, "ensembl:");
-            strcat(formatted_link, token + 8);
-            strcat(formatted_link, " ,\n        ");
-        } else if (strncmp(token, "miRBase:", 8) == 0) {
-            strcat(formatted_link, "mirbase:");
-            strcat(formatted_link, token + 8);
-            strcat(formatted_link, " ,\n        ");
-        } else {
-            strcat(filtered_db_xref, "\"");
-            strcat(filtered_db_xref, token);
-            strcat(filtered_db_xref, "\", ");
-        }
-        token = strtok(NULL, "|");
-    }
-    formatted_link[strlen(formatted_link) - 11] = '\0';  // Remove trailing comma and space
-    filtered_db_xref[strlen(filtered_db_xref) - 2] = '\0';  // Remove trailing comma and space
-}
-
-void print_entry(char* line) {
+void print_entry(char* line)
+{
     char* token = strtok(line, "\t");
     char* field[16];
     int i = 0;
@@ -138,35 +134,53 @@ void print_entry(char* line) {
     }
 }
 
-void chomp(char* line) {
+void format_str_array(char* str, char* formatted_str)
+{
+    char* token = strtok(str, "|");
+    while (token != NULL) {
+        strcat(formatted_str, "\"");
+        strcat(formatted_str, token);
+        strcat(formatted_str, "\" ,\n        ");
+        token = strtok(NULL, "|");
+    }
+    formatted_str[strlen(formatted_str) - 11] = '\0';  // Remove trailing comma and space
+}
+
+void format_link(char* str, char* formatted_link, char* filtered_db_xref)
+{
+    char* token = strtok(str, "|");
+    while (token != NULL) {
+        if (strncmp(token, "MIM:", 4) == 0) {
+            strcat(formatted_link, "mim:");
+            strcat(formatted_link, token + 4);
+            strcat(formatted_link, " ,\n        ");
+        } else if (strncmp(token, "HGNC:HGNC:", 10) == 0) {
+            strcat(formatted_link, "hgnc:");
+            strcat(formatted_link, token + 10);
+            strcat(formatted_link, " ,\n        ");
+        } else if (strncmp(token, "Ensembl:", 8) == 0) {
+            strcat(formatted_link, "ensembl:");
+            strcat(formatted_link, token + 8);
+            strcat(formatted_link, " ,\n        ");
+        } else if (strncmp(token, "miRBase:", 8) == 0) {
+            strcat(formatted_link, "mirbase:");
+            strcat(formatted_link, token + 8);
+            strcat(formatted_link, " ,\n        ");
+        } else {
+            strcat(filtered_db_xref, "\"");
+            strcat(filtered_db_xref, token);
+            strcat(filtered_db_xref, "\", ");
+        }
+        token = strtok(NULL, "|");
+    }
+    formatted_link[strlen(formatted_link) - 11] = '\0';  // Remove trailing comma and space
+    filtered_db_xref[strlen(filtered_db_xref) - 2] = '\0';  // Remove trailing comma and space
+}
+
+void chomp(char* line)
+{
     size_t len = strlen(line);
     if (len > 0 && line[len - 1] == '\n') {
         line[len - 1] = '\0';
     }
-}
-
-int main(int argc, char* argv[]) {
-    if (argc != 2) {
-        printf("Usage: %s gene_info\n", argv[0]);
-        return 1;
-    }
-
-    FILE* fp = fopen(argv[1], "r");
-    if (fp == NULL) {
-        printf("Error opening file: %s\n", argv[1]);
-        return 1;
-    }
-
-    print_prefix();
-
-    char line[MAX_LINE_LENGTH];
-    fgets(line, sizeof(line), fp); // Read and ignore the header line
-    while (fgets(line, sizeof(line), fp) != NULL) {
-        chomp(line);
-        print_entry(line);
-    }
-
-    fclose(fp);
-
-    return 0;
 }
