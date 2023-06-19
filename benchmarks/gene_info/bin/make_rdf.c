@@ -77,6 +77,7 @@ int main() {
 
     printf("%s", PREFIXES);
 
+    fgets(line, sizeof(line), stdin); // Read and ignore the header line
     while (fgets(line, sizeof(line), stdin) != NULL) {
         char *newline = strchr(line, '\n');
         if (newline != NULL) {
