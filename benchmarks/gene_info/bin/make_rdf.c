@@ -74,6 +74,89 @@ void filter_str(char* str, char* filtered_str) {
     filtered_str[strlen(filtered_str) - 2] = '\0';  // Remove trailing comma and space
 }
 
+void print_entry(char* line) {
+    char *newline = strchr(line, '\n');
+    if (newline != NULL) {
+        *newline = '\0';  // Remove trailing newline
+    }
+
+    char* token = strtok(line, "\t");
+    char* field[16];
+    int i = 0;
+    while (token != NULL) {
+        field[i] = token;
+        token = strtok(NULL, "\t");
+        i++;
+    }
+
+    printf("\n");
+    printf("ncbigene:%s a nuc:Gene ;\n", field[1]);
+    printf("    dct:identifier %s ;\n", field[1]);
+    printf("    rdfs:label \"%s\" ;\n", field[2]);
+
+    if (strcmp(field[10], "-") != 0) {
+        printf("    nuc:standard_name \"%s\" ;\n", field[10]);
+    }
+
+    if (strcmp(field[4], "-") != 0) {
+        char formatted_synonyms[MAX_LINE_LENGTH] = "";
+        format_str_array(field[4], formatted_synonyms);
+        printf("    nuc:gene_synonym %s ;\n", formatted_synonyms);
+    }
+
+    printf("    dct:description \"%s\" ;\n", field[8]);
+
+    if (strcmp(field[13], "-") != 0) {
+        char formatted_others[MAX_LINE_LENGTH] = "";
+        format_str_array(field[13], formatted_others);
+        printf("    dct:alternative %s ;\n", formatted_others);
+    }
+
+    char formatted_link[MAX_LINE_LENGTH] = "";
+    char filtered_db_xref[MAX_LINE_LENGTH] = "";
+    if (strcmp(field[5], "-") != 0) {
+        format_link(field[5], formatted_link, filtered_db_xref);
+        printf("    nuc:dblink %s ;\n", formatted_link);
+    }
+
+    printf("    :typeOfGene \"%s\" ;\n", field[9]);
+
+    if (strcmp(field[12], "O") == 0) {
+        printf("    :nomenclatureStatus \"official\" ;\n");
+    } else if (strcmp(field[12], "I") == 0) {
+        printf("    :nomenclatureStatus \"interim\" ;\n");
+    }
+
+    if (strcmp(field[11], "-") != 0) {
+        printf("    :fullName \"%s\" ;\n", field[11]);
+    }
+
+    if (strlen(filtered_db_xref) > 0) {
+        printf("    nuc:db_xref %s ;\n", filtered_db_xref);
+    }
+
+    if (strcmp(field[15], "-") != 0) {
+        char formatted_feature_type[MAX_LINE_LENGTH] = "";
+        format_str_array(field[15], formatted_feature_type);
+        printf("    :featureType %s ;\n", formatted_feature_type);
+    }
+
+    printf("    :taxid taxid:%s ;\n", field[0]);
+    printf("    nuc:chromosome \"%s\" ;\n", field[6]);
+    printf("    nuc:map \"%s\" ;\n", field[7]);
+
+    char* date = field[14];
+    if (strlen(date) == 8) {
+        char formatted_date[MAX_LINE_LENGTH] = "";
+        strncpy(formatted_date, date, 4);
+        strcat(formatted_date, "-");
+        strncat(formatted_date, date + 4, 2);
+        strcat(formatted_date, "-");
+        strncat(formatted_date, date + 6, 2);
+        printf("    dct:modified \"%s\"^^xsd:date .\n", formatted_date);
+    }
+}
+
 int main(int argc, char* argv[]) {
     if (argc != 2) {
         printf("Usage: %s gene_info\n", argv[0]);
@@ -91,86 +174,7 @@ int main(int argc, char* argv[]) {
     char line[MAX_LINE_LENGTH];
     fgets(line, sizeof(line), fp); // Read and ignore the header line
     while (fgets(line, sizeof(line), fp) != NULL) {
-        char *newline = strchr(line, '\n');
-        if (newline != NULL) {
-            *newline = '\0';  // Remove trailing newline
-        }
-
-        char* token = strtok(line, "\t");
-        char* field[16];
-        int i = 0;
-        while (token != NULL) {
-            field[i] = token;
-            token = strtok(NULL, "\t");
-            i++;
-        }
-
-        printf("\n");
-        printf("ncbigene:%s a nuc:Gene ;\n", field[1]);
-        printf("    dct:identifier %s ;\n", field[1]);
-        printf("    rdfs:label \"%s\" ;\n", field[2]);
-
-        if (strcmp(field[10], "-") != 0) {
-            printf("    nuc:standard_name \"%s\" ;\n", field[10]);
-        }
-
-        if (strcmp(field[4], "-") != 0) {
-            char formatted_synonyms[MAX_LINE_LENGTH] = "";
-            format_str_array(field[4], formatted_synonyms);
-            printf("    nuc:gene_synonym %s ;\n", formatted_synonyms);
-        }
-
-        printf("    dct:description \"%s\" ;\n", field[8]);
-
-        if (strcmp(field[13], "-") != 0) {
-            char formatted_others[MAX_LINE_LENGTH] = "";
-            format_str_array(field[13], formatted_others);
-            printf("    dct:alternative %s ;\n", formatted_others);
-        }
-
-        char formatted_link[MAX_LINE_LENGTH] = "";
-        char filtered_db_xref[MAX_LINE_LENGTH] = "";
-        if (strcmp(field[5], "-") != 0) {
-            format_link(field[5], formatted_link, filtered_db_xref);
-            printf("    nuc:dblink %s ;\n", formatted_link);
-        }
-
-        printf("    :typeOfGene \"%s\" ;\n", field[9]);
-
-        if (strcmp(field[12], "O") == 0) {
-            printf("    :nomenclatureStatus \"official\" ;\n");
-        } else if (strcmp(field[12], "I") == 0) {
-            printf("    :nomenclatureStatus \"interim\" ;\n");
-        }
-
-        if (strcmp(field[11], "-") != 0) {
-            printf("    :fullName \"%s\" ;\n", field[11]);
-        }
-
-        if (strlen(filtered_db_xref) > 0) {
-            printf("    nuc:db_xref %s ;\n", filtered_db_xref);
-        }
-
-        if (strcmp(field[15], "-") != 0) {
-            char formatted_feature_type[MAX_LINE_LENGTH] = "";
-            format_str_array(field[15], formatted_feature_type);
-            printf("    :featureType %s ;\n", formatted_feature_type);
-        }
-
-        printf("    :taxid taxid:%s ;\n", field[0]);
-        printf("    nuc:chromosome \"%s\" ;\n", field[6]);
-        printf("    nuc:map \"%s\" ;\n", field[7]);
-
-        char* date = field[14];
-        if (strlen(date) == 8) {
-            char formatted_date[MAX_LINE_LENGTH] = "";
-            strncpy(formatted_date, date, 4);
-            strcat(formatted_date, "-");
-            strncat(formatted_date, date + 4, 2);
-            strcat(formatted_date, "-");
-            strncat(formatted_date, date + 6, 2);
-            printf("    dct:modified \"%s\"^^xsd:date .\n", formatted_date);
-        }
+        print_entry(line);
     }
 
     fclose(fp);
