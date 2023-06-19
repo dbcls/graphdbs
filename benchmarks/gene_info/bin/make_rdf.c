@@ -169,12 +169,12 @@ void format_link(char* str, char* formatted_link, char* filtered_db_xref)
         } else {
             strcat(filtered_db_xref, "\"");
             strcat(filtered_db_xref, token);
-            strcat(filtered_db_xref, "\", ");
+            strcat(filtered_db_xref, "\" ,\n        ");
         }
         token = strtok(NULL, "|");
     }
     formatted_link[strlen(formatted_link) - 11] = '\0';  // Remove trailing comma and space
-    filtered_db_xref[strlen(filtered_db_xref) - 2] = '\0';  // Remove trailing comma and space
+    filtered_db_xref[strlen(filtered_db_xref) - 11] = '\0';  // Remove trailing comma and space
 }
 
 void chomp(char* line)
