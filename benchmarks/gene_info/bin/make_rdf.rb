@@ -103,15 +103,15 @@ File.open(input_file, mode="rt") { |f|
     if fields[11] != "-"
       puts "    :fullName \"#{fields[11]}\" ;"
     end
-    if fields[15] != "-"
-      feature_type = format_str_array(fields[15])
-      puts "    :featureType #{feature_type} ;"
-    end
     if fields[5] != "-"
       db_xref = filter_str(fields[5])
       if db_xref != ""
         puts "    nuc:db_xref \"#{db_xref}\" ;"
       end
+    end
+    if fields[15] != "-"
+      feature_type = format_str_array(fields[15])
+      puts "    :featureType #{feature_type} ;"
     end
     puts "    :taxid taxid:#{fields[0]} ;"
     puts "    nuc:chromosome \"#{fields[6]}\" ;"
