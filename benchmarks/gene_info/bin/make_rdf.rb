@@ -67,7 +67,7 @@ def format_date(date)
   return "#{r[1]}-#{r[2]}-#{r[3]}"
 end
 
-File.open(input_file, mode="rt") { |f|
+File.open(input_file, "r") { |f|
   header = f.readline
   f.each_line { |line|
     line = line.chomp
