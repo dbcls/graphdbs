@@ -6,8 +6,8 @@ https://graphdbs.readthedocs.io/
 
 ## Benchmarks
 
-### RDFizing
+### RDFize
 * [gene_info](https://github.com/dbcls/graphdbs/tree/master/benchmarks/gene_info)
 
-### Loading
+### Load
 * [taxonomy](https://github.com/dbcls/graphdbs/tree/master/benchmarks/taxonomy)
