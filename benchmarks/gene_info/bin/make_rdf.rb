@@ -63,9 +63,9 @@ def format_date(date)
   return "#{r[1]}-#{r[2]}-#{r[3]}"
 end
 
-File.open(input_file, "r") { |f|
-  header = f.readline
-  f.each_line { |line|
+File.open(input_file, "r") do |file|
+  header = file.readline
+  file.each_line do |line|
     line = line.chomp
     fields = line.split("\t")
     puts
@@ -114,5 +114,5 @@ File.open(input_file, "r") { |f|
     puts "    nuc:map \"#{fields[7]}\" ;"
     date = format_date(fields[14])
     puts "    dct:modified \"#{date}\"^^xsd:date ."
-  }
-}
+  end
+end
