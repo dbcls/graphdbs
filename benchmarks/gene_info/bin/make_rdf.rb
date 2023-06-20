@@ -30,7 +30,7 @@ end
 
 def format_links(str)
   str_array = []
-  str.split("|").each { |a|
+  str.split("|").each do |a|
     if a =~ /^MIM:(\d+)$/
       str_array << "mim:#{$1}"
     elsif a =~ /^HGNC:HGNC:(\d+)$/
@@ -40,13 +40,13 @@ def format_links(str)
     elsif a =~ /^miRBase:(MI\d+)$/
       str_array << "mirbase:#{$1}"
     end
-  }
+  end
   return str_array.join(" ,\n        ")
 end
 
 def filter_str(str)
   str_array = []
-  str.split("|").each { |a|
+  str.split("|").each do |a|
     if a =~ /^MIM:(\d+)$/
     elsif a =~ /^HGNC:HGNC:(\d+)$/
     elsif a =~ /^Ensembl:(ENSG\d+)$/
@@ -54,7 +54,7 @@ def filter_str(str)
     else
       str_array << "\"#{a}\""
     end
-  }
+  end
   return str_array.join(" ,\n        ")
 end
 
