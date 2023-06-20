@@ -23,14 +23,14 @@ puts '@prefix nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/> .'
 puts '@prefix : <http://purl.org/net/orthordf/hOP/ontology#> .'
 
 def format_str_array(str)
-  return str.split("|")
+  return str.split('|')
            .map { |x| "\"#{x}\"" }
            .join(" ,\n        ")
 end
 
 def format_links(str)
   str_array = []
-  str.split("|").each do |a|
+  str.split('|').each do |a|
     if a =~ /^MIM:(\d+)$/
       str_array << "mim:#{$1}"
     elsif a =~ /^HGNC:HGNC:(\d+)$/
@@ -46,7 +46,7 @@ end
 
 def filter_str(str)
   str_array = []
-  str.split("|").each do |a|
+  str.split('|').each do |a|
     if a =~ /^MIM:(\d+)$/
     elsif a =~ /^HGNC:HGNC:(\d+)$/
     elsif a =~ /^Ensembl:(ENSG\d+)$/
@@ -63,7 +63,7 @@ def format_date(date)
   return "#{r[1]}-#{r[2]}-#{r[3]}"
 end
 
-File.open(input_file, "r") do |file|
+File.open(input_file, 'r') do |file|
   header = file.readline
   file.each_line do |line|
     line = line.chomp
