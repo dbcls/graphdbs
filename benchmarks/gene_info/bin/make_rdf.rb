@@ -56,10 +56,10 @@ def filter_str(str)
     elsif a.match(/^Ensembl:ENSG\d+$/)
     elsif a.match(/^miRBase:MI\d+$/)
     else
-      str_array.push(a)
+      str_array.push("\"#{a}\"")
     end
   }
-  return str_array.join("|")
+  return str_array.join(" ,\n        ")
 end
 
 def format_date(date)
@@ -106,7 +106,7 @@ File.open(input_file, mode="rt") { |f|
     if fields[5] != "-"
       db_xref = filter_str(fields[5])
       if db_xref != ""
-        puts "    nuc:db_xref \"#{db_xref}\" ;"
+        puts "    nuc:db_xref #{db_xref} ;"
       end
     end
     if fields[15] != "-"
