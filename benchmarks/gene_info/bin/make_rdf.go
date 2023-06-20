@@ -20,7 +20,20 @@ func main() {
 	fmt.Println("@prefix nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/> .")
 	fmt.Println("@prefix : <http://purl.org/net/orthordf/hOP/ontology#> .")
 
-	reader := bufio.NewReader(os.Stdin)
+	var reader *bufio.Reader
+
+	if len(os.Args) > 1 {
+		file, err := os.Open(os.Args[1])
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Failed to open the file:", err)
+			os.Exit(1)
+		}
+		defer file.Close()
+		reader = bufio.NewReader(file)
+	} else {
+		reader = bufio.NewReader(os.Stdin)
+	}
+
 	_, err := reader.ReadString('\n')
 	if err != nil {
 		os.Exit(1)
