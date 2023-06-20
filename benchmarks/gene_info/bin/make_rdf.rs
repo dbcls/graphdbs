@@ -1,19 +1,22 @@
 use std::env;
 use std::fs::File;
-use std::io::{BufRead, BufReader};
+use std::io::{BufRead, BufReader, BufWriter, Write, stdout};
 
 fn main() {
-    println!("@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .");
-    println!("@prefix dct: <http://purl.org/dc/terms/> .");
-    println!("@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .");
-    println!("@prefix ncbigene: <http://identifiers.org/ncbigene/> .");
-    println!("@prefix taxid: <http://identifiers.org/taxonomy/> .");
-    println!("@prefix hgnc: <http://identifiers.org/hgnc/> .");
-    println!("@prefix mim: <http://identifiers.org/mim/> .");
-    println!("@prefix mirbase: <http://identifiers.org/mirbase/> .");
-    println!("@prefix ensembl: <http://identifiers.org/ensembl/> .");
-    println!("@prefix nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/> .");
-    println!("@prefix : <http://purl.org/net/orthordf/hOP/ontology#> .");
+    let stdout = stdout();
+    let mut writer = BufWriter::new(stdout.lock());
+
+    writeln!(writer, "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .").unwrap();
+    writeln!(writer, "@prefix dct: <http://purl.org/dc/terms/> .").unwrap();
+    writeln!(writer, "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .").unwrap();
+    writeln!(writer, "@prefix ncbigene: <http://identifiers.org/ncbigene/> .").unwrap();
+    writeln!(writer, "@prefix taxid: <http://identifiers.org/taxonomy/> .").unwrap();
+    writeln!(writer, "@prefix hgnc: <http://identifiers.org/hgnc/> .").unwrap();
+    writeln!(writer, "@prefix mim: <http://identifiers.org/mim/> .").unwrap();
+    writeln!(writer, "@prefix mirbase: <http://identifiers.org/mirbase/> .").unwrap();
+    writeln!(writer, "@prefix ensembl: <http://identifiers.org/ensembl/> .").unwrap();
+    writeln!(writer, "@prefix nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/> .").unwrap();
+    writeln!(writer, "@prefix : <http://purl.org/net/orthordf/hOP/ontology#> .").unwrap();
 
     let args: Vec<String> = env::args().collect();
     let filename = &args[1];
@@ -26,49 +29,49 @@ fn main() {
         let line = line.unwrap();
         let fields: Vec<&str> = line.split('\t').collect();
 
-        println!();
-        println!("ncbigene:{} a nuc:Gene ;", fields[1]);
-        println!("    dct:identifier {} ;", fields[1]);
-        println!("    rdfs:label \"{}\" ;", fields[2]);
+        writeln!(writer, "").unwrap();
+        writeln!(writer, "ncbigene:{} a nuc:Gene ;", fields[1]).unwrap();
+        writeln!(writer, "    dct:identifier {} ;", fields[1]).unwrap();
+        writeln!(writer, "    rdfs:label \"{}\" ;", fields[2]).unwrap();
         if fields[10] != "-" {
-            println!("    nuc:standard_name \"{}\" ;", fields[10]);
+            writeln!(writer, "    nuc:standard_name \"{}\" ;", fields[10]).unwrap();
         }
         if fields[4] != "-" {
             let synonyms = format_str_array(fields[4]);
-            println!("    nuc:gene_synonym {} ;", synonyms);
+            writeln!(writer, "    nuc:gene_synonym {} ;", synonyms).unwrap();
         }
-        println!("    dct:description \"{}\" ;", fields[8]);
+        writeln!(writer, "    dct:description \"{}\" ;", fields[8]).unwrap();
         if fields[13] != "-" {
             let others = format_str_array(fields[13]);
-            println!("    dct:alternative {} ;", others);
+            writeln!(writer, "    dct:alternative {} ;", others).unwrap();
         }
         let (link, db_xref) = format_link(fields[5]);
         if fields[5] != "-" {
-            println!("    nuc:dblink {} ;", link);
+            writeln!(writer, "    nuc:dblink {} ;", link).unwrap();
         }
-        println!("    :typeOfGene \"{}\" ;", fields[9]);
+        writeln!(writer, "    :typeOfGene \"{}\" ;", fields[9]).unwrap();
         if fields[12] == "O" {
-            println!("    :nomenclatureStatus \"official\" ;");
+            writeln!(writer, "    :nomenclatureStatus \"official\" ;").unwrap();
         } else if fields[12] == "I" {
-            println!("    :nomenclatureStatus \"interim\" ;");
+            writeln!(writer, "    :nomenclatureStatus \"interim\" ;").unwrap();
         }
         if fields[11] != "-" {
-            println!("    :fullName \"{}\" ;", fields[11]);
+            writeln!(writer, "    :fullName \"{}\" ;", fields[11]).unwrap();
         }
         if fields[5] != "-" {
             if !db_xref.is_empty() {
-                println!("    nuc:db_xref {} ;", db_xref);
+                writeln!(writer, "    nuc:db_xref {} ;", db_xref).unwrap();
             }
         }
         if fields[15] != "-" {
             let feature_type = format_str_array(fields[15]);
-            println!("    :featureType {} ;", feature_type);
+            writeln!(writer, "    :featureType {} ;", feature_type).unwrap();
         }
-        println!("    :taxid taxid:{} ;", fields[0]);
-        println!("    nuc:chromosome \"{}\" ;", fields[6]);
-        println!("    nuc:map \"{}\" ;", fields[7]);
+        writeln!(writer, "    :taxid taxid:{} ;", fields[0]).unwrap();
+        writeln!(writer, "    nuc:chromosome \"{}\" ;", fields[6]).unwrap();
+        writeln!(writer, "    nuc:map \"{}\" ;", fields[7]).unwrap();
         let date = format_date(fields[14]);
-        println!("    dct:modified \"{}\"^^xsd:date .", date);
+        writeln!(writer, "    dct:modified \"{}\"^^xsd:date .", date).unwrap();
     }
 }
 
