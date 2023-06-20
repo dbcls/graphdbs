@@ -80,31 +80,28 @@ fn format_str_array(str: &str) -> String {
 
 fn format_link(str: &str) -> (String, String) {
     let arr: Vec<&str> = str.split('|').collect();
-    let mut link = String::new();
+    let mut link: Vec<String> = Vec::new();
     let mut db_xref = String::new();
 
     for a in arr {
         if a.starts_with("MIM:") {
-            link.push_str(&format!("mim:{} ,\n        ", &a[4..]));
+            link.push(format!("mim:{}", &a[4..]));
         } else if a.starts_with("HGNC:HGNC:") {
-            link.push_str(&format!("hgnc:{} ,\n        ", &a[10..]));
+            link.push(format!("hgnc:{}", &a[10..]));
         } else if a.starts_with("Ensembl:") {
-            link.push_str(&format!("ensembl:{} ,\n        ", &a[8..]));
+            link.push(format!("ensembl:{}", &a[8..]));
         } else if a.starts_with("miRBase:") {
-            link.push_str(&format!("mirbase:{} ,\n        ", &a[8..]));
+            link.push(format!("mirbase:{}", &a[8..]));
         } else {
             db_xref.push_str(&format!("\"{}\" ,\n        ", a));
         }
     }
 
-    if !link.is_empty() {
-        link.truncate(link.len() - 11); // Remove trailing comma and space
-    }
     if !db_xref.is_empty() {
         db_xref.truncate(db_xref.len() - 11); // Remove trailing comma and space
     }
 
-    (link, db_xref)
+    (link.join(" ,\n        "), db_xref)
 }
 
 fn format_date(date: &str) -> String {
