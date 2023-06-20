@@ -8,17 +8,18 @@ import (
 )
 
 func main() {
-	fmt.Println("@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .")
-	fmt.Println("@prefix dct: <http://purl.org/dc/terms/> .")
-	fmt.Println("@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .")
-	fmt.Println("@prefix ncbigene: <http://identifiers.org/ncbigene/> .")
-	fmt.Println("@prefix taxid: <http://identifiers.org/taxonomy/> .")
-	fmt.Println("@prefix hgnc: <http://identifiers.org/hgnc/> .")
-	fmt.Println("@prefix mim: <http://identifiers.org/mim/> .")
-	fmt.Println("@prefix mirbase: <http://identifiers.org/mirbase/> .")
-	fmt.Println("@prefix ensembl: <http://identifiers.org/ensembl/> .")
-	fmt.Println("@prefix nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/> .")
-	fmt.Println("@prefix : <http://purl.org/net/orthordf/hOP/ontology#> .")
+	writer := bufio.NewWriter(os.Stdout)
+	fmt.Fprintln(writer, "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .")
+	fmt.Fprintln(writer, "@prefix dct: <http://purl.org/dc/terms/> .")
+	fmt.Fprintln(writer, "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .")
+	fmt.Fprintln(writer, "@prefix ncbigene: <http://identifiers.org/ncbigene/> .")
+	fmt.Fprintln(writer, "@prefix taxid: <http://identifiers.org/taxonomy/> .")
+	fmt.Fprintln(writer, "@prefix hgnc: <http://identifiers.org/hgnc/> .")
+	fmt.Fprintln(writer, "@prefix mim: <http://identifiers.org/mim/> .")
+	fmt.Fprintln(writer, "@prefix mirbase: <http://identifiers.org/mirbase/> .")
+	fmt.Fprintln(writer, "@prefix ensembl: <http://identifiers.org/ensembl/> .")
+	fmt.Fprintln(writer, "@prefix nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/> .")
+	fmt.Fprintln(writer, "@prefix : <http://purl.org/net/orthordf/hOP/ontology#> .")
 
 	var scanner *bufio.Scanner
 	if len(os.Args) > 1 {
@@ -43,52 +44,53 @@ func main() {
 		line := scanner.Text()
 		line = strings.TrimSuffix(line, "\n")
 		fields := strings.Split(line, "\t")
-		fmt.Println()
-		fmt.Printf("ncbigene:%s a nuc:Gene ;\n", fields[1])
-		fmt.Printf("    dct:identifier %s ;\n", fields[1])
-		fmt.Printf("    rdfs:label \"%s\" ;\n", fields[2])
+		fmt.Fprintln(writer)
+		fmt.Fprintf(writer, "ncbigene:%s a nuc:Gene ;\n", fields[1])
+		fmt.Fprintf(writer, "    dct:identifier %s ;\n", fields[1])
+		fmt.Fprintf(writer, "    rdfs:label \"%s\" ;\n", fields[2])
 		if fields[10] != "-" {
-			fmt.Printf("    nuc:standard_name \"%s\" ;\n", fields[10])
+			fmt.Fprintf(writer, "    nuc:standard_name \"%s\" ;\n", fields[10])
 		}
 		if fields[4] != "-" {
 			synonyms := formatStrArray(fields[4])
-			fmt.Printf("    nuc:gene_synonym %s ;\n", synonyms)
+			fmt.Fprintf(writer, "    nuc:gene_synonym %s ;\n", synonyms)
 		}
-		fmt.Printf("    dct:description \"%s\" ;\n", fields[8])
+		fmt.Fprintf(writer, "    dct:description \"%s\" ;\n", fields[8])
 		if fields[13] != "-" {
 			others := formatStrArray(fields[13])
-			fmt.Printf("    dct:alternative %s ;\n", others)
+			fmt.Fprintf(writer, "    dct:alternative %s ;\n", others)
 		}
 		link, dbXref := formatLink(fields[5])
 		if fields[5] != "-" {
-			fmt.Printf("    nuc:dblink %s ;\n", link)
+			fmt.Fprintf(writer, "    nuc:dblink %s ;\n", link)
 		}
-		fmt.Printf("    :typeOfGene \"%s\" ;\n", fields[9])
+		fmt.Fprintf(writer, "    :typeOfGene \"%s\" ;\n", fields[9])
 		if fields[12] == "O" {
-			fmt.Printf("    :nomenclatureStatus \"official\" ;\n")
+			fmt.Fprintf(writer, "    :nomenclatureStatus \"official\" ;\n")
 		} else if fields[12] == "I" {
-			fmt.Printf("    :nomenclatureStatus \"interim\" ;\n")
+			fmt.Fprintf(writer, "    :nomenclatureStatus \"interim\" ;\n")
 		}
 		if fields[11] != "-" {
-			fmt.Printf("    :fullName \"%s\" ;\n", fields[11])
+			fmt.Fprintf(writer, "    :fullName \"%s\" ;\n", fields[11])
 		}
 		if dbXref != "" {
-			fmt.Printf("    nuc:db_xref %s ;\n", dbXref)
+			fmt.Fprintf(writer, "    nuc:db_xref %s ;\n", dbXref)
 		}
 		if fields[15] != "-" {
 			featureType := formatStrArray(fields[15])
-			fmt.Printf("    :featureType %s ;\n", featureType)
+			fmt.Fprintf(writer, "    :featureType %s ;\n", featureType)
 		}
-		fmt.Printf("    :taxid taxid:%s ;\n", fields[0])
-		fmt.Printf("    nuc:chromosome \"%s\" ;\n", fields[6])
-		fmt.Printf("    nuc:map \"%s\" ;\n", fields[7])
+		fmt.Fprintf(writer, "    :taxid taxid:%s ;\n", fields[0])
+		fmt.Fprintf(writer, "    nuc:chromosome \"%s\" ;\n", fields[6])
+		fmt.Fprintf(writer, "    nuc:map \"%s\" ;\n", fields[7])
 		date := formatDate(fields[14])
-		fmt.Printf("    dct:modified \"%s\"^^xsd:date .\n", date)
+		fmt.Fprintf(writer, "    dct:modified \"%s\"^^xsd:date .\n", date)
 	}
 	if scanner.Err() != nil {
 		fmt.Fprintln(os.Stderr, "Error reading input:", scanner.Err())
 		os.Exit(1)
 	}
+	writer.Flush()
 }
 
 func formatStrArray(str string) string {
