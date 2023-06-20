@@ -31,18 +31,14 @@ end
 def format_links(str)
   str_array = []
   str.split("|").each { |a|
-    if a.match(/^MIM:(\d+)$/)
-      r = a.match(/^MIM:(\d+)$/)
-      str_array.push("mim:#{r[1]}")
-    elsif a.match(/^HGNC:HGNC:(\d+)$/)
-      r = a.match(/^HGNC:HGNC:(\d+)$/)
-      str_array.push("hgnc:#{r[1]}")
-    elsif a.match(/^Ensembl:ENSG\d+$/)
-      r = a.match(/^Ensembl:(ENSG\d+)$/)
-      str_array.push("ensembl:#{r[1]}")
-    elsif a.match(/^miRBase:MI\d+$/)
-      r = a.match(/miRBase:(MI\d+)$/)
-      str_array.push("mirbase:#{r[1]}")
+    if a =~ /^MIM:(\d+)$/
+      str_array << "mim:#{$1}"
+    elsif a =~ /^HGNC:HGNC:(\d+)$/
+      str_array << "hgnc:#{$1}"
+    elsif a =~ /^Ensembl:(ENSG\d+)$/
+      str_array << "ensembl:#{$1}"
+    elsif a =~ /^miRBase:(MI\d+)$/
+      str_array << "mirbase:#{$1}"
     end
   }
   return str_array.join(" ,\n        ")
