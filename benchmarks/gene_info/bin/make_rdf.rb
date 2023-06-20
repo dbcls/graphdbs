@@ -57,60 +57,56 @@ def filter_str(str)
   return str_array.join("|")
 end
 
-header = ""
 File.open(ARGV[0], mode="rt") { |f|
+  header = f.readline
   f.each_line { |line|
     line = line.chomp
-    if header == ""
-      header = line
-    else
-      fields = line.split("\t")
-      puts
-      puts "ncbigene:#{fields[1]} a nuc:Gene ;"
-      puts "    dct:identifier #{fields[1]} ;"
-      puts "    rdfs:label \"#{fields[2]}\" ;"
-      if fields[10] != "-"
-        puts "    nuc:standard_name \"#{fields[10]}\" ;"
-      end
-      if fields[4] != "-"
-        synonyms = format_str_array(fields[4])
-        puts "    nuc:gene_synonym #{synonyms} ;"
-      end
-      puts "    dct:description \"#{fields[8]}\" ;"
-      if fields[13] != "-"
-        alternatives = format_str_array(fields[13])
-        puts "    dct:alternative #{alternatives} ;"
-      end
-      if fields[5] != "-"
-        links = format_links(fields[5])
-        if links != ""
-          puts "    nuc:dblink #{links} ;"
-        end
-      end
-      puts "    :typeOfGene \"#{fields[9]}\" ;"
-      if fields[12] == "O"
-        puts "    :nomenclatureStatus \"official\" ;"
-      elsif fields[12] == "I"
-        puts "    :nomenclatureStatus \"interim\" ;"
-      end
-      if fields[11] != "-"
-        puts "    :fullName \"#{fields[11]}\" ;"
-      end
-      if fields[15] != "-"
-        feature_type = format_str_array(fields[15])
-        puts "    :featureType #{feature_type} ;"
-      end
-      if fields[5] != "-"
-        db_xref = filter_str(fields[5])
-        if db_xref != ""
-          puts "    nuc:db_xref \"#{db_xref}\" ;"
-        end
-      end
-      puts "    :taxid taxid:#{fields[0]} ;"
-      puts "    nuc:chromosome \"#{fields[6]}\" ;"
-      puts "    nuc:map \"#{fields[7]}\" ;"
-      date = format_date(fields[14])
-      puts "    dct:modified \"#{date}\"^^xsd:date ."
+    fields = line.split("\t")
+    puts
+    puts "ncbigene:#{fields[1]} a nuc:Gene ;"
+    puts "    dct:identifier #{fields[1]} ;"
+    puts "    rdfs:label \"#{fields[2]}\" ;"
+    if fields[10] != "-"
+      puts "    nuc:standard_name \"#{fields[10]}\" ;"
     end
+    if fields[4] != "-"
+      synonyms = format_str_array(fields[4])
+      puts "    nuc:gene_synonym #{synonyms} ;"
+    end
+    puts "    dct:description \"#{fields[8]}\" ;"
+    if fields[13] != "-"
+      alternatives = format_str_array(fields[13])
+      puts "    dct:alternative #{alternatives} ;"
+    end
+    if fields[5] != "-"
+      links = format_links(fields[5])
+      if links != ""
+        puts "    nuc:dblink #{links} ;"
+      end
+    end
+    puts "    :typeOfGene \"#{fields[9]}\" ;"
+    if fields[12] == "O"
+      puts "    :nomenclatureStatus \"official\" ;"
+    elsif fields[12] == "I"
+      puts "    :nomenclatureStatus \"interim\" ;"
+    end
+    if fields[11] != "-"
+      puts "    :fullName \"#{fields[11]}\" ;"
+    end
+    if fields[15] != "-"
+      feature_type = format_str_array(fields[15])
+      puts "    :featureType #{feature_type} ;"
+    end
+    if fields[5] != "-"
+      db_xref = filter_str(fields[5])
+      if db_xref != ""
+        puts "    nuc:db_xref \"#{db_xref}\" ;"
+      end
+    end
+    puts "    :taxid taxid:#{fields[0]} ;"
+    puts "    nuc:chromosome \"#{fields[6]}\" ;"
+    puts "    nuc:map \"#{fields[7]}\" ;"
+    date = format_date(fields[14])
+    puts "    dct:modified \"#{date}\"^^xsd:date ."
   }
 }
