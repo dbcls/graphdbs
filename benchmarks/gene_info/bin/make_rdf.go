@@ -20,8 +20,7 @@ func main() {
 	fmt.Println("@prefix nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/> .")
 	fmt.Println("@prefix : <http://purl.org/net/orthordf/hOP/ontology#> .")
 
-	var reader *bufio.Reader
-
+	var scanner *bufio.Scanner
 	if len(os.Args) > 1 {
 		file, err := os.Open(os.Args[1])
 		if err != nil {
@@ -29,21 +28,19 @@ func main() {
 			os.Exit(1)
 		}
 		defer file.Close()
-		reader = bufio.NewReader(file)
+		scanner = bufio.NewScanner(file)
 	} else {
-		reader = bufio.NewReader(os.Stdin)
+		scanner = bufio.NewScanner(os.Stdin)
 	}
 
-	_, err := reader.ReadString('\n')
-	if err != nil {
-		os.Exit(1)
-	}
-
-	for {
-		line, err := reader.ReadString('\n')
+	if scanner.Scan() {
+		_, err := scanner.Text(), scanner.Err()
 		if err != nil {
-			break
+			os.Exit(1)
 		}
+	}
+	for scanner.Scan() {
+		line := scanner.Text()
 		line = strings.TrimSuffix(line, "\n")
 		fields := strings.Split(line, "\t")
 		fmt.Println()
@@ -87,6 +84,10 @@ func main() {
 		fmt.Printf("    nuc:map \"%s\" ;\n", fields[7])
 		date := formatDate(fields[14])
 		fmt.Printf("    dct:modified \"%s\"^^xsd:date .\n", date)
+	}
+	if scanner.Err() != nil {
+		fmt.Fprintln(os.Stderr, "Error reading input:", scanner.Err())
+		os.Exit(1)
 	}
 }
 
