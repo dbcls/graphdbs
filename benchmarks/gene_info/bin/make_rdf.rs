@@ -14,7 +14,6 @@ fn main() {
     println!("@prefix ensembl: <http://identifiers.org/ensembl/> .");
     println!("@prefix nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/> .");
     println!("@prefix : <http://purl.org/net/orthordf/hOP/ontology#> .");
-    println!();
 
     let args: Vec<String> = env::args().collect();
     let filename = &args[1];
@@ -43,8 +42,8 @@ fn main() {
             let others = format_str_array(fields[13]);
             println!("    dct:alternative {} ;", others);
         }
+        let (link, db_xref) = format_link(fields[5]);
         if fields[5] != "-" {
-            let link = format_link(fields[5]);
             println!("    nuc:dblink {} ;", link);
         }
         println!("    :typeOfGene \"{}\" ;", fields[9]);
@@ -57,7 +56,6 @@ fn main() {
             println!("    :fullName \"{}\" ;", fields[11]);
         }
         if fields[5] != "-" {
-            let db_xref = filter_str(fields[5]);
             if !db_xref.is_empty() {
                 println!("    nuc:db_xref {} ;", db_xref);
             }
@@ -80,38 +78,33 @@ fn format_str_array(str: &str) -> String {
     str_arr.join(" ,\n        ")
 }
 
-fn format_link(str: &str) -> String {
+fn format_link(str: &str) -> (String, String) {
     let arr: Vec<&str> = str.split('|').collect();
-    let mut link: Vec<String> = Vec::new();
-    for a in arr {
-        if let Some(matched) = a.splitn(2, ':').collect::<Vec<&str>>().get(1) {
-            match *matched {
-                "MIM" => link.push(format!("mim:{}", matched)),
-                "HGNC" => link.push(format!("hgnc:{}", matched)),
-                "Ensembl" => link.push(format!("ensembl:{}", matched)),
-                "miRBase" => link.push(format!("mirbase:{}", matched)),
-                _ => (),
-            }
-        }
-    }
-    link.join(" ,\n        ")
-}
+    let mut link = String::new();
+    let mut db_xref = String::new();
 
-fn filter_str(str: &str) -> String {
-    let arr: Vec<&str> = str.split('|').collect();
-    let mut link: Vec<String> = Vec::new();
     for a in arr {
-        if let Some(matched) = a.splitn(2, ':').collect::<Vec<&str>>().get(1) {
-            match *matched {
-                "MIM" => (),
-                "HGNC" => (),
-                "Ensembl" => (),
-                "miRBase" => (),
-                _ => link.push(format!("\"{}\"", a)),
-            }
+        if a.starts_with("MIM:") {
+            link.push_str(&format!("mim:{} ,\n        ", &a[4..]));
+        } else if a.starts_with("HGNC:HGNC:") {
+            link.push_str(&format!("hgnc:{} ,\n        ", &a[10..]));
+        } else if a.starts_with("Ensembl:") {
+            link.push_str(&format!("ensembl:{} ,\n        ", &a[8..]));
+        } else if a.starts_with("miRBase:") {
+            link.push_str(&format!("mirbase:{} ,\n        ", &a[8..]));
+        } else {
+            db_xref.push_str(&format!("\"{}\" ,\n        ", a));
         }
     }
-    link.join(" ,\n        ")
+
+    if !link.is_empty() {
+        link.truncate(link.len() - 11); // Remove trailing comma and space
+    }
+    if !db_xref.is_empty() {
+        db_xref.truncate(db_xref.len() - 11); // Remove trailing comma and space
+    }
+
+    (link, db_xref)
 }
 
 fn format_date(date: &str) -> String {
