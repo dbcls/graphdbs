@@ -22,11 +22,6 @@ puts '@prefix ensembl: <http://identifiers.org/ensembl/> .'
 puts '@prefix nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/> .'
 puts '@prefix : <http://purl.org/net/orthordf/hOP/ontology#> .'
 
-def format_date(date)
-  r = date.match(/^(\d{4})(\d{2})(\d{2})$/)
-  return "#{r[1]}-#{r[2]}-#{r[3]}"
-end
-
 def format_str_array(str)
   return str.split("|")
            .map { |x| "\"#{x}\"" }
@@ -65,6 +60,11 @@ def filter_str(str)
     end
   }
   return str_array.join("|")
+end
+
+def format_date(date)
+  r = date.match(/^(\d{4})(\d{2})(\d{2})$/)
+  return "#{r[1]}-#{r[2]}-#{r[3]}"
 end
 
 File.open(input_file, mode="rt") { |f|
