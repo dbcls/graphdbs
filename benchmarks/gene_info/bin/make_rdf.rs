@@ -81,7 +81,7 @@ fn format_str_array(str: &str) -> String {
 fn format_link(str: &str) -> (String, String) {
     let arr: Vec<&str> = str.split('|').collect();
     let mut link: Vec<String> = Vec::new();
-    let mut db_xref = String::new();
+    let mut db_xref: Vec<String> = Vec::new();
 
     for a in arr {
         if a.starts_with("MIM:") {
@@ -93,15 +93,11 @@ fn format_link(str: &str) -> (String, String) {
         } else if a.starts_with("miRBase:") {
             link.push(format!("mirbase:{}", &a[8..]));
         } else {
-            db_xref.push_str(&format!("\"{}\" ,\n        ", a));
+            db_xref.push(format!("\"{}\"", a));
         }
     }
 
-    if !db_xref.is_empty() {
-        db_xref.truncate(db_xref.len() - 11); // Remove trailing comma and space
-    }
-
-    (link.join(" ,\n        "), db_xref)
+    (link.join(" ,\n        "), db_xref.join(" ,\n        "))
 }
 
 fn format_date(date: &str) -> String {
