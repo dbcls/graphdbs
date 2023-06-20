@@ -1,5 +1,15 @@
 #!/usr/bin/env ruby
 
+input_file = ARGV[0]
+unless input_file
+  puts "Usage: #{File.basename($0)} <input_file>"
+  exit 1
+end
+unless File.exist?(input_file)
+  puts "Error: cannot open '#{input_file}'"
+  exit 1
+end
+
 puts '@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .'
 puts '@prefix dct: <http://purl.org/dc/terms/> .'
 puts '@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .'
@@ -57,7 +67,7 @@ def filter_str(str)
   return str_array.join("|")
 end
 
-File.open(ARGV[0], mode="rt") { |f|
+File.open(input_file, mode="rt") { |f|
   header = f.readline
   f.each_line { |line|
     line = line.chomp
