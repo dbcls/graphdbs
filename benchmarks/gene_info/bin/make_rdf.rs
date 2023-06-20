@@ -37,13 +37,11 @@ fn main() {
             writeln!(writer, "    nuc:standard_name \"{}\" ;", fields[10]).unwrap();
         }
         if fields[4] != "-" {
-            let synonyms = format_str_array(fields[4]);
-            writeln!(writer, "    nuc:gene_synonym {} ;", synonyms).unwrap();
+            writeln!(writer, "    nuc:gene_synonym {} ;", format_str_array(fields[4])).unwrap();
         }
         writeln!(writer, "    dct:description \"{}\" ;", fields[8]).unwrap();
         if fields[13] != "-" {
-            let others = format_str_array(fields[13]);
-            writeln!(writer, "    dct:alternative {} ;", others).unwrap();
+            writeln!(writer, "    dct:alternative {} ;", format_str_array(fields[13])).unwrap();
         }
         let (link, db_xref) = format_link(fields[5]);
         if fields[5] != "-" {
@@ -64,14 +62,12 @@ fn main() {
             }
         }
         if fields[15] != "-" {
-            let feature_type = format_str_array(fields[15]);
-            writeln!(writer, "    :featureType {} ;", feature_type).unwrap();
+            writeln!(writer, "    :featureType {} ;", format_str_array(fields[15])).unwrap();
         }
         writeln!(writer, "    :taxid taxid:{} ;", fields[0]).unwrap();
         writeln!(writer, "    nuc:chromosome \"{}\" ;", fields[6]).unwrap();
         writeln!(writer, "    nuc:map \"{}\" ;", fields[7]).unwrap();
-        let date = format_date(fields[14]);
-        writeln!(writer, "    dct:modified \"{}\"^^xsd:date .", date).unwrap();
+        writeln!(writer, "    dct:modified \"{}\"^^xsd:date .", format_date(fields[14])).unwrap();
     }
 }
 
