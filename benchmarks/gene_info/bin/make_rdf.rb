@@ -47,12 +47,12 @@ end
 def filter_str(str)
   str_array = []
   str.split("|").each { |a|
-    if a.match(/^MIM:(\d+)$/)
-    elsif a.match(/^HGNC:HGNC:(\d+)$/)
-    elsif a.match(/^Ensembl:ENSG\d+$/)
-    elsif a.match(/^miRBase:MI\d+$/)
+    if a =~ /^MIM:(\d+)$/
+    elsif a =~ /^HGNC:HGNC:(\d+)$/
+    elsif a =~ /^Ensembl:(ENSG\d+)$/
+    elsif a =~ /^miRBase:(MI\d+)$/
     else
-      str_array.push("\"#{a}\"")
+      str_array << "\"#{a}\""
     end
   }
   return str_array.join(" ,\n        ")
