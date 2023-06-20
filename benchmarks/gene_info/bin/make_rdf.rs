@@ -3,6 +3,10 @@ use std::fs::File;
 use std::io::{BufRead, BufReader, BufWriter, Write, stdout};
 
 fn main() {
+    let args: Vec<String> = env::args().collect();
+    let filename = &args[1];
+    let file = File::open(filename).expect("Failed to open the file");
+
     let stdout = stdout();
     let mut writer = BufWriter::new(stdout.lock());
 
@@ -17,10 +21,6 @@ fn main() {
     writeln!(writer, "@prefix ensembl: <http://identifiers.org/ensembl/> .").unwrap();
     writeln!(writer, "@prefix nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/> .").unwrap();
     writeln!(writer, "@prefix : <http://purl.org/net/orthordf/hOP/ontology#> .").unwrap();
-
-    let args: Vec<String> = env::args().collect();
-    let filename = &args[1];
-    let file = File::open(filename).expect("Failed to open the file");
 
     let mut lines = BufReader::new(file).lines();
     let _header = lines.next().unwrap().unwrap();
