@@ -19,7 +19,6 @@ func main() {
 	fmt.Println("@prefix ensembl: <http://identifiers.org/ensembl/> .")
 	fmt.Println("@prefix nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/> .")
 	fmt.Println("@prefix : <http://purl.org/net/orthordf/hOP/ontology#> .")
-	fmt.Println()
 
 	reader := bufio.NewReader(os.Stdin)
 	_, err := reader.ReadString('\n')
@@ -50,8 +49,8 @@ func main() {
 			others := formatStrArray(fields[13])
 			fmt.Printf("    dct:alternative %s ;\n", others)
 		}
+		link, dbXref := formatLink(fields[5])
 		if fields[5] != "-" {
-			link := formatLink(fields[5])
 			fmt.Printf("    nuc:dblink %s ;\n", link)
 		}
 		fmt.Printf("    :typeOfGene \"%s\" ;\n", fields[9])
@@ -63,11 +62,8 @@ func main() {
 		if fields[11] != "-" {
 			fmt.Printf("    :fullName \"%s\" ;\n", fields[11])
 		}
-		if fields[5] != "-" {
-			dbXref := filterStr(fields[5])
-			if dbXref != "" {
-				fmt.Printf("    nuc:db_xref %s ;\n", dbXref)
-			}
+		if dbXref != "" {
+			fmt.Printf("    nuc:db_xref %s ;\n", dbXref)
 		}
 		if fields[15] != "-" {
 			featureType := formatStrArray(fields[15])
@@ -90,9 +86,10 @@ func formatStrArray(str string) string {
 	return strings.Join(strArr, " ,\n        ")
 }
 
-func formatLink(str string) string {
+func formatLink(str string) (string, string) {
 	arr := strings.Split(str, "|")
 	var link []string
+	var xref []string
 	for _, a := range arr {
 		if match := strings.Split(a, ":"); len(match) >= 2 {
 			switch match[0] {
@@ -104,21 +101,12 @@ func formatLink(str string) string {
 				link = append(link, "ensembl:"+match[1])
 			case "miRBase":
 				link = append(link, "mirbase:"+match[1])
+			default:
+				xref = append(xref, "\""+a+"\"")
 			}
 		}
 	}
-	return strings.Join(link, " ,\n        ")
-}
-
-func filterStr(str string) string {
-	arr := strings.Split(str, "|")
-	var link []string
-	for _, a := range arr {
-		if match := strings.SplitN(a, ":", 2); len(match) != 2 {
-			link = append(link, "\""+a+"\"")
-		}
-	}
-	return strings.Join(link, " ,\n        ")
+	return strings.Join(link, " ,\n        "), strings.Join(xref, " ,\n        ")
 }
 
 func formatDate(date string) string {
