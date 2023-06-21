@@ -39,26 +39,26 @@ BEGIN {
     if ($6 != "-") {
         split($6, dblinks, "|")
         for (i in dblinks) {
-            if (match(dblinks[i], /^MIM:([0-9]+)$/, match_arr)) {
+            if (match(dblinks[i], /^MIM:([0-9]+)$/, m)) {
                 if (dblink_str != "") {
                     dblink_str = dblink_str " ,\n        "
                 }
-                dblink_str = dblink_str "mim:" match_arr[1]
-            } else if (match(dblinks[i], /^HGNC:HGNC:([0-9]+)$/, match_arr)) {
+                dblink_str = dblink_str "mim:" m[1]
+            } else if (match(dblinks[i], /^HGNC:HGNC:([0-9]+)$/, m)) {
                 if (dblink_str != "") {
                     dblink_str = dblink_str " ,\n        "
                 }
-                dblink_str = dblink_str "hgnc:" match_arr[1]
-            } else if (match(dblinks[i], /^Ensembl:(ENSG[0-9]+)$/, match_arr)) {
+                dblink_str = dblink_str "hgnc:" m[1]
+            } else if (match(dblinks[i], /^Ensembl:(ENSG[0-9]+)$/, m)) {
                 if (dblink_str != "") {
                     dblink_str = dblink_str " ,\n        "
                 }
-                dblink_str = dblink_str "ensembl:" match_arr[1]
-            } else if (match(dblinks[i], /^miRBase:(MI[0-9]+)$/, match_arr)) {
+                dblink_str = dblink_str "ensembl:" m[1]
+            } else if (match(dblinks[i], /^miRBase:(MI[0-9]+)$/, m)) {
                 if (dblink_str != "") {
                     dblink_str = dblink_str " ,\n        "
                 }
-                dblink_str = dblink_str "mirbase:" match_arr[1]
+                dblink_str = dblink_str "mirbase:" m[1]
             } else {
                 if (db_xref_str != "") {
                     db_xref_str = db_xref_str " ,\n        "
