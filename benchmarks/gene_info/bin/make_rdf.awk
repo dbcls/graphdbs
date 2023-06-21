@@ -26,26 +26,12 @@ BEGIN {
         print "    nuc:standard_name \"" $11 "\" ;"
     }
     if ($5 != "-") {
-        split($5, synonyms, "|")
-        synonym_str = ""
-        for (i = 1; i <= length(synonyms); i++) {
-            synonym_str = synonym_str "\"" synonyms[i] "\""
-            if (i < length(synonyms)) {
-                synonym_str = synonym_str " ,\n        "
-            }
-        }
+        synonym_str = format_str_array($5)
         print "    nuc:gene_synonym " synonym_str " ;"
     }
     print "    dct:description \"" $9 "\" ;"
     if ($14 != "-") {
-        split($14, others, "|")
-        others_str = ""
-        for (i = 1; i <= length(others); i++) {
-            others_str = others_str "\"" others[i] "\""
-            if (i < length(others)) {
-                others_str = others_str " ,\n        "
-            }
-        }
+        others_str = format_str_array($14)
         print "    dct:alternative " others_str " ;"
     }
     if ($6 != "-") {
@@ -104,14 +90,7 @@ BEGIN {
         }
     }
     if ($16 != "-") {
-        split($16, feature_types, "|")
-        feature_type_str = ""
-        for (i = 1; i <= length(feature_types); i++) {
-            feature_type_str = feature_type_str "\"" feature_types[i] "\""
-            if (i < length(feature_types)) {
-                feature_type_str = feature_type_str " ,\n        "
-            }
-        }
+        feature_type_str = format_str_array($16)
         print "    :featureType " feature_type_str " ;"
     }
     print "    :taxid taxid:" $1 " ;"
@@ -121,6 +100,18 @@ BEGIN {
         date = format_date($15)
         print "    dct:modified \"" date "\"^^xsd:date ."
     }
+}
+
+function format_str_array(str) {
+    split(str, arr, "|")
+    str_arr = ""
+    for (i in arr) {
+        if (str_arr != "") {
+            str_arr = str_arr " ,\n        "
+        }
+        str_arr = str_arr "\"" arr[i] "\""
+    }
+    return str_arr
 }
 
 function format_date(date) {
