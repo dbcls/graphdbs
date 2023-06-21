@@ -1,21 +1,17 @@
 #!/usr/bin/perl -w
 use strict;
-use File::Basename;
-use Getopt::Std;
-my $PROGRAM = basename $0;
-my $USAGE=
-"Usage: $PROGRAM
-";
 
-my %OPT;
-getopts('', \%OPT);
+if (!@ARGV) {
+    exit 1;
+}
+my ($INPUT_FILE) = @ARGV;
 
-!@ARGV && -t and die $USAGE;
+open(INPUT, "$INPUT_FILE") || die "$!";
 
 print_prefix();
 
-my $HEADER = <>;
-while (<>) {
+my $HEADER = <INPUT>; # Skip header line
+while (<INPUT>) {
     chomp;
     my @field = split("\t");
     print "\n";
@@ -63,6 +59,7 @@ while (<>) {
     my $date = format_date($field[14]);
     print "    dct:modified \"$date\"^^xsd:date .\n";
 }
+close(INPUT);
 
 sub print_prefix {
     print '@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .', "\n";
