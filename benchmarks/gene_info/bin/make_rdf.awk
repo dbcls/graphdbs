@@ -34,9 +34,10 @@ BEGIN {
         others_str = format_str_array($14)
         print "    dct:alternative " others_str " ;"
     }
+    dblink_str = ""
+    db_xref_str = ""
     if ($6 != "-") {
         split($6, dblinks, "|")
-        dblink_str = ""
         for (i = 1; i <= length(dblinks); i++) {
             if (match(dblinks[i], /^MIM:([0-9]+)$/, match_arr)) {
                 if (dblink_str != "") {
@@ -58,6 +59,11 @@ BEGIN {
                     dblink_str = dblink_str " ,\n        "
                 }
                 dblink_str = dblink_str "mirbase:" match_arr[1]
+            } else {
+                if (db_xref_str != "") {
+                    db_xref_str = db_xref_str " ,\n        "
+                }
+                db_xref_str = db_xref_str "\"" dblinks[i] "\""
             }
         }
         print "    nuc:dblink " dblink_str " ;"
@@ -72,19 +78,6 @@ BEGIN {
         print "    :fullName \"" $12 "\" ;"
     }
     if ($6 != "-") {
-        split($6, db_xrefs, "|")
-        db_xref_str = ""
-        for (i = 1; i <= length(db_xrefs); i++) {
-            if (!(match(db_xrefs[i], /^MIM:([0-9]+)$/) ||
-                match(db_xrefs[i], /^HGNC:HGNC:([0-9]+)$/) ||
-                match(db_xrefs[i], /^Ensembl:(ENSG[0-9]+)$/) ||
-                match(db_xrefs[i], /^miRBase:(MI[0-9]+)$/))) {
-                db_xref_str = db_xref_str "\"" db_xrefs[i] "\""
-                if (i < length(db_xrefs)) {
-                    db_xref_str = db_xref_str " ,\n        "
-                }
-            }
-        }
         if (db_xref_str != "") {
             print "    nuc:db_xref " db_xref_str " ;"
         }
