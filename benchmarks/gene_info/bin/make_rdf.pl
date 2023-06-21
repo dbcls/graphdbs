@@ -78,14 +78,6 @@ sub print_prefix {
     print '@prefix : <http://purl.org/net/orthordf/hOP/ontology#> .', "\n";
 }
 
-sub format_date {
-    my ($date) = @_;
-    if ($date =~ /^(\d\d\d\d)(\d\d)(\d\d)$/) {
-        my ($y, $m, $d) = ($1, $2, $3);
-        return "$y-$m-$d";
-    }
-}
-
 sub format_str_array {
     my ($str) = @_;
     my @arr = split(/\|/, $str);
@@ -128,4 +120,12 @@ sub filter_str {
         }
     }
     return join(" ,\n        ", @link);
+}
+
+sub format_date {
+    my ($date) = @_;
+    if ($date =~ /^(\d\d\d\d)(\d\d)(\d\d)$/) {
+        my ($y, $m, $d) = ($1, $2, $3);
+        return "$y-$m-$d";
+    }
 }
