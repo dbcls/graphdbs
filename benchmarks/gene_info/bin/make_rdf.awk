@@ -38,7 +38,7 @@ BEGIN {
     db_xref_str = ""
     if ($6 != "-") {
         split($6, dblinks, "|")
-        for (i = 1; i <= length(dblinks); i++) {
+        for (i in dblinks) {
             if (match(dblinks[i], /^MIM:([0-9]+)$/, match_arr)) {
                 if (dblink_str != "") {
                     dblink_str = dblink_str " ,\n        "
