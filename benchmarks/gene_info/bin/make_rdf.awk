@@ -1,6 +1,6 @@
 #!/usr/bin/awk -f
-
 BEGIN {
+    FS = "\t"
     print "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ."
     print "@prefix dct: <http://purl.org/dc/terms/> ."
     print "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> ."
@@ -12,25 +12,19 @@ BEGIN {
     print "@prefix ensembl: <http://identifiers.org/ensembl/> ."
     print "@prefix nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/> ."
     print "@prefix : <http://purl.org/net/orthordf/hOP/ontology#> ."
-    FS = "\t"
 }
 
 {
     if (NR == 1) {
-        next
+        next # Skip header line
     }
-
-    # split($0, field, "\t")
-
     print ""
     print "ncbigene:" $2 " a nuc:Gene ;"
     print "    dct:identifier " $2 " ;"
     print "    rdfs:label \"" $3 "\" ;"
-
     if ($11 != "-") {
         print "    nuc:standard_name \"" $11 "\" ;"
     }
-
     if ($5 != "-") {
         split($5, synonyms, "|")
         synonym_str = ""
@@ -42,9 +36,7 @@ BEGIN {
         }
         print "    nuc:gene_synonym " synonym_str " ;"
     }
-
     print "    dct:description \"" $9 "\" ;"
-
     if ($14 != "-") {
         split($14, others, "|")
         others_str = ""
@@ -56,7 +48,6 @@ BEGIN {
         }
         print "    dct:alternative " others_str " ;"
     }
-
     if ($6 != "-") {
         split($6, dblinks, "|")
         dblink_str = ""
@@ -81,28 +72,19 @@ BEGIN {
                     dblink_str = dblink_str " ,\n        "
                 }
                 dblink_str = dblink_str "mirbase:" match_arr[1]
-            } else {
-                # dblink_str = dblink_str "\"" dblinks[i] "\""
             }
-            # if (i < length(dblinks)) {
-            #     dblink_str = dblink_str " ,\n        "
-            # }
         }
         print "    nuc:dblink " dblink_str " ;"
     }
-
     print "    :typeOfGene \"" $10 "\" ;"
-
     if ($13 == "O") {
         print "    :nomenclatureStatus \"official\" ;"
     } else if ($13 == "I") {
         print "    :nomenclatureStatus \"interim\" ;"
     }
-
     if ($12 != "-") {
         print "    :fullName \"" $12 "\" ;"
     }
-
     if ($6 != "-") {
         split($6, db_xrefs, "|")
         db_xref_str = ""
@@ -121,7 +103,6 @@ BEGIN {
             print "    nuc:db_xref " db_xref_str " ;"
         }
     }
-
     if ($16 != "-") {
         split($16, feature_types, "|")
         feature_type_str = ""
@@ -133,11 +114,9 @@ BEGIN {
         }
         print "    :featureType " feature_type_str " ;"
     }
-
     print "    :taxid taxid:" $1 " ;"
     print "    nuc:chromosome \"" $7 "\" ;"
     print "    nuc:map \"" $8 "\" ;"
-
     if ($15 != "-") {
         date = format_date($15)
         print "    dct:modified \"" date "\"^^xsd:date ."
