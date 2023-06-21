@@ -10,19 +10,9 @@ my $USAGE=
 my %OPT;
 getopts('', \%OPT);
 
-print '@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .', "\n";
-print '@prefix dct: <http://purl.org/dc/terms/> .', "\n";
-print '@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .', "\n";
-print '@prefix ncbigene: <http://identifiers.org/ncbigene/> .', "\n";
-print '@prefix taxid: <http://identifiers.org/taxonomy/> .', "\n";
-print '@prefix hgnc: <http://identifiers.org/hgnc/> .', "\n";
-print '@prefix mim: <http://identifiers.org/mim/> .', "\n";
-print '@prefix mirbase: <http://identifiers.org/mirbase/> .', "\n";
-print '@prefix ensembl: <http://identifiers.org/ensembl/> .', "\n";
-print '@prefix nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/> .', "\n";
-print '@prefix : <http://purl.org/net/orthordf/hOP/ontology#> .', "\n";
-
 !@ARGV && -t and die $USAGE;
+
+print_prefix();
 
 my $HEADER = <>;
 while (<>) {
@@ -72,6 +62,20 @@ while (<>) {
     print "    nuc:map \"$field[7]\" ;\n";
     my $date = format_date($field[14]);
     print "    dct:modified \"$date\"^^xsd:date .\n";
+}
+
+sub print_prefix {
+    print '@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .', "\n";
+    print '@prefix dct: <http://purl.org/dc/terms/> .', "\n";
+    print '@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .', "\n";
+    print '@prefix ncbigene: <http://identifiers.org/ncbigene/> .', "\n";
+    print '@prefix taxid: <http://identifiers.org/taxonomy/> .', "\n";
+    print '@prefix hgnc: <http://identifiers.org/hgnc/> .', "\n";
+    print '@prefix mim: <http://identifiers.org/mim/> .', "\n";
+    print '@prefix mirbase: <http://identifiers.org/mirbase/> .', "\n";
+    print '@prefix ensembl: <http://identifiers.org/ensembl/> .', "\n";
+    print '@prefix nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/> .', "\n";
+    print '@prefix : <http://purl.org/net/orthordf/hOP/ontology#> .', "\n";
 }
 
 sub format_date {
