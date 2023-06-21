@@ -30,8 +30,8 @@ while (<INPUT>) {
         my $others = format_str_array($field[13]);
         print "    dct:alternative $others ;\n";
     }
+    my ($link, $db_xref) = format_link($field[5]);
     if ($field[5] ne "-") {
-        my $link = format_link($field[5]);
         print "    nuc:dblink $link ;\n";
     }
     print "    :typeOfGene \"$field[9]\" ;\n";
@@ -44,7 +44,6 @@ while (<INPUT>) {
         print "    :fullName \"$field[11]\" ;\n";
     }
     if ($field[5] ne "-") {
-        my $db_xref = filter_str($field[5]);
         if ($db_xref) {
             print "    nuc:db_xref $db_xref ;\n";
         }
@@ -89,6 +88,7 @@ sub format_link {
     my ($str) = @_;
     my @arr = split(/\|/, $str);
     my @link = ();
+    my @xref = ();
     for my $a (@arr) {
         if ($a =~ /^MIM:(\d+)$/) {
             push(@link, "mim:$1");
@@ -98,25 +98,11 @@ sub format_link {
             push(@link, "ensembl:$1");
         } elsif ($a =~ /^miRBase:(MI\d+)$/) {
             push(@link, "mirbase:$1");
-        }
-    }
-    return join(" ,\n        ", @link);
-}
-
-sub filter_str {
-    my ($str) = @_;
-    my @arr = split(/\|/, $str);
-    my @link = ();
-    for my $a (@arr) {
-        if ($a =~ /^MIM:(\d+)$/) {
-        } elsif ($a =~ /^HGNC:HGNC:(\d+)$/) {
-        } elsif ($a =~ /^Ensembl:(ENSG\d+)$/) {
-        } elsif ($a =~ /^miRBase:(MI\d+)$/) {
         } else {
-            push(@link, "\"$a\"");
+            push(@xref, "\"$a\"");
         }
     }
-    return join(" ,\n        ", @link);
+    return join(" ,\n        ", @link), join(" ,\n        ", @xref);
 }
 
 sub format_date {
