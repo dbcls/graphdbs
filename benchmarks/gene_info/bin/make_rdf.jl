@@ -10,60 +10,47 @@ function main(args)
         header = readline(file) # Skip header line
         for line in eachline(file)
             field = split(line, "\t")
-
             println()
             println("ncbigene:$(field[2]) a nuc:Gene ;")
             println("    dct:identifier $(field[2]) ;")
             println("    rdfs:label \"$(field[3])\" ;")
-
             if field[11] != "-"
                 println("    nuc:standard_name \"$(field[11])\" ;")
             end
-
             if field[5] != "-"
                 synonyms = format_str_array(field[5])
                 println("    nuc:gene_synonym $synonyms ;")
             end
-
             println("    dct:description \"$(field[9])\" ;")
-
             if field[14] != "-"
                 others = format_str_array(field[14])
                 println("    dct:alternative $others ;")
             end
-
             link, db_xref = format_link(field[6])
             if field[6] != "-"
                 println("    nuc:dblink $link ;")
             end
-
             println("    :typeOfGene \"$(field[10])\" ;")
-
             if field[13] == "O"
                 println("    :nomenclatureStatus \"official\" ;")
             elseif field[13] == "I"
                 println("    :nomenclatureStatus \"interim\" ;")
             end
-
             if field[12] != "-"
                 println("    :fullName \"$(field[12])\" ;")
             end
-
             if field[6] != "-"
                 if db_xref != ""
                     println("    nuc:db_xref $db_xref ;")
                 end
             end
-
             if field[16] != "-"
                 feature_type = format_str_array(field[16])
                 println("    :featureType $feature_type ;")
             end
-
             println("    :taxid taxid:$(field[1]) ;")
             println("    nuc:chromosome \"$(field[7])\" ;")
             println("    nuc:map \"$(field[8])\" ;")
-
             date = format_date(field[15])
             println("    dct:modified \"$date\"^^xsd:date .")
         end
