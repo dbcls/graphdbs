@@ -2,7 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class GeneDataProcessor {
+public class GeneInfo {
     public static void main(String[] args) {
         if (args.length == 0) {
             System.exit(1);
