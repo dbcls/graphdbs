@@ -11,54 +11,10 @@ public class GeneInfo {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(inputFileName))) {
             printPrefix();
-
             String header = reader.readLine(); // Skip header line
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] field = line.split("\t");
-                System.out.println();
-                System.out.printf("ncbigene:%s a nuc:Gene ;%n", field[1]);
-                System.out.printf("    dct:identifier %s ;%n", field[1]);
-                System.out.printf("    rdfs:label \"%s\" ;%n", field[2]);
-                if (!field[10].equals("-")) {
-                    System.out.printf("    nuc:standard_name \"%s\" ;%n", field[10]);
-                }
-                if (!field[4].equals("-")) {
-                    String synonyms = formatStrArray(field[4]);
-                    System.out.printf("    nuc:gene_synonym %s ;%n", synonyms);
-                }
-                System.out.printf("    dct:description \"%s\" ;%n", field[8]);
-                if (!field[13].equals("-")) {
-                    String others = formatStrArray(field[13]);
-                    System.out.printf("    dct:alternative %s ;%n", others);
-                }
-                String[] linkAndXref = formatLink(field[5]);
-                if (!field[5].equals("-")) {
-                    System.out.printf("    nuc:dblink %s ;%n", linkAndXref[0]);
-                }
-                System.out.printf("    :typeOfGene \"%s\" ;%n", field[9]);
-                if (field[12].equals("O")) {
-                    System.out.println("    :nomenclatureStatus \"official\" ;");
-                } else if (field[12].equals("I")) {
-                    System.out.println("    :nomenclatureStatus \"interim\" ;");
-                }
-                if (!field[11].equals("-")) {
-                    System.out.printf("    :fullName \"%s\" ;%n", field[11]);
-                }
-                if (!field[5].equals("-")) {
-                    if (linkAndXref[1] != null) {
-                        System.out.printf("    nuc:db_xref %s ;%n", linkAndXref[1]);
-                    }
-                }
-                if (!field[15].equals("-")) {
-                    String featureType = formatStrArray(field[15]);
-                    System.out.printf("    :featureType %s ;%n", featureType);
-                }
-                System.out.printf("    :taxid taxid:%s ;%n", field[0]);
-                System.out.printf("    nuc:chromosome \"%s\" ;%n", field[6]);
-                System.out.printf("    nuc:map \"%s\" ;%n", field[7]);
-                String date = formatDate(field[14]);
-                System.out.printf("    dct:modified \"%s\"^^xsd:date .%n", date);
+                printEntry(line);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -77,6 +33,50 @@ public class GeneInfo {
         System.out.println("@prefix ensembl: <http://identifiers.org/ensembl/> .");
         System.out.println("@prefix nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/> .");
         System.out.println("@prefix : <http://purl.org/net/orthordf/hOP/ontology#> .");
+    }
+
+    private static void printEntry(String line) {
+        String[] field = line.split("\t");
+
+        System.out.println();
+        System.out.printf("ncbigene:%s a nuc:Gene ;%n", field[1]);
+        System.out.printf("    dct:identifier %s ;%n", field[1]);
+        System.out.printf("    rdfs:label \"%s\" ;%n", field[2]);
+        if (!field[10].equals("-")) {
+            System.out.printf("    nuc:standard_name \"%s\" ;%n", field[10]);
+        }
+        if (!field[4].equals("-")) {
+            System.out.printf("    nuc:gene_synonym %s ;%n", formatStrArray(field[4]));
+        }
+        System.out.printf("    dct:description \"%s\" ;%n", field[8]);
+        if (!field[13].equals("-")) {
+            System.out.printf("    dct:alternative %s ;%n", formatStrArray(field[13]));
+        }
+        String[] linkAndXref = formatLink(field[5]);
+        if (!field[5].equals("-")) {
+            System.out.printf("    nuc:dblink %s ;%n", linkAndXref[0]);
+        }
+        System.out.printf("    :typeOfGene \"%s\" ;%n", field[9]);
+        if (field[12].equals("O")) {
+            System.out.println("    :nomenclatureStatus \"official\" ;");
+        } else if (field[12].equals("I")) {
+            System.out.println("    :nomenclatureStatus \"interim\" ;");
+        }
+        if (!field[11].equals("-")) {
+            System.out.printf("    :fullName \"%s\" ;%n", field[11]);
+        }
+        if (!field[5].equals("-")) {
+            if (linkAndXref[1] != null) {
+                System.out.printf("    nuc:db_xref %s ;%n", linkAndXref[1]);
+            }
+        }
+        if (!field[15].equals("-")) {
+            System.out.printf("    :featureType %s ;%n", formatStrArray(field[15]));
+        }
+        System.out.printf("    :taxid taxid:%s ;%n", field[0]);
+        System.out.printf("    nuc:chromosome \"%s\" ;%n", field[6]);
+        System.out.printf("    nuc:map \"%s\" ;%n", field[7]);
+        System.out.printf("    dct:modified \"%s\"^^xsd:date .%n", formatDate(field[14]));
     }
 
     private static String formatStrArray(String str) {
