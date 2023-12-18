@@ -20,5 +20,8 @@ $ time ./bin/make_rdf.pl original_data/Homo_sapiens.gene_info > /dev/null
 
 ### Java
 ```
+$ javac bin/GeneInfo.java
+```
+```
 $ time java -cp bin/java GeneInfo original_data/Homo_sapiens.gene_info > /dev/null
 ```
