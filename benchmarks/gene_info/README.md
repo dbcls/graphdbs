@@ -8,5 +8,17 @@ NCBI Homo_sapiens.gene_info
 
 ## Created RDF
 ```
-./bin/make_rdf.pl original_data/Homo_sapiens.gene_info > created_rdf/Homo_sapiens.gene_info.ttl
+$ ./bin/make_rdf.pl original_data/Homo_sapiens.gene_info > created_rdf/Homo_sapiens.gene_info.ttl
+```
+
+## Benchmark
+
+### Perl etc.
+```
+$ time ./bin/make_rdf.pl original_data/Homo_sapiens.gene_info > /dev/null
+```
+
+### Java
+```
+$ time java -cp bin/java GeneInfo original_data/Homo_sapiens.gene_info > /dev/null
 ```
